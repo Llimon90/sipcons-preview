@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Sipcons · Sistema de Diseño</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="./tokens.css">
+<style>
+  *, *::before, *::after { box-sizing: border-box; }
+  body {
+    margin: 0;
+    font-family: var(--font-body);
+    color: var(--color-text);
+    background: var(--color-bg);
+    line-height: var(--leading-normal);
+    -webkit-font-smoothing: antialiased;
+  }
+  .wrap { max-width: var(--container); margin-inline: auto; padding-inline: var(--gutter); }
+  h1, h2, h3, h4 { font-family: var(--font-display); letter-spacing: var(--tracking-tight); line-height: var(--leading-tight); margin: 0; }
+
+  .overline {
+    display: inline-block;
+    font-size: var(--text-sm);
+    font-weight: var(--weight-semibold);
+    letter-spacing: var(--tracking-overline);
+    text-transform: uppercase;
+    color: var(--color-accent);
+    margin-bottom: var(--space-3);
+  }
+
+  /* Hero de la guía */
+  .doc-hero {
+    background: var(--gradient-hero);
+    color: var(--color-text-inverse);
+    padding-block: var(--space-12);
+  }
+  .doc-hero .overline { color: var(--sip-cyan-400); }
+  .doc-hero h1 { font-size: var(--text-hero); max-width: 14ch; }
+  .doc-hero p { color: rgba(255,255,255,.8); max-width: 52ch; font-size: var(--text-lg); margin-top: var(--space-4); }
+
+  section.block { padding-block: var(--section-y); border-bottom: 1px solid var(--color-border); }
+  .block > .wrap > h2 { font-size: var(--text-4xl); }
+  .block .lead { color: var(--color-text-muted); max-width: 60ch; margin-top: var(--space-3); }
+
+  /* Swatches */
+  .swatch-row { display: grid; grid-template-columns: repeat(auto-fill, minmax(120px, 1fr)); gap: var(--space-3); margin-top: var(--space-6); }
+  .swatch { border-radius: var(--radius-md); overflow: hidden; border: 1px solid var(--color-border); background: var(--color-surface); }
+  .swatch .chip { height: 72px; }
+  .swatch .meta { padding: var(--space-2) var(--space-3); font-size: var(--text-xs); }
+  .swatch .name { font-weight: var(--weight-semibold); display: block; }
+  .swatch .hex { color: var(--color-text-subtle); font-family: var(--font-display); }
+
+  .token-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: var(--space-4); margin-top: var(--space-6); }
+  .token { display: flex; align-items: center; gap: var(--space-3); font-size: var(--text-sm); }
+  .token .dot { width: 40px; height: 40px; border-radius: var(--radius-md); border: 1px solid var(--color-border); flex: none; }
+  .token code { font-family: var(--font-display); font-size: var(--text-xs); color: var(--color-text-muted); }
+
+  /* Tipografía */
+  .type-row { display: flex; align-items: baseline; gap: var(--space-5); padding-block: var(--space-3); border-bottom: 1px dashed var(--color-border); flex-wrap: wrap; }
+  .type-row .label { width: 90px; flex: none; color: var(--color-text-subtle); font-size: var(--text-xs); font-family: var(--font-display); }
+  .t-hero { font-family: var(--font-display); font-size: var(--text-5xl); font-weight: 700; letter-spacing: var(--tracking-tight); }
+  .t-4xl { font-family: var(--font-display); font-size: var(--text-4xl); font-weight: 700; }
+  .t-2xl { font-family: var(--font-display); font-size: var(--text-2xl); font-weight: 600; }
+  .t-xl  { font-family: var(--font-display); font-size: var(--text-xl); font-weight: 600; }
+  .t-body { font-size: var(--text-base); max-width: 60ch; }
+  .t-sm { font-size: var(--text-sm); color: var(--color-text-muted); }
+
+  /* Botones */
+  .btn { display: inline-flex; align-items: center; gap: var(--space-2); font-family: var(--font-body); font-weight: var(--weight-semibold); font-size: var(--text-base); padding: var(--space-3) var(--space-5); border-radius: var(--radius-full); border: 1px solid transparent; cursor: pointer; text-decoration: none; transition: transform var(--dur) var(--ease-out), background var(--dur) var(--ease-out), box-shadow var(--dur) var(--ease-out); }
+  .btn:hover { transform: translateY(-2px); }
+  .btn-primary { background: var(--color-primary); color: var(--color-text-on-primary); }
+  .btn-primary:hover { background: var(--color-primary-hover); box-shadow: var(--shadow-lg); }
+  .btn-action { background: var(--color-action); color: var(--sip-blue-950); }
+  .btn-action:hover { background: var(--color-action-hover); box-shadow: var(--shadow-lg); }
+  .btn-outline { background: transparent; color: var(--color-primary); border-color: var(--color-border-strong); }
+  .btn-outline:hover { border-color: var(--color-primary); background: var(--color-primary-soft); }
+  .btn-row { display: flex; gap: var(--space-3); flex-wrap: wrap; margin-top: var(--space-6); }
+
+  /* Cards */
+  .cards { display: grid; grid-template-columns: repeat(auto-fill, minmax(230px, 1fr)); gap: var(--space-5); margin-top: var(--space-6); }
+  .card { background: var(--color-surface); border: 1px solid var(--color-border); border-radius: var(--radius-lg); padding: var(--space-6); transition: transform var(--dur) var(--ease-out), box-shadow var(--dur) var(--ease-out); }
+  .card:hover { transform: translateY(-4px); box-shadow: var(--shadow-lg); }
+  .card .ico { width: 44px; height: 44px; border-radius: var(--radius-md); background: var(--color-primary-soft); color: var(--color-primary); display: grid; place-items: center; margin-bottom: var(--space-4); font-family: var(--font-display); font-weight: 700; }
+  .card h3 { font-size: var(--text-xl); margin-bottom: var(--space-2); }
+  .card p { color: var(--color-text-muted); font-size: var(--text-sm); margin: 0 0 var(--space-4); }
+  .card .more { color: var(--color-accent); font-weight: var(--weight-semibold); font-size: var(--text-sm); text-decoration: none; }
+  .card:hover .more { letter-spacing: .02em; }
+
+  /* Stats */
+  .stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: var(--space-6); margin-top: var(--space-6); background: var(--color-bg-inverse); border-radius: var(--radius-xl); padding: var(--space-8); }
+  .stat .num { font-family: var(--font-display); font-weight: 700; font-size: var(--text-5xl); color: #fff; line-height: 1; }
+  .stat .num .accent { color: var(--sip-cyan-400); }
+  .stat .lbl { color: rgba(255,255,255,.7); font-size: var(--text-sm); margin-top: var(--space-2); }
+
+  /* CTA band */
+  .cta-band { background: var(--gradient-accent); border-radius: var(--radius-xl); padding: var(--space-8); display: flex; align-items: center; justify-content: space-between; gap: var(--space-6); flex-wrap: wrap; margin-top: var(--space-6); }
+  .cta-band h3 { color: #fff; font-size: var(--text-3xl); max-width: 20ch; }
+</style>
+</head>
+<body>
+
+<header class="doc-hero">
+  <div class="wrap">
+    <span class="overline">Sistema de Diseño</span>
+    <h1>Sipcons, elevado.</h1>
+    <p>La base visual para el rediseño del sitio: paleta azul refinada, tipografía moderna y componentes consistentes. Todo construido con design tokens.</p>
+  </div>
+</header>
+
+<section class="block">
+  <div class="wrap">
+    <span class="overline">Color · Marca</span>
+    <h2>Azul Sipcons</h2>
+    <p class="lead">La esencia azul del logo, elevada a una escala completa. El 600 es el primario de marca.</p>
+    <div class="swatch-row">
+      <div class="swatch"><div class="chip" style="background:var(--sip-blue-50)"></div><div class="meta"><span class="name">blue-50</span><span class="hex">#EDF3FF</span></div></div>
+      <div class="swatch"><div class="chip" style="background:var(--sip-blue-100)"></div><div class="meta"><span class="name">blue-100</span><span class="hex">#D6E4FF</span></div></div>
+      <div class="swatch"><div class="chip" style="background:var(--sip-blue-200)"></div><div class="meta"><span class="name">blue-200</span><span class="hex">#B0CBFF</span></div></div>
+      <div class="swatch"><div class="chip" style="background:var(--sip-blue-300)"></div><div class="meta"><span class="name">blue-300</span><span class="hex">#83A9FF</span></div></div>
+      <div class="swatch"><div class="chip" style="background:var(--sip-blue-400)"></div><div class="meta"><span class="name">blue-400</span><span class="hex">#5285FA</span></div></div>
+      <div class="swatch"><div class="chip" style="background:var(--sip-blue-500)"></div><div class="meta"><span class="name">blue-500</span><span class="hex">#2C63EE</span></div></div>
+      <div class="swatch"><div class="chip" style="background:var(--sip-blue-600)"></div><div class="meta"><span class="name">blue-600 ●</span><span class="hex">#1A4BD0</span></div></div>
+      <div class="swatch"><div class="chip" style="background:var(--sip-blue-700)"></div><div class="meta"><span class="name">blue-700</span><span class="hex">#163CA6</span></div></div>
+      <div class="swatch"><div class="chip" style="background:var(--sip-blue-800)"></div><div class="meta"><span class="name">blue-800</span><span class="hex">#17347F</span></div></div>
+      <div class="swatch"><div class="chip" style="background:var(--sip-blue-900)"></div><div class="meta"><span class="name">blue-900</span><span class="hex">#172C63</span></div></div>
+      <div class="swatch"><div class="chip" style="background:var(--sip-blue-950)"></div><div class="meta"><span class="name">blue-950</span><span class="hex">#0E1B3D</span></div></div>
+    </div>
+
+    <div style="margin-top:var(--space-8)">
+      <span class="overline">Color · Acentos</span>
+      <h2>Cyan &amp; Ámbar</h2>
+      <p class="lead">Cyan para el toque de precisión/tecnología. Ámbar solo para el CTA que debe ganar el ojo.</p>
+      <div class="swatch-row">
+        <div class="swatch"><div class="chip" style="background:var(--sip-cyan-400)"></div><div class="meta"><span class="name">cyan-400</span><span class="hex">#22D3EE</span></div></div>
+        <div class="swatch"><div class="chip" style="background:var(--sip-cyan-500)"></div><div class="meta"><span class="name">cyan-500 ●</span><span class="hex">#06B6D4</span></div></div>
+        <div class="swatch"><div class="chip" style="background:var(--sip-cyan-600)"></div><div class="meta"><span class="name">cyan-600</span><span class="hex">#0891B2</span></div></div>
+        <div class="swatch"><div class="chip" style="background:var(--sip-amber-400)"></div><div class="meta"><span class="name">amber-400</span><span class="hex">#FBBF24</span></div></div>
+        <div class="swatch"><div class="chip" style="background:var(--sip-amber-500)"></div><div class="meta"><span class="name">amber-500 ●</span><span class="hex">#F59E0B</span></div></div>
+        <div class="swatch"><div class="chip" style="background:var(--sip-amber-600)"></div><div class="meta"><span class="name">amber-600</span><span class="hex">#D97706</span></div></div>
+      </div>
+    </div>
+
+    <div style="margin-top:var(--space-8)">
+      <span class="overline">Color · Neutros</span>
+      <h2>Slate frío</h2>
+      <p class="lead">Neutros con un leve tinte azul: combinan con la marca y evitan el gris "sucio".</p>
+      <div class="swatch-row">
+        <div class="swatch"><div class="chip" style="background:var(--sip-neutral-50); border-bottom:1px solid var(--color-border)"></div><div class="meta"><span class="name">50</span><span class="hex">#F6F8FC</span></div></div>
+        <div class="swatch"><div class="chip" style="background:var(--sip-neutral-100)"></div><div class="meta"><span class="name">100</span><span class="hex">#EDF1F7</span></div></div>
+        <div class="swatch"><div class="chip" style="background:var(--sip-neutral-200)"></div><div class="meta"><span class="name">200</span><span class="hex">#DDE4EE</span></div></div>
+        <div class="swatch"><div class="chip" style="background:var(--sip-neutral-300)"></div><div class="meta"><span class="name">300</span><span class="hex">#C3CDDC</span></div></div>
+        <div class="swatch"><div class="chip" style="background:var(--sip-neutral-400)"></div><div class="meta"><span class="name">400</span><span class="hex">#94A2B8</span></div></div>
+        <div class="swatch"><div class="chip" style="background:var(--sip-neutral-500)"></div><div class="meta"><span class="name">500</span><span class="hex">#64748B</span></div></div>
+        <div class="swatch"><div class="chip" style="background:var(--sip-neutral-700)"></div><div class="meta"><span class="name">700</span><span class="hex">#334155</span></div></div>
+        <div class="swatch"><div class="chip" style="background:var(--sip-neutral-900)"></div><div class="meta"><span class="name">900</span><span class="hex">#0F1A2E</span></div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="block">
+  <div class="wrap">
+    <span class="overline">Tipografía</span>
+    <h2>Space Grotesk + Inter</h2>
+    <p class="lead">Títulos con carácter geométrico (Space Grotesk), cuerpo legible y neutro (Inter).</p>
+    <div style="margin-top:var(--space-6)">
+      <div class="type-row"><span class="label">hero</span><span class="t-hero">Pesos exactos</span></div>
+      <div class="type-row"><span class="label">4xl</span><span class="t-4xl">Confianza que se mide</span></div>
+      <div class="type-row"><span class="label">2xl</span><span class="t-2xl">Cobertura en Baja California</span></div>
+      <div class="type-row"><span class="label">xl</span><span class="t-xl">Soporte técnico en sitio</span></div>
+      <div class="type-row"><span class="label">body</span><span class="t-body">Más de 40 años respaldando a comercios e industria con básculas, plataformas y puntos de venta. Servicio directo en Tijuana, Mexicali, Ensenada y Tecate.</span></div>
+      <div class="type-row"><span class="label">small</span><span class="t-sm">Texto secundario, notas y metadatos.</span></div>
+    </div>
+  </div>
+</section>
+
+<section class="block">
+  <div class="wrap">
+    <span class="overline">Componentes</span>
+    <h2>Botones</h2>
+    <div class="btn-row">
+      <a href="#" class="btn btn-action">Cotiza ahora →</a>
+      <a href="#" class="btn btn-primary">Ver productos</a>
+      <a href="#" class="btn btn-outline">Contáctanos</a>
+    </div>
+
+    <div style="margin-top:var(--space-10)">
+      <h2>Tarjetas · Industrias</h2>
+      <div class="cards">
+        <div class="card"><div class="ico">A</div><h3>Abarrotes</h3><p>Básculas comerciales y puntos de venta para tu tienda.</p><a href="#" class="more">Ver más →</a></div>
+        <div class="card"><div class="ico">F</div><h3>Ferreterías</h3><p>Pesaje robusto y sistemas de cobro confiables.</p><a href="#" class="more">Ver más →</a></div>
+        <div class="card"><div class="ico">R</div><h3>Restaurantes</h3><p>Balanzas de precisión y control de porciones.</p><a href="#" class="more">Ver más →</a></div>
+        <div class="card"><div class="ico">I</div><h3>Industria</h3><p>Plataformas industriales de alta capacidad.</p><a href="#" class="more">Ver más →</a></div>
+      </div>
+    </div>
+
+    <div style="margin-top:var(--space-10)">
+      <h2>Contadores</h2>
+      <div class="stats">
+        <div class="stat"><div class="num"><span class="accent">+</span>40</div><div class="lbl">Años de experiencia</div></div>
+        <div class="stat"><div class="num">4</div><div class="lbl">Ciudades con servicio</div></div>
+        <div class="stat"><div class="num"><span class="accent">+</span>2K</div><div class="lbl">Clientes atendidos</div></div>
+        <div class="stat"><div class="num"><span class="accent">+</span>8</div><div class="lbl">Marcas líderes</div></div>
+      </div>
+    </div>
+
+    <div style="margin-top:var(--space-10)">
+      <h2>Banda CTA</h2>
+      <div class="cta-band">
+        <h3>¿Listo para automatizar tu negocio?</h3>
+        <a href="#" class="btn btn-action">Habla con un asesor →</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer style="background:var(--color-bg-inverse); color:rgba(255,255,255,.7); padding-block:var(--space-8); font-size:var(--text-sm)">
+  <div class="wrap">
+    <strong style="color:#fff; font-family:var(--font-display)">SIPCONS</strong> · Sistema de Diseño · Soluciones Integrales de Pesaje y Control desde 1980.
+  </div>
+</footer>
+
+</body>
+</html>

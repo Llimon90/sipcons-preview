@@ -1,0 +1,529 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>SIPCONS · Básculas, Plataformas y Puntos de Venta en Baja California</title>
+<meta name="description" content="Más de 40 años en soluciones de pesaje y control. Venta, instalación y servicio de básculas, plataformas y puntos de venta en Tijuana, Mexicali, Ensenada y Tecate.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
+<style>
+/* =====================================================================
+   TOKENS (copia de tokens.css — en el proyecto real van en assets/css/tokens.css)
+   ===================================================================== */
+:root{
+  --sip-blue-50:#EDF3FF;--sip-blue-100:#D6E4FF;--sip-blue-200:#B0CBFF;--sip-blue-300:#83A9FF;
+  --sip-blue-400:#5285FA;--sip-blue-500:#2C63EE;--sip-blue-600:#1A4BD0;--sip-blue-700:#163CA6;
+  --sip-blue-800:#17347F;--sip-blue-900:#172C63;--sip-blue-950:#0E1B3D;
+  --sip-cyan-300:#67E8F9;--sip-cyan-400:#22D3EE;--sip-cyan-500:#06B6D4;--sip-cyan-600:#0891B2;
+  --sip-amber-400:#FBBF24;--sip-amber-500:#F59E0B;--sip-amber-600:#D97706;
+  --sip-neutral-0:#FFFFFF;--sip-neutral-50:#F6F8FC;--sip-neutral-100:#EDF1F7;--sip-neutral-200:#DDE4EE;
+  --sip-neutral-300:#C3CDDC;--sip-neutral-400:#94A2B8;--sip-neutral-500:#64748B;--sip-neutral-600:#47566B;
+  --sip-neutral-700:#334155;--sip-neutral-800:#1E293B;--sip-neutral-900:#0F1A2E;--sip-neutral-950:#0A1220;
+
+  --color-bg:var(--sip-neutral-0);--color-bg-subtle:var(--sip-neutral-50);--color-surface:var(--sip-neutral-0);
+  --color-surface-2:var(--sip-neutral-100);--color-bg-inverse:var(--sip-blue-950);
+  --color-text:var(--sip-neutral-900);--color-text-muted:var(--sip-neutral-600);--color-text-subtle:var(--sip-neutral-500);
+  --color-text-inverse:var(--sip-neutral-0);--color-text-on-primary:var(--sip-neutral-0);
+  --color-border:var(--sip-neutral-200);--color-border-strong:var(--sip-neutral-300);--color-border-inverse:rgba(255,255,255,.14);
+  --color-primary:var(--sip-blue-600);--color-primary-hover:var(--sip-blue-700);--color-primary-active:var(--sip-blue-800);--color-primary-soft:var(--sip-blue-50);
+  --color-link:var(--sip-blue-500);--color-link-hover:var(--sip-blue-700);--color-focus:var(--sip-cyan-400);
+  --color-accent:var(--sip-cyan-500);--color-accent-soft:#E0FAFF;--color-action:var(--sip-amber-500);--color-action-hover:var(--sip-amber-600);
+  --gradient-hero:linear-gradient(135deg,var(--sip-blue-950) 0%,var(--sip-blue-800) 55%,var(--sip-blue-700) 100%);
+  --gradient-accent:linear-gradient(120deg,var(--sip-blue-600) 0%,var(--sip-cyan-500) 100%);
+
+  --font-display:"Space Grotesk",system-ui,sans-serif;--font-body:"Inter",system-ui,sans-serif;
+  --text-xs:.75rem;--text-sm:.875rem;--text-base:1rem;--text-lg:1.125rem;--text-xl:1.25rem;--text-2xl:1.5rem;
+  --text-3xl:1.875rem;--text-4xl:clamp(2rem,1.4rem + 2.2vw,2.75rem);--text-5xl:clamp(2.5rem,1.6rem + 3.5vw,3.75rem);
+  --text-hero:clamp(2.75rem,1.5rem + 5vw,5rem);
+  --weight-regular:400;--weight-medium:500;--weight-semibold:600;--weight-bold:700;
+  --leading-tight:1.1;--leading-snug:1.25;--leading-normal:1.55;--leading-relaxed:1.7;
+  --tracking-tight:-.02em;--tracking-wide:.04em;--tracking-overline:.14em;
+
+  --space-1:.25rem;--space-2:.5rem;--space-3:.75rem;--space-4:1rem;--space-5:1.5rem;--space-6:2rem;
+  --space-7:2.5rem;--space-8:3rem;--space-10:4rem;--space-12:6rem;--space-16:8rem;
+  --section-y:clamp(4rem,8vw,8rem);
+  --container:1240px;--container-narrow:820px;--gutter:clamp(1rem,4vw,2.5rem);
+  --radius-sm:6px;--radius-md:10px;--radius-lg:16px;--radius-xl:24px;--radius-2xl:32px;--radius-full:9999px;
+  --shadow-sm:0 1px 2px rgba(14,27,61,.06),0 1px 3px rgba(14,27,61,.08);
+  --shadow-md:0 4px 12px rgba(14,27,61,.08),0 2px 4px rgba(14,27,61,.06);
+  --shadow-lg:0 12px 28px rgba(14,27,61,.12),0 6px 12px rgba(14,27,61,.08);
+  --shadow-xl:0 24px 48px rgba(14,27,61,.16);--shadow-focus:0 0 0 3px rgba(34,211,238,.45);
+  --dur-fast:150ms;--dur:250ms;--dur-slow:400ms;
+  --ease-out:cubic-bezier(.16,1,.3,1);--ease-in-out:cubic-bezier(.65,0,.35,1);
+  --z-header:100;--z-float:600;
+}
+@media (prefers-reduced-motion:reduce){:root{--dur-fast:0ms;--dur:0ms;--dur-slow:0ms;}}
+
+/* =====================================================================
+   BASE
+   ===================================================================== */
+*,*::before,*::after{box-sizing:border-box;}
+html{scroll-behavior:smooth;}
+body{margin:0;font-family:var(--font-body);color:var(--color-text);background:var(--color-bg);line-height:var(--leading-normal);-webkit-font-smoothing:antialiased;}
+h1,h2,h3,h4{font-family:var(--font-display);letter-spacing:var(--tracking-tight);line-height:var(--leading-tight);margin:0;}
+p{margin:0;}
+a{color:inherit;text-decoration:none;}
+img{max-width:100%;display:block;}
+:focus-visible{outline:none;box-shadow:var(--shadow-focus);border-radius:var(--radius-sm);}
+
+.wrap{max-width:var(--container);margin-inline:auto;padding-inline:var(--gutter);}
+.overline{display:inline-block;font-size:var(--text-sm);font-weight:var(--weight-semibold);letter-spacing:var(--tracking-overline);text-transform:uppercase;color:var(--color-accent);margin-bottom:var(--space-3);}
+.section{padding-block:var(--section-y);}
+.section-head{max-width:var(--container-narrow);margin-bottom:var(--space-8);}
+.section-head h2{font-size:var(--text-4xl);}
+.section-head .lead{color:var(--color-text-muted);font-size:var(--text-lg);margin-top:var(--space-3);}
+
+/* Botones */
+.btn{display:inline-flex;align-items:center;gap:var(--space-2);font-family:var(--font-body);font-weight:var(--weight-semibold);font-size:var(--text-base);padding:var(--space-3) var(--space-5);border-radius:var(--radius-full);border:1px solid transparent;cursor:pointer;transition:transform var(--dur) var(--ease-out),background var(--dur) var(--ease-out),box-shadow var(--dur) var(--ease-out),border-color var(--dur) var(--ease-out);white-space:nowrap;}
+.btn:hover{transform:translateY(-2px);}
+.btn .arw{transition:transform var(--dur) var(--ease-out);}
+.btn:hover .arw{transform:translateX(3px);}
+.btn-action{background:var(--color-action);color:var(--sip-blue-950);}
+.btn-action:hover{background:var(--color-action-hover);box-shadow:var(--shadow-lg);}
+.btn-primary{background:var(--color-primary);color:var(--color-text-on-primary);}
+.btn-primary:hover{background:var(--color-primary-hover);box-shadow:var(--shadow-lg);}
+.btn-outline{background:transparent;color:var(--color-primary);border-color:var(--color-border-strong);}
+.btn-outline:hover{border-color:var(--color-primary);background:var(--color-primary-soft);}
+.btn-ghost-light{background:rgba(255,255,255,.08);color:#fff;border-color:rgba(255,255,255,.28);}
+.btn-ghost-light:hover{background:rgba(255,255,255,.16);}
+
+/* =====================================================================
+   NAVBAR
+   ===================================================================== */
+.nav{position:fixed;top:0;left:0;right:0;z-index:var(--z-header);transition:background var(--dur) var(--ease-out),box-shadow var(--dur) var(--ease-out),border-color var(--dur) var(--ease-out);border-bottom:1px solid transparent;}
+.nav-inner{display:flex;align-items:center;justify-content:space-between;gap:var(--space-6);height:76px;}
+.brand{display:flex;align-items:center;gap:var(--space-3);font-family:var(--font-display);font-weight:700;font-size:var(--text-xl);color:#fff;letter-spacing:.02em;transition:color var(--dur) var(--ease-out);}
+.brand .mark{width:34px;height:34px;border-radius:9px;background:var(--gradient-accent);display:grid;place-items:center;color:#fff;font-size:var(--text-base);box-shadow:var(--shadow-md);}
+.nav-links{display:flex;align-items:center;gap:var(--space-6);list-style:none;margin:0;padding:0;}
+.nav-links a{font-size:var(--text-base);font-weight:var(--weight-medium);color:rgba(255,255,255,.86);transition:color var(--dur) var(--ease-out);}
+.nav-links a:hover{color:#fff;}
+.nav-cta{display:flex;align-items:center;gap:var(--space-3);}
+.nav-toggle{display:none;background:none;border:0;cursor:pointer;padding:8px;flex-direction:column;gap:5px;}
+.nav-toggle span{width:24px;height:2px;background:#fff;transition:all var(--dur) var(--ease-out);border-radius:2px;}
+
+/* estado "scrolled": fondo sólido */
+.nav.scrolled{background:var(--color-bg);box-shadow:var(--shadow-sm);border-bottom-color:var(--color-border);}
+.nav.scrolled .brand{color:var(--color-text);}
+.nav.scrolled .nav-links a{color:var(--color-text-muted);}
+.nav.scrolled .nav-links a:hover{color:var(--color-primary);}
+.nav.scrolled .nav-toggle span{background:var(--color-text);}
+.nav.scrolled .btn-ghost-light{background:var(--color-primary-soft);color:var(--color-primary);border-color:transparent;}
+
+/* =====================================================================
+   HERO
+   ===================================================================== */
+.hero{position:relative;background:var(--gradient-hero);color:var(--color-text-inverse);padding-top:calc(76px + var(--space-12));padding-bottom:var(--space-12);overflow:hidden;}
+.hero-orb{position:absolute;border-radius:50%;filter:blur(60px);opacity:.5;pointer-events:none;}
+.hero-orb.a{width:460px;height:460px;background:radial-gradient(circle,var(--sip-cyan-500),transparent 70%);top:-120px;right:-80px;animation:float 14s var(--ease-in-out) infinite;}
+.hero-orb.b{width:380px;height:380px;background:radial-gradient(circle,var(--sip-blue-500),transparent 70%);bottom:-140px;left:-60px;animation:float 18s var(--ease-in-out) infinite reverse;}
+.hero-grid{position:absolute;inset:0;background-image:linear-gradient(rgba(255,255,255,.05) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.05) 1px,transparent 1px);background-size:64px 64px;mask-image:radial-gradient(ellipse at 50% 0%,#000 20%,transparent 75%);pointer-events:none;}
+@keyframes float{0%,100%{transform:translate(0,0);}50%{transform:translate(20px,-24px);}}
+@media (prefers-reduced-motion:reduce){.hero-orb{animation:none;}}
+.hero-inner{position:relative;max-width:var(--container-narrow);}
+.hero h1{font-size:var(--text-hero);max-width:16ch;}
+.hero .sub{color:rgba(255,255,255,.82);font-size:var(--text-xl);max-width:56ch;margin-top:var(--space-5);}
+.hero .btn-row{display:flex;gap:var(--space-3);flex-wrap:wrap;margin-top:var(--space-7);}
+.hero .trust{display:flex;gap:var(--space-6);flex-wrap:wrap;margin-top:var(--space-8);color:rgba(255,255,255,.7);font-size:var(--text-sm);}
+.hero .trust b{color:#fff;}
+
+/* =====================================================================
+   CONTADORES
+   ===================================================================== */
+.stats{background:var(--color-bg-inverse);}
+.stats-inner{display:grid;grid-template-columns:repeat(4,1fr);gap:var(--space-6);padding-block:var(--space-8);}
+.stat{text-align:center;}
+.stat .num{font-family:var(--font-display);font-weight:700;font-size:var(--text-5xl);color:#fff;line-height:1;}
+.stat .num .accent{color:var(--sip-cyan-400);}
+.stat .lbl{color:rgba(255,255,255,.7);font-size:var(--text-sm);margin-top:var(--space-2);}
+
+/* =====================================================================
+   CARDS (industrias / soluciones)
+   ===================================================================== */
+.grid{display:grid;gap:var(--space-5);}
+.grid.cols-4{grid-template-columns:repeat(4,1fr);}
+.grid.cols-3{grid-template-columns:repeat(3,1fr);}
+.card{background:var(--color-surface);border:1px solid var(--color-border);border-radius:var(--radius-lg);padding:var(--space-6);transition:transform var(--dur) var(--ease-out),box-shadow var(--dur) var(--ease-out),border-color var(--dur) var(--ease-out);display:flex;flex-direction:column;}
+.card:hover{transform:translateY(-4px);box-shadow:var(--shadow-lg);border-color:var(--color-border);}
+.card .ico{width:48px;height:48px;border-radius:var(--radius-md);background:var(--color-primary-soft);color:var(--color-primary);display:grid;place-items:center;margin-bottom:var(--space-4);}
+.card .ico svg{width:26px;height:26px;}
+.card h3{font-size:var(--text-xl);margin-bottom:var(--space-2);}
+.card p{color:var(--color-text-muted);font-size:var(--text-sm);margin-bottom:var(--space-4);flex:1;}
+.card .more{color:var(--color-accent);font-weight:var(--weight-semibold);font-size:var(--text-sm);display:inline-flex;align-items:center;gap:6px;}
+.card .more .arw{transition:transform var(--dur) var(--ease-out);}
+.card:hover .more .arw{transform:translateX(4px);}
+
+/* solución destacada (fondo oscuro dentro del grid) */
+.card.feature{background:var(--gradient-hero);border:0;color:#fff;}
+.card.feature .ico{background:rgba(255,255,255,.12);color:var(--sip-cyan-400);}
+.card.feature p{color:rgba(255,255,255,.78);}
+.card.feature .more{color:var(--sip-cyan-400);}
+
+/* =====================================================================
+   POR QUÉ SIPCONS (split)
+   ===================================================================== */
+.why{background:var(--color-bg-subtle);}
+.why-grid{display:grid;grid-template-columns:1fr 1fr;gap:var(--space-10);align-items:center;}
+.why-list{display:flex;flex-direction:column;gap:var(--space-5);margin-top:var(--space-6);}
+.why-item{display:flex;gap:var(--space-4);}
+.why-item .dot{width:44px;height:44px;flex:none;border-radius:var(--radius-md);background:var(--color-primary-soft);color:var(--color-primary);display:grid;place-items:center;}
+.why-item .dot svg{width:24px;height:24px;}
+.why-item h4{font-size:var(--text-lg);margin-bottom:4px;}
+.why-item p{color:var(--color-text-muted);font-size:var(--text-sm);}
+.why-visual{aspect-ratio:4/3;border-radius:var(--radius-xl);background:var(--gradient-hero);position:relative;overflow:hidden;box-shadow:var(--shadow-xl);display:grid;place-items:center;}
+.why-visual .badge{background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.2);color:#fff;border-radius:var(--radius-lg);padding:var(--space-6) var(--space-8);text-align:center;backdrop-filter:blur(4px);}
+.why-visual .badge .big{font-family:var(--font-display);font-weight:700;font-size:var(--text-5xl);color:var(--sip-cyan-400);line-height:1;}
+.why-visual .badge .cap{color:rgba(255,255,255,.8);font-size:var(--text-sm);margin-top:var(--space-2);}
+
+/* =====================================================================
+   MARCAS
+   ===================================================================== */
+.brands{background:var(--color-bg);border-block:1px solid var(--color-border);}
+.brands-inner{padding-block:var(--space-8);text-align:center;}
+.brands .cap{color:var(--color-text-subtle);font-size:var(--text-sm);letter-spacing:var(--tracking-overline);text-transform:uppercase;margin-bottom:var(--space-6);}
+.marquee{overflow:hidden;-webkit-mask-image:linear-gradient(90deg,transparent,#000 12%,#000 88%,transparent);mask-image:linear-gradient(90deg,transparent,#000 12%,#000 88%,transparent);}
+.marquee-track{display:flex;gap:var(--space-10);align-items:center;width:max-content;animation:scroll 26s linear infinite;}
+.marquee:hover .marquee-track{animation-play-state:paused;}
+.brand-logo{font-family:var(--font-display);font-weight:700;font-size:var(--text-2xl);color:var(--color-neutral-400,var(--sip-neutral-400));white-space:nowrap;transition:color var(--dur) var(--ease-out);letter-spacing:.02em;}
+.brand-logo:hover{color:var(--color-primary);}
+@keyframes scroll{from{transform:translateX(0);}to{transform:translateX(-50%);}}
+@media (prefers-reduced-motion:reduce){.marquee-track{animation:none;flex-wrap:wrap;justify-content:center;width:auto;}}
+
+/* =====================================================================
+   BANDA CTA
+   ===================================================================== */
+.cta-band{position:relative;background:var(--gradient-accent);border-radius:var(--radius-2xl);padding:var(--space-10) var(--space-8);display:flex;align-items:center;justify-content:space-between;gap:var(--space-6);flex-wrap:wrap;overflow:hidden;box-shadow:var(--shadow-xl);}
+.cta-band::after{content:"";position:absolute;width:340px;height:340px;border-radius:50%;background:rgba(255,255,255,.14);top:-120px;right:-60px;filter:blur(20px);}
+.cta-band .txt{position:relative;color:#fff;}
+.cta-band h2{font-size:var(--text-3xl);max-width:22ch;}
+.cta-band p{color:rgba(255,255,255,.9);margin-top:var(--space-2);}
+.cta-band .btn{position:relative;}
+
+/* =====================================================================
+   FOOTER
+   ===================================================================== */
+.footer{background:var(--color-bg-inverse);color:rgba(255,255,255,.7);padding-block:var(--space-10) var(--space-6);}
+.footer-grid{display:grid;grid-template-columns:1.6fr 1fr 1fr;gap:var(--space-8);padding-bottom:var(--space-8);border-bottom:1px solid var(--color-border-inverse);}
+.footer .brand{color:#fff;margin-bottom:var(--space-4);}
+.footer .tagline{max-width:38ch;font-size:var(--text-sm);}
+.footer h5{color:#fff;font-family:var(--font-display);font-size:var(--text-base);margin:0 0 var(--space-4);}
+.footer ul{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:var(--space-2);font-size:var(--text-sm);}
+.footer ul a:hover{color:var(--sip-cyan-400);}
+.footer .copy{padding-top:var(--space-5);font-size:var(--text-xs);color:rgba(255,255,255,.5);}
+
+/* =====================================================================
+   WHATSAPP FLOTANTE
+   ===================================================================== */
+.wa{position:fixed;right:22px;bottom:22px;z-index:var(--z-float);width:58px;height:58px;border-radius:50%;background:#25D366;display:grid;place-items:center;box-shadow:var(--shadow-lg);transition:transform var(--dur) var(--ease-out);animation:wabounce 1s var(--ease-out) .6s both;}
+.wa:hover{transform:scale(1.08);}
+.wa svg{width:30px;height:30px;fill:#fff;}
+@keyframes wabounce{0%{transform:scale(0);}70%{transform:scale(1.12);}100%{transform:scale(1);}}
+
+/* =====================================================================
+   REVEAL AL SCROLL
+   ===================================================================== */
+.reveal{opacity:0;transform:translateY(18px);transition:opacity var(--dur-slow) var(--ease-out),transform var(--dur-slow) var(--ease-out);}
+.reveal.is-visible{opacity:1;transform:none;}
+.reveal[data-delay="1"]{transition-delay:.08s;}
+.reveal[data-delay="2"]{transition-delay:.16s;}
+.reveal[data-delay="3"]{transition-delay:.24s;}
+@media (prefers-reduced-motion:reduce){.reveal{opacity:1;transform:none;}}
+
+/* =====================================================================
+   RESPONSIVE
+   ===================================================================== */
+@media (max-width:960px){
+  .grid.cols-4{grid-template-columns:repeat(2,1fr);}
+  .why-grid{grid-template-columns:1fr;}
+  .stats-inner{grid-template-columns:repeat(2,1fr);gap:var(--space-8) var(--space-4);}
+  .footer-grid{grid-template-columns:1fr 1fr;}
+}
+@media (max-width:720px){
+  .nav-links,.nav-cta .btn{display:none;}
+  .nav-toggle{display:flex;}
+  .nav-menu-open .nav-links{display:flex;position:fixed;inset:76px 0 auto 0;flex-direction:column;background:var(--color-bg);padding:var(--space-6) var(--gutter);gap:var(--space-5);box-shadow:var(--shadow-lg);border-bottom:1px solid var(--color-border);}
+  .nav-menu-open .nav-links a{color:var(--color-text);}
+  .grid.cols-4,.grid.cols-3{grid-template-columns:1fr;}
+  .cta-band{flex-direction:column;align-items:flex-start;}
+  .footer-grid{grid-template-columns:1fr;gap:var(--space-6);}
+}
+</style>
+</head>
+<body>
+
+<!-- ================= NAVBAR ================= -->
+<header class="nav" id="nav">
+  <div class="wrap nav-inner">
+    <a href="#" class="brand"><img src="./assets/img/logo-sipcons.png" alt="SIPCONS" class="nav-logo"></a>
+    <nav>
+      <ul class="nav-links">
+        <li><a href="#inicio">Inicio</a></li>
+        <li><a href="#soluciones">Soluciones</a></li>
+        <li><a href="#industrias">Industrias</a></li>
+        <li><a href="#nosotros">Nosotros</a></li>
+        <li><a href="#contacto">Contacto</a></li>
+      </ul>
+    </nav>
+    <div class="nav-cta">
+      <a href="#contacto" class="btn btn-ghost-light">Contáctanos</a>
+      <button class="nav-toggle" id="navToggle" aria-label="Abrir menú" aria-expanded="false">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </div>
+</header>
+
+<!-- ================= HERO ================= -->
+<section class="hero" id="inicio">
+  <div class="hero-grid"></div>
+  <div class="hero-orb a"></div>
+  <div class="hero-orb b"></div>
+  <div class="wrap hero-inner">
+    <span class="overline reveal" style="color:var(--sip-cyan-400)">Soluciones Integrales de Pesaje y Control</span>
+    <h1 class="reveal" data-delay="1">Precisión que da confianza.</h1>
+    <p class="sub reveal" data-delay="2">Básculas, plataformas y puntos de venta con más de 40 años de respaldo. Venta, instalación y servicio en sitio en todo Baja California.</p>
+    <div class="btn-row reveal" data-delay="3">
+      <a href="#contacto" class="btn btn-action">Cotiza ahora <span class="arw">→</span></a>
+      <a href="#soluciones" class="btn btn-ghost-light">Ver soluciones</a>
+    </div>
+    <div class="trust reveal" data-delay="3">
+      <span><b>Desde 1980</b> en el mercado</span>
+      <span><b>Tijuana</b> · Mexicali · Ensenada · Tecate</span>
+      <span>Marcas líderes: <b>Mettler-Toledo, Zebra, Toshiba</b></span>
+    </div>
+  </div>
+</section>
+
+<!-- ================= CONTADORES ================= -->
+<section class="stats">
+  <div class="wrap stats-inner" id="counters">
+    <div class="stat reveal"><div class="num"><span class="accent">+</span><span class="count" data-target="40">0</span></div><div class="lbl">Años de experiencia</div></div>
+    <div class="stat reveal" data-delay="1"><div class="num"><span class="count" data-target="4">0</span></div><div class="lbl">Ciudades con servicio</div></div>
+    <div class="stat reveal" data-delay="2"><div class="num"><span class="accent">+</span><span class="count" data-target="2000" data-suffix="">0</span></div><div class="lbl">Clientes atendidos</div></div>
+    <div class="stat reveal" data-delay="3"><div class="num"><span class="accent">+</span><span class="count" data-target="8">0</span></div><div class="lbl">Marcas líderes</div></div>
+  </div>
+</section>
+
+<!-- ================= SOLUCIONES ================= -->
+<section class="section" id="soluciones">
+  <div class="wrap">
+    <div class="section-head reveal">
+      <span class="overline">Nuestro ecosistema</span>
+      <h2>Cuatro pilares, una solución integral</h2>
+      <p class="lead">Precisión, venta, soporte e innovación. Todo lo que tu negocio necesita para pesar y cobrar con exactitud.</p>
+    </div>
+    <div class="grid cols-4">
+      <div class="card reveal">
+        <div class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 3v3M5 8h14l2 9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2L5 8Z"/><path d="M9 12a3 3 0 0 0 6 0"/></svg></div>
+        <h3>Básculas y Plataformas</h3>
+        <p>Balanzas comerciales, de precisión y plataformas industriales certificadas para mediciones exactas.</p>
+        <a href="#" class="more">Ver productos <span class="arw">→</span></a>
+      </div>
+      <div class="card reveal" data-delay="1">
+        <div class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="4" y="3" width="16" height="18" rx="2"/><path d="M8 7h8M8 11h8M8 15h4"/></svg></div>
+        <h3>Puntos de Venta</h3>
+        <p>Automatiza el cobro y gana la confianza de tus clientes con sistemas POS confiables.</p>
+        <a href="#" class="more">Ver productos <span class="arw">→</span></a>
+      </div>
+      <div class="card reveal" data-delay="2">
+        <div class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M21 8 12 3 3 8l9 5 9-5Z"/><path d="M3 8v8l9 5 9-5V8"/></svg></div>
+        <h3>Consumibles y Refacciones</h3>
+        <p>Etiquetas, rollos y refacciones originales para mantener tus equipos siempre operando.</p>
+        <a href="#" class="more">Ver productos <span class="arw">→</span></a>
+      </div>
+      <div class="card feature reveal" data-delay="3">
+        <div class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 2v4M12 18v4M2 12h4M18 12h4M5 5l3 3M16 16l3 3M19 5l-3 3M8 16l-3 3"/><circle cx="12" cy="12" r="3"/></svg></div>
+        <h3>Innovación Tecnológica</h3>
+        <p>Integramos las últimas tecnologías de pesaje y control para modernizar tu operación.</p>
+        <a href="#" class="more">Conocer más <span class="arw">→</span></a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= INDUSTRIAS ================= -->
+<section class="section why" id="industrias">
+  <div class="wrap">
+    <div class="section-head reveal">
+      <span class="overline">A quién servimos</span>
+      <h2>Soluciones para cada tipo de comercio</h2>
+      <p class="lead">Del abarrote de la esquina a la planta industrial: equipamos negocios de todos los tamaños.</p>
+    </div>
+    <div class="grid cols-4">
+      <div class="card reveal">
+        <div class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 9h16l-1 11H5L4 9Z"/><path d="M9 9V6a3 3 0 0 1 6 0v3"/></svg></div>
+        <h3>Abarrotes</h3>
+        <p>Básculas comerciales y puntos de venta para agilizar tu tienda.</p>
+      </div>
+      <div class="card reveal" data-delay="1">
+        <div class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="m14 7 3-3 3 3-3 3M13 8 4 17v3h3l9-9"/></svg></div>
+        <h3>Ferreterías</h3>
+        <p>Pesaje robusto y sistemas de cobro confiables para alto volumen.</p>
+      </div>
+      <div class="card reveal" data-delay="2">
+        <div class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M6 3v7a3 3 0 0 0 6 0V3M9 3v18M18 3c-2 1-3 3-3 6s1 4 3 4v8"/></svg></div>
+        <h3>Restaurantes</h3>
+        <p>Balanzas de precisión y control de porciones para tu cocina.</p>
+      </div>
+      <div class="card reveal" data-delay="3">
+        <div class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M3 21V9l6-3v3l6-3v15M3 21h18M9 21v-4M15 21v-4"/></svg></div>
+        <h3>Industria</h3>
+        <p>Plataformas de alta capacidad para procesos de manufactura.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= POR QUÉ SIPCONS ================= -->
+<section class="section" id="nosotros">
+  <div class="wrap why-grid">
+    <div class="reveal">
+      <span class="overline">Por qué Sipcons</span>
+      <h2>Cuatro décadas midiendo la confianza de Baja California</h2>
+      <div class="why-list">
+        <div class="why-item">
+          <span class="dot"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="m5 13 4 4L19 7"/></svg></span>
+          <div><h4>Equipos certificados</h4><p>Garantizamos mediciones exactas para que cobres siempre lo justo.</p></div>
+        </div>
+        <div class="why-item">
+          <span class="dot"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 21s-7-4.4-7-10a7 7 0 0 1 14 0c0 5.6-7 10-7 10Z"/><circle cx="12" cy="11" r="2.5"/></svg></span>
+          <div><h4>Servicio en sitio</h4><p>Llegamos a tu negocio en Tijuana, Mexicali, Ensenada y Tecate.</p></div>
+        </div>
+        <div class="why-item">
+          <span class="dot"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M20.5 7.5 12 12 3.5 7.5M12 12v9"/><path d="M12 3 3.5 7.5v9L12 21l8.5-4.5v-9L12 3Z"/></svg></span>
+          <div><h4>Marcas líderes</h4><p>Distribuidores de Mettler-Toledo, Zebra, Toshiba, A&amp;D y más.</p></div>
+        </div>
+        <div class="why-item">
+          <span class="dot"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 6v6l4 2"/><circle cx="12" cy="12" r="9"/></svg></span>
+          <div><h4>Soporte que responde</h4><p>Refacciones originales y soporte técnico especializado cuando lo necesitas.</p></div>
+        </div>
+      </div>
+    </div>
+    <div class="why-visual reveal" data-delay="2">
+      <div class="badge">
+        <div class="big">1980</div>
+        <div class="cap">Innovación y confianza,<br>año tras año</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= MARCAS ================= -->
+<section class="brands">
+  <div class="brands-inner">
+    <p class="cap">Marcas que comercializamos</p>
+    <div class="marquee">
+      <div class="marquee-track">
+        <span class="brand-logo">Mettler-Toledo</span>
+        <span class="brand-logo">Zebra</span>
+        <span class="brand-logo">Toshiba</span>
+        <span class="brand-logo">A&amp;D Weighing</span>
+        <span class="brand-logo">CAS</span>
+        <span class="brand-logo">Rhino</span>
+        <!-- duplicado para loop continuo -->
+        <span class="brand-logo">Mettler-Toledo</span>
+        <span class="brand-logo">Zebra</span>
+        <span class="brand-logo">Toshiba</span>
+        <span class="brand-logo">A&amp;D Weighing</span>
+        <span class="brand-logo">CAS</span>
+        <span class="brand-logo">Rhino</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= CTA ================= -->
+<section class="section" id="contacto">
+  <div class="wrap">
+    <div class="cta-band reveal">
+      <div class="txt">
+        <h2>¿Listo para automatizar tu negocio?</h2>
+        <p>Un asesor te ayuda a elegir el equipo exacto para tu operación.</p>
+      </div>
+      <a href="https://wa.me/526641086038" class="btn btn-action">Habla con un asesor <span class="arw">→</span></a>
+    </div>
+  </div>
+</section>
+
+<!-- ================= FOOTER ================= -->
+<footer class="footer">
+  <div class="wrap">
+    <div class="footer-grid">
+      <div>
+        <div class="brand"><img src="./assets/img/logo-sipcons.png" alt="SIPCONS" class="nav-logo"></div>
+        <p class="tagline">Soluciones Integrales de Pesaje y Control. Innovación y confianza desde 1980.</p>
+      </div>
+      <div>
+        <h5>Soluciones</h5>
+        <ul>
+          <li><a href="#">Básculas</a></li>
+          <li><a href="#">Puntos de Venta</a></li>
+          <li><a href="#">Plataformas</a></li>
+          <li><a href="#">Consumibles</a></li>
+          <li><a href="#">Soporte técnico</a></li>
+        </ul>
+      </div>
+      <div>
+        <h5>Contacto</h5>
+        <ul>
+          <li><a href="tel:+526646300471">(664) 630-0471</a></li>
+          <li><a href="mailto:info@sipcons.com">info@sipcons.com</a></li>
+          <li>Av. De Las Perlas 630, Playas de Tijuana, B.C.</li>
+          <li>Lun–Vie 08:30–18:00 · Sáb 09:00–13:30</li>
+        </ul>
+      </div>
+    </div>
+    <div class="copy">© 2026 SIPCONS. Todos los derechos reservados.</div>
+  </div>
+</footer>
+
+<!-- ================= WHATSAPP ================= -->
+<a href="https://wa.me/526641086038" class="wa" aria-label="Escríbenos por WhatsApp">
+  <svg viewBox="0 0 24 24"><path d="M17.5 14.4c-.3-.1-1.7-.8-2-.9-.3-.1-.5-.1-.7.1-.2.3-.7.9-.9 1.1-.2.2-.3.2-.6.1-.3-.1-1.2-.5-2.3-1.4-.9-.8-1.4-1.7-1.6-2-.2-.3 0-.5.1-.6l.4-.5c.1-.2.2-.3.3-.5.1-.2 0-.4 0-.5s-.7-1.6-.9-2.2c-.2-.6-.5-.5-.7-.5h-.6c-.2 0-.5.1-.8.4-.3.3-1 1-1 2.5s1.1 2.9 1.2 3.1c.1.2 2.1 3.2 5 4.5.7.3 1.3.5 1.7.6.7.2 1.4.2 1.9.1.6-.1 1.7-.7 1.9-1.4.2-.7.2-1.2.2-1.4-.1-.1-.3-.2-.6-.3M12 2a10 10 0 0 0-8.6 15l-1.3 4.8 4.9-1.3A10 10 0 1 0 12 2Z"/></svg>
+</a>
+
+<script>
+/* ===== NAVBAR: sticky sólido + menú móvil ===== */
+const nav = document.getElementById('nav');
+const onScroll = () => nav.classList.toggle('scrolled', window.scrollY > 40);
+onScroll();
+window.addEventListener('scroll', onScroll, { passive:true });
+
+const toggle = document.getElementById('navToggle');
+toggle.addEventListener('click', () => {
+  const open = document.body.classList.toggle('nav-menu-open');
+  toggle.setAttribute('aria-expanded', open);
+});
+document.querySelectorAll('.nav-links a').forEach(a =>
+  a.addEventListener('click', () => document.body.classList.remove('nav-menu-open'))
+);
+
+/* ===== REVEAL al scroll ===== */
+const io = new IntersectionObserver((entries) => {
+  entries.forEach(e => { if (e.isIntersecting){ e.target.classList.add('is-visible'); io.unobserve(e.target); }});
+}, { threshold:0.15 });
+document.querySelectorAll('.reveal').forEach(el => io.observe(el));
+
+/* ===== CONTADORES animados ===== */
+const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+const fmt = n => n.toLocaleString('es-MX');
+function animateCount(el){
+  const target = +el.dataset.target;
+  if (reduce){ el.textContent = fmt(target); return; }
+  const dur = 1400, start = performance.now();
+  const step = (now) => {
+    const p = Math.min((now - start) / dur, 1);
+    const eased = 1 - Math.pow(1 - p, 3);
+    el.textContent = fmt(Math.floor(eased * target));
+    if (p < 1) requestAnimationFrame(step); else el.textContent = fmt(target);
+  };
+  requestAnimationFrame(step);
+}
+const cio = new IntersectionObserver((entries) => {
+  entries.forEach(e => { if (e.isIntersecting){ animateCount(e.target); cio.unobserve(e.target); }});
+}, { threshold:0.5 });
+document.querySelectorAll('.count').forEach(el => cio.observe(el));
+</script>
+</body>
+</html>

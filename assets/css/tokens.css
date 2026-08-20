@@ -1,0 +1,219 @@
+/* =====================================================================
+   SIPCONS · DESIGN TOKENS
+   Fuente única de verdad para color, tipografía, espaciado y motion.
+   Uso: importar PRIMERO, antes de cualquier otro CSS.
+        @import "tokens.css";
+   Regla de oro: nunca escribas un color/tamaño "a mano" en un componente.
+   Siempre consume un token (var(--color-*), var(--space-*), etc.).
+   ===================================================================== */
+
+:root {
+  /* -----------------------------------------------------------------
+     1. PALETA CRUDA (escala primitiva — no usar directo en componentes,
+        usar los tokens semánticos de la sección 2)
+     ----------------------------------------------------------------- */
+
+  /* Azul de marca Sipcons — refinado (esencia del logo, elevada) */
+  --sip-blue-50:  #EDF3FF;
+  --sip-blue-100: #D6E4FF;
+  --sip-blue-200: #B0CBFF;
+  --sip-blue-300: #83A9FF;
+  --sip-blue-400: #5285FA;
+  --sip-blue-500: #2C63EE;   /* interactivo / links */
+  --sip-blue-600: #1A4BD0;   /* PRIMARIO de marca */
+  --sip-blue-700: #163CA6;
+  --sip-blue-800: #17347F;
+  --sip-blue-900: #172C63;   /* fondos oscuros / hero */
+  --sip-blue-950: #0E1B3D;   /* "tinta" azul, casi negro */
+
+  /* Cyan de acento — toque "precisión / tecnología" */
+  --sip-cyan-300: #67E8F9;
+  --sip-cyan-400: #22D3EE;
+  --sip-cyan-500: #06B6D4;
+  --sip-cyan-600: #0891B2;
+
+  /* Ámbar de acción — para CTAs (contrasta con el azul, gana el ojo) */
+  --sip-amber-300: #FCD34D;
+  --sip-amber-400: #FBBF24;
+  --sip-amber-500: #F59E0B;
+  --sip-amber-600: #D97706;
+
+  /* Neutros fríos (slate) — combinan con el azul, evitan el gris "sucio" */
+  --sip-neutral-0:   #FFFFFF;
+  --sip-neutral-50:  #F6F8FC;
+  --sip-neutral-100: #EDF1F7;
+  --sip-neutral-200: #DDE4EE;
+  --sip-neutral-300: #C3CDDC;
+  --sip-neutral-400: #94A2B8;
+  --sip-neutral-500: #64748B;
+  --sip-neutral-600: #47566B;
+  --sip-neutral-700: #334155;
+  --sip-neutral-800: #1E293B;
+  --sip-neutral-900: #0F1A2E;
+  --sip-neutral-950: #0A1220;
+
+  /* Estado */
+  --sip-success: #16A34A;
+  --sip-warning: #F59E0B;
+  --sip-danger:  #DC2626;
+
+  /* -----------------------------------------------------------------
+     2. TOKENS SEMÁNTICOS (ESTOS son los que usas en los componentes)
+     ----------------------------------------------------------------- */
+
+  /* Superficies / fondos */
+  --color-bg:            var(--sip-neutral-0);    /* fondo base */
+  --color-bg-subtle:     var(--sip-neutral-50);   /* secciones alternas */
+  --color-surface:       var(--sip-neutral-0);    /* cards */
+  --color-surface-2:     var(--sip-neutral-100);  /* cards anidadas / hover */
+  --color-bg-inverse:    var(--sip-blue-950);     /* bloques oscuros / hero */
+
+  /* Texto */
+  --color-text:          var(--sip-neutral-900);  /* cuerpo principal */
+  --color-text-muted:    var(--sip-neutral-600);  /* secundario */
+  --color-text-subtle:   var(--sip-neutral-500);  /* captions, meta */
+  --color-text-inverse:  var(--sip-neutral-0);    /* sobre fondos oscuros */
+  --color-text-on-primary: var(--sip-neutral-0);
+
+  /* Bordes / líneas */
+  --color-border:        var(--sip-neutral-200);
+  --color-border-strong: var(--sip-neutral-300);
+  --color-border-inverse: rgba(255, 255, 255, 0.14);
+
+  /* Marca / primario (botones principales, énfasis) */
+  --color-primary:        var(--sip-blue-600);
+  --color-primary-hover:  var(--sip-blue-700);
+  --color-primary-active: var(--sip-blue-800);
+  --color-primary-soft:   var(--sip-blue-50);   /* fondos suaves de marca */
+
+  /* Interactivo (links, foco) */
+  --color-link:          var(--sip-blue-500);
+  --color-link-hover:    var(--sip-blue-700);
+  --color-focus:         var(--sip-cyan-400);
+
+  /* Acentos */
+  --color-accent:        var(--sip-cyan-500);   /* precisión / detalles tech */
+  --color-accent-soft:   #E0FAFF;
+  --color-action:        var(--sip-amber-500);  /* CTA que debe destacar */
+  --color-action-hover:  var(--sip-amber-600);
+
+  /* Estado semántico */
+  --color-success: var(--sip-success);
+  --color-warning: var(--sip-warning);
+  --color-danger:  var(--sip-danger);
+
+  /* Gradientes de marca (hero, bandas destacadas) */
+  --gradient-hero:  linear-gradient(135deg, var(--sip-blue-950) 0%, var(--sip-blue-800) 55%, var(--sip-blue-700) 100%);
+  --gradient-accent: linear-gradient(120deg, var(--sip-blue-600) 0%, var(--sip-cyan-500) 100%);
+
+  /* -----------------------------------------------------------------
+     3. TIPOGRAFÍA
+     ----------------------------------------------------------------- */
+  --font-display: "Space Grotesk", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --font-body:    "Inter", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+
+  /* Escala tipográfica (fluida donde importa) */
+  --text-xs:   0.75rem;    /* 12px */
+  --text-sm:   0.875rem;   /* 14px */
+  --text-base: 1rem;       /* 16px */
+  --text-lg:   1.125rem;   /* 18px */
+  --text-xl:   1.25rem;    /* 20px */
+  --text-2xl:  1.5rem;     /* 24px */
+  --text-3xl:  1.875rem;   /* 30px */
+  --text-4xl:  clamp(2rem, 1.4rem + 2.2vw, 2.75rem);
+  --text-5xl:  clamp(2.5rem, 1.6rem + 3.5vw, 3.75rem);
+  --text-hero: clamp(2.75rem, 1.5rem + 5vw, 5rem);
+
+  /* Pesos */
+  --weight-regular: 400;
+  --weight-medium:  500;
+  --weight-semibold: 600;
+  --weight-bold:    700;
+
+  /* Interlineado */
+  --leading-tight:  1.1;
+  --leading-snug:   1.25;
+  --leading-normal: 1.55;
+  --leading-relaxed: 1.7;
+
+  /* Tracking (títulos apretados = look moderno; overline abierto) */
+  --tracking-tight:   -0.02em;
+  --tracking-normal:  0;
+  --tracking-wide:    0.04em;
+  --tracking-overline: 0.14em;
+
+  /* -----------------------------------------------------------------
+     4. ESPACIADO (base 4px)
+     ----------------------------------------------------------------- */
+  --space-1:  0.25rem;   /* 4  */
+  --space-2:  0.5rem;    /* 8  */
+  --space-3:  0.75rem;   /* 12 */
+  --space-4:  1rem;      /* 16 */
+  --space-5:  1.5rem;    /* 24 */
+  --space-6:  2rem;      /* 32 */
+  --space-7:  2.5rem;    /* 40 */
+  --space-8:  3rem;      /* 48 */
+  --space-10: 4rem;      /* 64 */
+  --space-12: 6rem;      /* 96 */
+  --space-16: 8rem;      /* 128 */
+
+  /* Ritmo vertical de secciones (respira como Sonda) */
+  --section-y: clamp(4rem, 8vw, 8rem);
+
+  /* -----------------------------------------------------------------
+     5. LAYOUT
+     ----------------------------------------------------------------- */
+  --container:        1240px;
+  --container-narrow: 820px;
+  --gutter:           clamp(1rem, 4vw, 2.5rem);
+
+  /* -----------------------------------------------------------------
+     6. RADIOS
+     ----------------------------------------------------------------- */
+  --radius-sm:  6px;
+  --radius-md:  10px;
+  --radius-lg:  16px;
+  --radius-xl:  24px;
+  --radius-2xl: 32px;
+  --radius-full: 9999px;
+
+  /* -----------------------------------------------------------------
+     7. SOMBRAS (tinte azul frío para cohesión, nunca negro puro)
+     ----------------------------------------------------------------- */
+  --shadow-sm:  0 1px 2px rgba(14, 27, 61, 0.06),
+                0 1px 3px rgba(14, 27, 61, 0.08);
+  --shadow-md:  0 4px 12px rgba(14, 27, 61, 0.08),
+                0 2px 4px rgba(14, 27, 61, 0.06);
+  --shadow-lg:  0 12px 28px rgba(14, 27, 61, 0.12),
+                0 6px 12px rgba(14, 27, 61, 0.08);
+  --shadow-xl:  0 24px 48px rgba(14, 27, 61, 0.16);
+  --shadow-focus: 0 0 0 3px rgba(34, 211, 238, 0.45);
+
+  /* -----------------------------------------------------------------
+     8. MOTION
+     ----------------------------------------------------------------- */
+  --dur-fast: 150ms;
+  --dur:      250ms;
+  --dur-slow: 400ms;
+  --ease-out:    cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-in-out: cubic-bezier(0.65, 0, 0.35, 1);
+
+  /* -----------------------------------------------------------------
+     9. Z-INDEX
+     ----------------------------------------------------------------- */
+  --z-header:   100;
+  --z-dropdown: 200;
+  --z-overlay:  300;
+  --z-modal:    400;
+  --z-toast:    500;
+  --z-float:    600;   /* botón flotante de WhatsApp */
+}
+
+/* Respeta a quien pide menos movimiento (accesibilidad, no opcional) */
+@media (prefers-reduced-motion: reduce) {
+  :root {
+    --dur-fast: 0ms;
+    --dur: 0ms;
+    --dur-slow: 0ms;
+  }
+}
