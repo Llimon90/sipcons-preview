@@ -69,7 +69,7 @@ ul{margin:0;}
 .section.dark .section-head .lead{color:rgba(255,255,255,.75);}
 
 /* ---------- BOTONES ---------- */
-.btn{display:inline-flex;align-items:center;gap:var(--space-2);font-family:var(--font-body);font-weight:var(--weight-semibold);font-size:var(--text-base);padding:var(--space-3) var(--space-5);border-radius:var(--radius-full);border:1px solid transparent;cursor:pointer;transition:transform var(--dur) var(--ease-out),background var(--dur) var(--ease-out),box-shadow var(--dur) var(--ease-out),border-color var(--dur) var(--ease-out);white-space:nowrap;}
+.btn{display:inline-flex;align-items:center;gap:var(--space-2);font-family:var(--font-body);font-weight:var(--weight-semibold);font-size:var(--text-base);padding:var(--space-3) var(--space-5);border-radius:var(--radius-full);border:1px solid transparent;cursor:pointer;transition:transform var(--dur) var(--ease-out),background var(--dur) var(--ease-out),box-shadow var(--dur) var(--ease-out),border-color var(--dur) var(--ease-out);}
 .btn:hover{transform:translateY(-2px);}
 .btn .arw{transition:transform var(--dur) var(--ease-out);}
 .btn:hover .arw{transform:translateX(3px);}
@@ -500,6 +500,12 @@ ul{margin:0;}
    CATEGORÍA / MARCA — filas de subcategorías o modelos
    ===================================================================== */
 .subcat-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:var(--space-5);}
+
+/* ---------- SAFETY: evita que texto/contenido fuerce overflow horizontal en grids ---------- */
+.grid > *,.split > *,.footer-grid > *,.product-grid > *,.contact-grid > *,.field-row > *,
+.testimonials > *,.steps > *,.logo-wall > *,.coverage > *,.pricing > *,.team-grid > *,
+.dept-grid > *,.resource-grid > *,.case-card > *,.product-detail > *,.related-grid > *,
+.subcat-grid > *,.stats-inner > *,.tools-band > *,.catalog > *{min-width:0;}
 
 /* =====================================================================
    RESPONSIVE
