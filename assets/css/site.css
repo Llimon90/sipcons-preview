@@ -570,14 +570,22 @@ body:has(#nav.scrolled) .nav-cta{position:static;transform:none;}
 @media (max-width:720px){
   .nav-links,.nav-cta .btn{display:none;}
   .nav-toggle{display:flex;}
-  .home-brandbar{display:none;}
-  body .nav{top:0;}
-  body .nav-inner{justify-content:space-between;}
-  body .nav .brand{display:flex;}
-  body .nav-cta{position:static;transform:none;}
-  body .hero{padding-top:calc(76px + var(--space-12));}
-  body .page-hero{padding-top:calc(76px + var(--space-10));}
-  .nav-menu-open .nav-links{display:flex;position:fixed;inset:76px 0 auto 0;flex-direction:column;background:rgba(12,23,54,.92);-webkit-backdrop-filter:blur(18px) saturate(180%);backdrop-filter:blur(18px) saturate(180%);padding:var(--space-6) var(--gutter);gap:var(--space-5);box-shadow:0 20px 40px rgba(0,0,0,.35);border-bottom:1px solid rgba(255,255,255,.12);}
+  /* En móvil el logo permanece centrado arriba; al hacer scroll baja al centro del nav. */
+  .home-brandbar{display:block;}
+  .home-brand{top:16px;transform-origin:center center;transform:translateX(-50%);}
+  .home-brand img{height:42px;}
+  body .nav{top:66px;}
+  body .nav-inner{justify-content:center;}
+  body .nav .brand{display:none;}
+  body .nav-cta{position:absolute;right:0;top:50%;transform:translateY(-50%);}
+  body .hero{padding-top:calc(66px + 76px + var(--space-8));}
+  body .page-hero{padding-top:calc(66px + 76px + var(--space-6));}
+  body:has(#nav.scrolled) .home-brand{transform:translateX(-50%) translateY(1px) scale(.6);}
+  body:has(#nav.scrolled) .nav-inner{justify-content:center;}
+  body:has(#nav.scrolled) .nav .brand{display:none;}
+  body:has(#nav.scrolled) .nav-cta{position:absolute;right:0;top:50%;transform:translateY(-50%);}
+  .nav-menu-open .nav-links{display:flex;position:fixed;inset:142px 0 auto 0;flex-direction:column;background:rgba(12,23,54,.92);-webkit-backdrop-filter:blur(18px) saturate(180%);backdrop-filter:blur(18px) saturate(180%);padding:var(--space-6) var(--gutter);gap:var(--space-5);box-shadow:0 20px 40px rgba(0,0,0,.35);border-bottom:1px solid rgba(255,255,255,.12);}
+  body.nav-menu-open:has(#nav.scrolled) .nav-links{inset:76px 0 auto 0;}
   .nav-menu-open .nav-links a{color:rgba(255,255,255,.92);}
   .nav-menu-open .nav-links a.active::after{display:none;}
   .grid.cols-4,.grid.cols-3,.grid.cols-2{grid-template-columns:1fr;}
