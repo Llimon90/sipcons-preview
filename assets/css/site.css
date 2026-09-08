@@ -570,7 +570,8 @@ body:has(#nav.scrolled) .nav-cta{position:static;transform:none;}
 @media (max-width:720px){
   .nav-links,.nav-cta .btn{display:none;}
   .nav-toggle{display:flex;}
-  /* En móvil el logo permanece centrado arriba; al hacer scroll baja al centro del nav. */
+  /* En móvil el logo permanece centrado arriba y del MISMO tamaño siempre
+     (no se contrae al hacer scroll); el nav queda fijo debajo. */
   .home-brandbar{display:block;}
   .home-brand{top:16px;transform-origin:center center;transform:translateX(-50%);}
   .home-brand img{height:42px;}
@@ -580,7 +581,10 @@ body:has(#nav.scrolled) .nav-cta{position:static;transform:none;}
   body .nav-cta{position:absolute;right:0;top:50%;transform:translateY(-50%);}
   body .hero{padding-top:calc(66px + 76px + var(--space-8));}
   body .page-hero{padding-top:calc(66px + 76px + var(--space-6));}
-  body:has(#nav.scrolled) .home-brand{transform:translateX(-50%) translateY(1px) scale(.6);}
+  /* Al hacer scroll el logo NO cambia de tamaño ni de sitio: la barra de
+     vidrio sube por debajo y lo envuelve. */
+  body:has(#nav.scrolled) .home-brand{transform:translateX(-50%);}
+  body:has(#nav.scrolled) .nav{top:0;}
   body:has(#nav.scrolled) .nav-inner{justify-content:center;}
   body:has(#nav.scrolled) .nav .brand{display:none;}
   body:has(#nav.scrolled) .nav-cta{position:absolute;right:0;top:50%;transform:translateY(-50%);}
