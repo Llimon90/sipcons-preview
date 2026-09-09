@@ -1,0 +1,81 @@
+# =====================================================================
+#  SIPCONS · sitio web estático — raíz de public_html
+#  -------------------------------------------------------------------
+#  IMPORTANTE:
+#   /app/     -> aplicación propia. Tiene (o debe tener) su propio
+#               .htaccess. Estas reglas NO la tocan.
+#   /tienda/  -> WordPress (productos/tienda). WordPress genera su
+#               propio .htaccess dentro de /tienda/. Estas reglas
+#               NO lo tocan.
+# =====================================================================
+
+Options -Indexes
+DirectoryIndex index.html index.php
+
+<IfModule mod_rewrite.c>
+  RewriteEngine On
+
+  # --- 1) No reescribir NUNCA la app ni WordPress -------------------
+  RewriteRule ^app(/|$)    - [L]
+  RewriteRule ^tienda(/|$) - [L]
+
+  # No exponer el repositorio si clonas el repo con git en la raíz
+  RewriteRule (^|/)\.git(/|$) - [F,L]
+
+  # --- 2) Dominio canónico: HTTPS + sin www ------------------------
+  RewriteCond %{HTTPS} off [OR]
+  RewriteCond %{HTTP_HOST} ^www\.(.+)$ [NC]
+  RewriteRule ^ https://sipcons.com%{REQUEST_URI} [L,R=301]
+
+  # --- 3) Redirecciones 301 de URLs viejas de WordPress -----------
+  #     Descomenta / ajusta según lo que tengas indexado en Google.
+  #     (Ver Search Console -> Páginas, o el sitemap anterior de WP.)
+  # RewriteRule ^nosotros/?$              /quienes-somos.html            [L,R=301]
+  # RewriteRule ^quienes-somos/?$         /quienes-somos.html            [L,R=301]
+  # RewriteRule ^servicios/?$             /servicios.html               [L,R=301]
+  # RewriteRule ^soporte/?$               /soporte.html                 [L,R=301]
+  # RewriteRule ^contacto/?$              /contacto.html                [L,R=301]
+  # RewriteRule ^productos/?$             /productos.html               [L,R=301]
+  # RewriteRule ^calibracion/?$           /calibracion.html             [L,R=301]
+  # RewriteRule ^casos-de-exito/?$        /casos-de-exito.html          [L,R=301]
+  #     Fichas de producto y blog que ahora viven en WordPress:
+  # RewriteRule ^producto/(.*)$           /tienda/producto/$1           [L,R=301]
+  # RewriteRule ^tienda-online/(.*)$      /tienda/$1                    [L,R=301]
+  # RewriteRule ^blog/(.*)$              /tienda/blog/$1                [L,R=301]
+</IfModule>
+
+# --- Página de error 404 del sitio estático ----------------------
+#     (WordPress y la app manejan sus propios 404 internamente.)
+ErrorDocument 404 /404.html
+
+# --- Compresión -------------------------------------------------
+<IfModule mod_deflate.c>
+  AddOutputFilterByType DEFLATE text/html text/css text/plain text/xml \
+    application/javascript application/json image/svg+xml \
+    font/ttf font/otf font/woff font/woff2
+</IfModule>
+
+# --- Caché de navegador ----------------------------------------
+#     Solo para /assets/ del sitio; no afecta a /app/ ni /tienda/.
+<IfModule mod_headers.c>
+  <If "%{REQUEST_URI} =~ m#^/assets/#">
+    Header set Cache-Control "public, max-age=2592000"
+  </If>
+  <If "%{REQUEST_URI} =~ m#\.html$# || %{REQUEST_URI} == '/'">
+    Header set Cache-Control "public, max-age=3600, must-revalidate"
+  </If>
+</IfModule>
+
+# --- Cabeceras de seguridad para el sitio ---------------------
+<IfModule mod_headers.c>
+  Header always set X-Content-Type-Options "nosniff"
+  Header always set Referrer-Policy "strict-origin-when-cross-origin"
+  Header always set X-Frame-Options "SAMEORIGIN"
+</IfModule>
+
+# --- Tipos MIME (por si el server no los trae) ---------------
+<IfModule mod_mime.c>
+  AddType image/webp .webp
+  AddType image/svg+xml .svg
+  AddType font/woff2 .woff2
+</IfModule>
