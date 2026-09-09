@@ -1,0 +1,36 @@
+# =====================================================================
+#  SIPCONS · .htaccess para el sitio en PRUEBAS (staging)
+#  Ubicación: public_html/upgrade-site/.htaccess
+#  -------------------------------------------------------------------
+#  Copia este archivo como  .htaccess  DENTRO de la carpeta
+#  public_html/upgrade-site/  (no en la raíz).
+#  Cuando el sitio pase a producción en la raíz, este archivo se
+#  descarta y se usa el  .htaccess  que está en la raíz del repo.
+# =====================================================================
+
+Options -Indexes
+DirectoryIndex index.html
+
+# --- Mantener el sitio de pruebas FUERA de Google -----------------
+<IfModule mod_headers.c>
+  Header set X-Robots-Tag "noindex, nofollow"
+</IfModule>
+
+# --- 404 propio del sitio de pruebas ----------------------------
+ErrorDocument 404 /upgrade-site/404.html
+
+# --- No exponer el repositorio si clonas con git ---------------
+<IfModule mod_rewrite.c>
+  RewriteEngine On
+  RewriteRule (^|/)\.git(/|$) - [F,L]
+</IfModule>
+
+# --- Compresión ------------------------------------------------
+<IfModule mod_deflate.c>
+  AddOutputFilterByType DEFLATE text/html text/css text/plain text/xml \
+    application/javascript application/json image/svg+xml
+</IfModule>
+
+# NOTA: además de este archivo, protege la carpeta con contraseña
+# en cPanel -> "Privacidad del directorio" -> upgrade-site.
+# Así ningún cliente ni buscador entra al sitio a medio probar.
