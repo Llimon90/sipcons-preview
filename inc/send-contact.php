@@ -10,7 +10,7 @@ error_reporting(0); // no exponer warnings/paths del servidor al cliente
 header('Content-Type: application/json; charset=UTF-8');
 
 const DEST_EMAIL   = 'info@sipcons.com';
-const FROM_EMAIL   = 'noreply@sipcons.com'; // debe existir en el mismo dominio/cPanel
+const FROM_EMAIL   = 'noreply@sipcons.com'; // buzón dedicado en cPanel para no saturar info@ con rebotes
 const FROM_NAME    = 'Formulario SIPCONS';
 const MAX_LEN_LARGO  = 3000; // mensaje
 const MAX_LEN_CORTO  = 200;  // nombre, telefono, email, interes
