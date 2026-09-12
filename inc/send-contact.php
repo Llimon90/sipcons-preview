@@ -14,11 +14,6 @@ const FROM_EMAIL   = 'noreply@sipcons.com'; // buzón dedicado en cPanel para no
 const FROM_NAME    = 'Formulario SIPCONS';
 const MAX_LEN_LARGO  = 3000; // mensaje
 const MAX_LEN_CORTO  = 200;  // nombre, telefono, email, interes
-const DEBUG_LOG    = __DIR__ . '/mail-debug.log'; // bitácora temporal, bloqueada por .htaccess; borrar cuando quede resuelto el envío
-
-function bitacora(string $msg): void {
-    @file_put_contents(DEBUG_LOG, '[' . date('Y-m-d H:i:s') . '] ' . $msg . PHP_EOL, FILE_APPEND);
-}
 
 function responder(bool $ok, string $error = ''): void {
     echo json_encode($ok ? ['ok' => true] : ['ok' => false, 'error' => $error]);
@@ -76,17 +71,6 @@ $headers[] = 'Content-Type: text/plain; charset=UTF-8';
 $headers[] = 'X-Mailer: PHP/' . phpversion();
 
 $enviado = mail(DEST_EMAIL, $asunto, $cuerpo, implode("\r\n", $headers), '-f' . FROM_EMAIL);
-$ultimoError = error_get_last();
-
-bitacora(sprintf(
-    'to=%s from=%s reply_to=%s mail()=%s sendmail_path=%s last_error=%s',
-    DEST_EMAIL,
-    FROM_EMAIL,
-    $email,
-    $enviado ? 'true' : 'false',
-    ini_get('sendmail_path') ?: '(vacío)',
-    $ultimoError ? $ultimoError['message'] : '(ninguno)'
-));
 
 if (!$enviado) {
     responder(false, 'No se pudo enviar el mensaje. Intenta de nuevo o escríbenos por WhatsApp.');
@@ -114,8 +98,6 @@ $headersConfirma[] = 'Reply-To: SIPCONS <' . DEST_EMAIL . '>';
 $headersConfirma[] = 'Content-Type: text/plain; charset=UTF-8';
 $headersConfirma[] = 'X-Mailer: PHP/' . phpversion();
 
-$confirmaEnviada = mail($email, $asuntoConfirma, $cuerpoConfirma, implode("\r\n", $headersConfirma), '-f' . FROM_EMAIL);
-
-bitacora(sprintf('confirmación a=%s mail()=%s', $email, $confirmaEnviada ? 'true' : 'false'));
+mail($email, $asuntoConfirma, $cuerpoConfirma, implode("\r\n", $headersConfirma), '-f' . FROM_EMAIL);
 
 responder(true);

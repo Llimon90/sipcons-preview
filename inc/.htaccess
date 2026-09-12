@@ -6,16 +6,3 @@ Options -Indexes
   RewriteCond %{REQUEST_METHOD} !POST
   RewriteRule ^send-contact\.php$ - [F]
 </IfModule>
-
-# Bloquear acceso público a la bitácora de depuración (mail-debug.log)
-<IfModule mod_authz_core.c>
-  <FilesMatch "\.log$">
-    Require all denied
-  </FilesMatch>
-</IfModule>
-<IfModule !mod_authz_core.c>
-  <FilesMatch "\.log$">
-    Order allow,deny
-    Deny from all
-  </FilesMatch>
-</IfModule>
