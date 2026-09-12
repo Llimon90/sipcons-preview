@@ -147,16 +147,46 @@
     });
   });
 
-  /* ---- Formulario de contacto (validación front-end) ---- */
+  /* ---- Formulario de contacto ---- */
   const form = document.getElementById('contactForm');
   if (form) {
-    form.addEventListener('submit', (e) => {
+    const ok = document.getElementById('formOk');
+    const err = document.getElementById('formErr');
+    const submitBtn = form.querySelector('button[type="submit"]');
+
+    form.addEventListener('submit', async (e) => {
       e.preventDefault();
-      // NOTA: conectar a un handler PHP (ej. inc/send-contact.php) en producción.
       if (!form.checkValidity()) { form.reportValidity(); return; }
-      const ok = document.getElementById('formOk');
-      if (ok) ok.style.display = 'block';
-      form.reset();
+      if (ok) ok.style.display = 'none';
+      if (err) err.style.display = 'none';
+      if (submitBtn) submitBtn.disabled = true;
+
+      try {
+        const res = await fetch('inc/send-contact.php', {
+          method: 'POST',
+          body: new FormData(form),
+          headers: { 'Accept': 'application/json' }
+        });
+        let data = null;
+        try { data = await res.json(); } catch (_) { /* respuesta no-JSON */ }
+
+        if (res.ok && data && data.ok) {
+          if (ok) ok.style.display = 'block';
+          form.reset();
+        } else {
+          if (err) {
+            err.textContent = (data && data.error) || 'No se pudo enviar el mensaje. Intenta de nuevo o escríbenos por WhatsApp.';
+            err.style.display = 'block';
+          }
+        }
+      } catch (_) {
+        if (err) {
+          err.textContent = 'No se pudo conectar. Revisa tu conexión o escríbenos por WhatsApp.';
+          err.style.display = 'block';
+        }
+      } finally {
+        if (submitBtn) submitBtn.disabled = false;
+      }
     });
   }
 })();

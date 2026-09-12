@@ -1,0 +1,8 @@
+Options -Indexes
+
+<IfModule mod_rewrite.c>
+  RewriteEngine On
+  # Solo permitir POST a send-contact.php; bloquear todo lo demás (GET directo, otros archivos).
+  RewriteCond %{REQUEST_METHOD} !POST
+  RewriteRule ^send-contact\.php$ - [F]
+</IfModule>

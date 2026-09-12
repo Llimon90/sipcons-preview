@@ -131,6 +131,7 @@
       <p style="color:var(--color-text-muted);font-size:var(--text-sm);margin-bottom:var(--space-6)">Respondemos en horario laboral. Los campos con * son obligatorios.</p>
 
       <div class="form-ok" id="formOk">¡Gracias! Tu mensaje fue enviado. Te contactaremos pronto.</div>
+      <div class="form-err" id="formErr"></div>
 
       <form id="contactForm" novalidate>
         <div class="field-row">
@@ -150,6 +151,7 @@
           </select>
         </div>
         <div class="field"><label for="mensaje">Mensaje *</label><textarea id="mensaje" name="mensaje" required placeholder="Cuéntanos qué necesitas…"></textarea></div>
+        <div class="hp-field" aria-hidden="true"><label for="website">Deja este campo vacío</label><input id="website" name="website" type="text" tabindex="-1" autocomplete="off"></div>
         <button type="submit" class="btn btn-action">Enviar mensaje <span class="arw">→</span></button>
         <p class="form-note">Al enviar aceptas ser contactado por SIPCONS.</p>
       </form>
