@@ -91,7 +91,8 @@ $textoConfirma = "Hola {$nombre},\n\n"
     . "Interés:  {$interesMostrado}\n"
     . "Mensaje:  {$mensaje}\n\n"
     . "Si es urgente, escríbenos por WhatsApp: https://wa.me/526641086038\n"
-    . "Tel: (664) 630-0471\n\n"
+    . "Tel: (664) 630-0471\n"
+    . "Sitio web: https://sipcons.com/\n\n"
     . "— Equipo SIPCONS\n"
     . "Soluciones Integrales de Pesaje y Control";
 
@@ -107,7 +108,9 @@ $htmlConfirma = <<<HTML
 <table role="presentation" width="560" cellpadding="0" cellspacing="0" style="max-width:560px;width:100%;background:#FFFFFF;border-radius:12px;overflow:hidden;border:1px solid #DDE4EE;">
   <tr>
     <td align="center" style="padding:32px 24px 16px;">
-      <img src="https://sipcons.com/assets/img/logo-sipcons.png" width="220" alt="SIPCONS" style="display:block;max-width:220px;height:auto;">
+      <a href="https://sipcons.com/" style="text-decoration:none;">
+        <img src="https://sipcons.com/assets/img/logo-sipcons.png" width="220" alt="SIPCONS" style="display:block;max-width:220px;height:auto;border:0;">
+      </a>
     </td>
   </tr>
   <tr>
@@ -142,7 +145,8 @@ $htmlConfirma = <<<HTML
   <tr>
     <td align="center" style="padding:20px 24px 28px;">
       <p style="margin:0 0 4px;font-size:12px;color:#64748B;">SIPCONS — Soluciones Integrales de Pesaje y Control</p>
-      <p style="margin:0;font-size:12px;color:#94A2B8;">Av. De Las Perlas 630, Playas de Tijuana, B.C. · Lun–Vie 08:30–18:00 · Sáb 09:00–13:30</p>
+      <p style="margin:0 0 14px;font-size:12px;color:#94A2B8;">Av. De Las Perlas 630, Playas de Tijuana, B.C. · Lun–Vie 08:30–18:00 · Sáb 09:00–13:30</p>
+      <a href="https://sipcons.com/" style="font-size:12px;font-weight:700;color:#1A4BD0;text-decoration:none;">Visitar sipcons.com →</a>
     </td>
   </tr>
 </table>
