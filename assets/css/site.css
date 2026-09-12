@@ -193,6 +193,8 @@ body:has(#nav.scrolled) .nav-cta{position:static;transform:none;}
 .split-media .ph span{color:rgba(255,255,255,.7);font-size:var(--text-sm);}
 .split-media img{width:100%;height:100%;object-fit:cover;}
 .split-media.top img{object-position:center top;}
+.split-media.contain{background:#fff;}
+.split-media.contain img{object-fit:contain;}
 .media-band{margin:0;border-radius:var(--radius-xl);overflow:hidden;box-shadow:var(--shadow-xl);}
 .media-band img{display:block;width:100%;height:auto;}
 .media-band figcaption{background:var(--color-bg-inverse);color:rgba(255,255,255,.72);font-size:var(--text-sm);padding:var(--space-3) var(--space-5);text-align:center;}

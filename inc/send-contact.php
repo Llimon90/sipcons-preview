@@ -137,7 +137,7 @@ $htmlConfirma = <<<HTML
   </tr>
   <tr>
     <td align="center" style="padding:0 32px 32px;">
-      <a href="https://wa.me/526641086038" style="display:inline-block;background:#F59E0B;color:#0E1B3D;text-decoration:none;font-weight:700;font-size:14px;padding:12px 22px;border-radius:8px;margin:0 6px 10px;">Escribir por WhatsApp</a>
+      <a href="https://wa.me/526641086038" style="display:inline-block;background:#25D366;color:#FFFFFF;text-decoration:none;font-weight:700;font-size:14px;padding:12px 22px;border-radius:8px;margin:0 6px 10px;">Escribir por WhatsApp</a>
       <a href="tel:+526646300471" style="display:inline-block;background:transparent;color:#1A4BD0;text-decoration:none;font-weight:700;font-size:14px;padding:12px 22px;border-radius:8px;border:1px solid #C3CDDC;margin:0 6px 10px;">Llamar: (664) 630-0471</a>
     </td>
   </tr>
