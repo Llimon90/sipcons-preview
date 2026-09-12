@@ -92,4 +92,30 @@ if (!$enviado) {
     responder(false, 'No se pudo enviar el mensaje. Intenta de nuevo o escríbenos por WhatsApp.');
 }
 
+// --- Confirmación automática al cliente --------------------------------
+// No afecta la respuesta al navegador: el mensaje a info@ ya se envió,
+// que esta confirmación falle no debe mostrarse como error al usuario.
+$asuntoConfirma = mb_encode_mimeheader('Hemos recibido tu mensaje — SIPCONS', 'UTF-8');
+
+$cuerpoConfirma = "Hola {$nombre},\n\n"
+    . "Gracias por escribirnos. Ya recibimos tu mensaje y un asesor te contactará "
+    . "en horario laboral con una cotización a la medida de acuerdo a tus requerimientos y necesidades.\n\n"
+    . "Resumen de tu mensaje:\n"
+    . "Interés:  " . ($interes !== '' ? $interes : '—') . "\n"
+    . "Mensaje:  {$mensaje}\n\n"
+    . "Si es urgente, escríbenos por WhatsApp: https://wa.me/526641086038\n"
+    . "Tel: (664) 630-0471\n\n"
+    . "— Equipo SIPCONS\n"
+    . "Soluciones Integrales de Pesaje y Control";
+
+$headersConfirma   = [];
+$headersConfirma[] = 'From: ' . mb_encode_mimeheader(FROM_NAME, 'UTF-8') . ' <' . FROM_EMAIL . '>';
+$headersConfirma[] = 'Reply-To: SIPCONS <' . DEST_EMAIL . '>';
+$headersConfirma[] = 'Content-Type: text/plain; charset=UTF-8';
+$headersConfirma[] = 'X-Mailer: PHP/' . phpversion();
+
+$confirmaEnviada = mail($email, $asuntoConfirma, $cuerpoConfirma, implode("\r\n", $headersConfirma), '-f' . FROM_EMAIL);
+
+bitacora(sprintf('confirmación a=%s mail()=%s', $email, $confirmaEnviada ? 'true' : 'false'));
+
 responder(true);
