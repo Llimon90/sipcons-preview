@@ -81,21 +81,92 @@ if (!$enviado) {
 // que esta confirmación falle no debe mostrarse como error al usuario.
 $asuntoConfirma = mb_encode_mimeheader('Hemos recibido tu mensaje — SIPCONS', 'UTF-8');
 
-$cuerpoConfirma = "Hola {$nombre},\n\n"
+$interesMostrado = $interes !== '' ? $interes : '—';
+
+$textoConfirma = "Hola {$nombre},\n\n"
     . "Gracias por escribirnos. Ya recibimos tu mensaje y un asesor te contactará "
     . "en horario laboral con una cotización a la medida de acuerdo a tus requerimientos y necesidades.\n\n"
+    . "\"Después de la venta, el servicio es lo que cuenta.\"\n\n"
     . "Resumen de tu mensaje:\n"
-    . "Interés:  " . ($interes !== '' ? $interes : '—') . "\n"
+    . "Interés:  {$interesMostrado}\n"
     . "Mensaje:  {$mensaje}\n\n"
     . "Si es urgente, escríbenos por WhatsApp: https://wa.me/526641086038\n"
     . "Tel: (664) 630-0471\n\n"
     . "— Equipo SIPCONS\n"
     . "Soluciones Integrales de Pesaje y Control";
 
+$e = static fn(string $s): string => htmlspecialchars($s, ENT_QUOTES, 'UTF-8');
+
+$htmlConfirma = <<<HTML
+<!DOCTYPE html>
+<html lang="es">
+<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1"></head>
+<body style="margin:0;padding:0;background:#F0F3F9;font-family:Arial,Helvetica,sans-serif;">
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:#F0F3F9;padding:32px 16px;">
+<tr><td align="center">
+<table role="presentation" width="560" cellpadding="0" cellspacing="0" style="max-width:560px;width:100%;background:#FFFFFF;border-radius:12px;overflow:hidden;border:1px solid #DDE4EE;">
+  <tr>
+    <td align="center" style="padding:32px 24px 16px;">
+      <img src="https://sipcons.com/assets/img/logo-sipcons.png" width="220" alt="SIPCONS" style="display:block;max-width:220px;height:auto;">
+    </td>
+  </tr>
+  <tr>
+    <td align="center" style="padding:0 24px 20px;">
+      <p style="margin:0;font-style:italic;font-size:14px;color:#1A4BD0;font-weight:600;">Después de la venta, el servicio es lo que cuenta</p>
+    </td>
+  </tr>
+  <tr><td style="height:4px;background:linear-gradient(90deg,#1A4BD0,#22D3EE);"></td></tr>
+  <tr>
+    <td style="padding:28px 32px 8px;">
+      <p style="margin:0 0 16px;font-size:15px;line-height:1.6;color:#0F1A2E;">Hola <strong>{$e($nombre)}</strong>,</p>
+      <p style="margin:0 0 16px;font-size:15px;line-height:1.6;color:#334155;">Gracias por escribirnos. Ya recibimos tu mensaje y un asesor te contactará en horario laboral con una cotización a la medida de acuerdo a tus requerimientos y necesidades.</p>
+    </td>
+  </tr>
+  <tr>
+    <td style="padding:8px 32px 24px;">
+      <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:#F6F8FC;border-radius:8px;border:1px solid #EDF1F7;">
+        <tr><td style="padding:16px 20px;font-size:14px;line-height:1.7;color:#334155;">
+          <strong style="color:#0F1A2E;">Interés:</strong> {$e($interesMostrado)}<br>
+          <strong style="color:#0F1A2E;">Mensaje:</strong> {$e($mensaje)}
+        </td></tr>
+      </table>
+    </td>
+  </tr>
+  <tr>
+    <td align="center" style="padding:0 32px 32px;">
+      <a href="https://wa.me/526641086038" style="display:inline-block;background:#F59E0B;color:#0E1B3D;text-decoration:none;font-weight:700;font-size:14px;padding:12px 22px;border-radius:8px;margin:0 6px 10px;">Escribir por WhatsApp</a>
+      <a href="tel:+526646300471" style="display:inline-block;background:transparent;color:#1A4BD0;text-decoration:none;font-weight:700;font-size:14px;padding:12px 22px;border-radius:8px;border:1px solid #C3CDDC;margin:0 6px 10px;">Llamar: (664) 630-0471</a>
+    </td>
+  </tr>
+  <tr><td style="border-top:1px solid #EDF1F7;"></td></tr>
+  <tr>
+    <td align="center" style="padding:20px 24px 28px;">
+      <p style="margin:0 0 4px;font-size:12px;color:#64748B;">SIPCONS — Soluciones Integrales de Pesaje y Control</p>
+      <p style="margin:0;font-size:12px;color:#94A2B8;">Av. De Las Perlas 630, Playas de Tijuana, B.C. · Lun–Vie 08:30–18:00 · Sáb 09:00–13:30</p>
+    </td>
+  </tr>
+</table>
+</td></tr>
+</table>
+</body>
+</html>
+HTML;
+
+$boundary = 'sipcons-' . md5(uniqid((string)mt_rand(), true));
+
+$cuerpoConfirma = "--{$boundary}\r\n"
+    . "Content-Type: text/plain; charset=UTF-8\r\n\r\n"
+    . $textoConfirma . "\r\n\r\n"
+    . "--{$boundary}\r\n"
+    . "Content-Type: text/html; charset=UTF-8\r\n\r\n"
+    . $htmlConfirma . "\r\n\r\n"
+    . "--{$boundary}--";
+
 $headersConfirma   = [];
 $headersConfirma[] = 'From: ' . mb_encode_mimeheader(FROM_NAME, 'UTF-8') . ' <' . FROM_EMAIL . '>';
 $headersConfirma[] = 'Reply-To: SIPCONS <' . DEST_EMAIL . '>';
-$headersConfirma[] = 'Content-Type: text/plain; charset=UTF-8';
+$headersConfirma[] = 'MIME-Version: 1.0';
+$headersConfirma[] = 'Content-Type: multipart/alternative; boundary="' . $boundary . '"';
 $headersConfirma[] = 'X-Mailer: PHP/' . phpversion();
 
 mail($email, $asuntoConfirma, $cuerpoConfirma, implode("\r\n", $headersConfirma), '-f' . FROM_EMAIL);
