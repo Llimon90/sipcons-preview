@@ -64,7 +64,7 @@ function sipcons_obtener_productos(): array {
 
     $rutaPorAttachment = [];
     if ($attachmentIds) {
-        $attachmentIds = array_unique($attachmentIds);
+        $attachmentIds = array_values(array_unique($attachmentIds));
         $ph2 = implode(',', array_fill(0, count($attachmentIds), '?'));
         $stmt = $pdo->prepare("
             SELECT post_id, meta_value AS ruta
