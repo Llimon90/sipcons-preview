@@ -181,3 +181,86 @@ function sipcons_obtener_productos(): array {
         'marcas'    => $chipsMarcas,
     ];
 }
+
+/**
+ * Descripción larga (post_content) de un producto, para su página de detalle.
+ * Conserva un set chico de etiquetas de formato; quita todo lo demás
+ * (scripts, shortcodes de builders de página, etc.).
+ */
+function sipcons_obtener_descripcion_larga(int $productId): string {
+    $pdo = sipcons_db();
+    $posts = sipcons_tabla('posts');
+
+    $stmt = $pdo->prepare("SELECT post_content FROM {$posts} WHERE ID = :id");
+    $stmt->execute(['id' => $productId]);
+    $contenido = (string)($stmt->fetch()['post_content'] ?? '');
+
+    $contenido = preg_replace('/\[[^\]]*\]/', '', $contenido); // quita shortcodes [tipo_esto]
+    $contenido = strip_tags($contenido, '<p><br><strong><em><b><i><ul><ol><li>');
+    // strip_tags no quita atributos de las etiquetas permitidas (ej. onclick=...);
+    // ninguna de ellas necesita atributos para el formato básico, así que se eliminan todos.
+    $contenido = preg_replace('/<(\w+)[^>]*>/', '<$1>', $contenido);
+    return trim($contenido);
+}
+
+/**
+ * Busca el "código de modelo" de un producto a partir de su título: el último
+ * token que trae un dígito (ej. "RHINO BAPRE-2600" -> "BAPRE2600"). Se usa
+ * solo como pista para emparejar PDFs sueltos; null si no hay nada así.
+ */
+function sipcons_extraer_codigo_modelo(string $titulo): ?string {
+    $tokens = preg_split('/\s+/', trim($titulo));
+    for ($i = count($tokens) - 1; $i >= 0; $i--) {
+        $t = $tokens[$i];
+        if (preg_match('/\d/', $t) && strlen($t) >= 3) {
+            return strtoupper((string)preg_replace('/[^A-Z0-9]/i', '', $t));
+        }
+    }
+    return null;
+}
+
+/**
+ * Fichas técnicas / manuales (PDF) de un producto.
+ * 1) PDFs adjuntos directamente en WordPress (post_parent = producto): siempre confiables.
+ * 2) Si no hay ninguno, busca entre los PDFs sueltos (post_parent = 0) por el
+ *    código de modelo del producto — solo se usa si hay UNA sola coincidencia,
+ *    para no arriesgarse a mostrar la ficha de otro equipo.
+ */
+function sipcons_obtener_pdfs_producto(int $productId, string $titulo): array {
+    $pdo = sipcons_db();
+    $posts = sipcons_tabla('posts');
+    $postmeta = sipcons_tabla('postmeta');
+
+    $stmt = $pdo->prepare("
+        SELECT a.post_title AS titulo, am.meta_value AS ruta
+        FROM {$posts} a
+        LEFT JOIN {$postmeta} am ON am.post_id = a.ID AND am.meta_key = '_wp_attached_file'
+        WHERE a.post_type = 'attachment' AND a.post_mime_type = 'application/pdf' AND a.post_parent = :id
+        ORDER BY a.ID
+    ");
+    $stmt->execute(['id' => $productId]);
+    $pdfs = [];
+    foreach ($stmt as $row) {
+        if ($row['ruta']) $pdfs[] = ['titulo' => $row['titulo'], 'url' => SIPCONS_UPLOADS_BASE . $row['ruta']];
+    }
+    if ($pdfs) return $pdfs;
+
+    $codigo = sipcons_extraer_codigo_modelo($titulo);
+    if (!$codigo) return [];
+
+    $stmt = $pdo->query("
+        SELECT a.post_title AS titulo, am.meta_value AS ruta
+        FROM {$posts} a
+        LEFT JOIN {$postmeta} am ON am.post_id = a.ID AND am.meta_key = '_wp_attached_file'
+        WHERE a.post_type = 'attachment' AND a.post_mime_type = 'application/pdf' AND a.post_parent = 0
+    ");
+    $candidatos = [];
+    foreach ($stmt as $row) {
+        if (!$row['ruta']) continue;
+        $normalizada = strtoupper((string)preg_replace('/[^A-Z0-9]/i', '', $row['ruta']));
+        if (strpos($normalizada, $codigo) !== false) {
+            $candidatos[] = ['titulo' => $row['titulo'], 'url' => SIPCONS_UPLOADS_BASE . $row['ruta']];
+        }
+    }
+    return count($candidatos) === 1 ? $candidatos : [];
+}

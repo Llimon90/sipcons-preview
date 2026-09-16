@@ -141,7 +141,7 @@ $sipconsMarcas    = $sipconsCatalogo['marcas'];
               <?php if ($p['descripcion'] !== ''): ?><p class="desc"><?= htmlspecialchars($p['descripcion'], ENT_QUOTES, 'UTF-8') ?></p><?php endif; ?>
               <div class="product-actions">
                 <a href="https://wa.me/526641086038?text=<?= rawurlencode('Hola, quiero cotizar: ' . $p['titulo']) ?>" class="btn btn-primary btn-sm">Cotizar</a>
-                <a href="contacto.html" class="btn btn-outline btn-sm">Detalle</a>
+                <a href="producto.php?slug=<?= rawurlencode($p['slug']) ?>" class="btn btn-outline btn-sm">Detalle</a>
               </div>
             </div>
           </article>
