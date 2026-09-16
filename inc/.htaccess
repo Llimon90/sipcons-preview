@@ -6,3 +6,18 @@ Options -Indexes
   RewriteCond %{REQUEST_METHOD} !POST
   RewriteRule ^send-contact\.php$ - [F]
 </IfModule>
+
+# Archivos de uso interno: solo se deben usar por include() desde productos.html,
+# nunca visitarse directo. (db-inspect.php se protege con token dentro del propio
+# archivo y se debe borrar del servidor cuando ya no se necesite.)
+<IfModule mod_authz_core.c>
+  <FilesMatch "^(db|db-config|db-config\.example|product-cat-map|productos-data)\.php$">
+    Require all denied
+  </FilesMatch>
+</IfModule>
+<IfModule !mod_authz_core.c>
+  <FilesMatch "^(db|db-config|db-config\.example|product-cat-map|productos-data)\.php$">
+    Order allow,deny
+    Deny from all
+  </FilesMatch>
+</IfModule>
