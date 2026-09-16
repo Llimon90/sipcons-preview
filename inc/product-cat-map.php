@@ -49,9 +49,6 @@ return [
         'megellan'   => 'Magellan',
         'youjie'     => 'Youjie',
         'inovacion'  => 'Innovación',
-        // 'mettler' se guarda como marca en los datos del producto, pero no
-        // tiene botón de filtro propio: ya tiene su página dedicada
-        // (marca-mettler-toledo.html), igual que en el diseño original.
         'mettler'    => 'Mettler-Toledo',
     ],
 
@@ -60,11 +57,5 @@ return [
         'sipcons',
         'basculas-pos',
         'cajones-de-dinero',
-    ],
-
-    // Marcas con página propia: no se muestran como botón de filtro en el
-    // catálogo, se enlazan directo a su página dedicada.
-    'marcas_con_pagina' => [
-        'mettler' => 'marca-mettler-toledo.html',
     ],
 ];

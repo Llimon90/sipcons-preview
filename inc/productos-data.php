@@ -186,7 +186,6 @@ function sipcons_obtener_productos(): array {
 
     $chipsMarcas = [];
     foreach ($mapa['marcas'] as $slug => $label) {
-        if (isset($mapa['marcas_con_pagina'][$slug])) continue; // esas van como link, no como chip
         if ($conteoMarcas[$slug] > 0) {
             $chipsMarcas[] = ['slug' => $slug, 'label' => $label, 'count' => $conteoMarcas[$slug]];
         }
