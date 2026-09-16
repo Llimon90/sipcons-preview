@@ -14,6 +14,7 @@ $producto = null;
 $relacionados = [];
 $descripcionLarga = '';
 $pdfs = [];
+$galeria = [];
 $errorCatalogo = false;
 
 try {
@@ -24,6 +25,10 @@ try {
     if ($producto) {
         $descripcionLarga = sipcons_obtener_descripcion_larga($producto['id']);
         $pdfs = sipcons_obtener_pdfs_producto($producto['id'], $producto['titulo']);
+        $galeria = sipcons_obtener_galeria_producto($producto['id'], $producto['imagen_id']);
+        if (!$galeria && $producto['imagen_grande']) {
+            $galeria = [['chica' => $producto['imagen'] ?? $producto['imagen_grande'], 'grande' => $producto['imagen_grande']]];
+        }
 
         foreach ($catalogo['productos'] as $p) {
             if ($p['id'] === $producto['id']) continue;
@@ -75,7 +80,7 @@ $urlCanonica = 'https://sipcons.com/producto.php' . ($producto ? '?slug=' . rawu
 <meta name="twitter:title" content="<?= $e($tituloPagina) ?>">
 <meta name="twitter:description" content="<?= $e($descMeta) ?>">
 <meta name="twitter:image" content="<?= $e($ogImagen) ?>">
-<link rel="stylesheet" href="./assets/css/site.css?v=20260916">
+<link rel="stylesheet" href="./assets/css/site.css?v=20260916b">
 </head>
 <body>
 
@@ -136,36 +141,78 @@ $urlCanonica = 'https://sipcons.com/producto.php' . ($producto ? '?slug=' . rawu
 
 <section class="section">
   <div class="wrap">
-    <div class="product-detail">
-      <div class="product-gallery reveal">
-        <?php if ($producto['imagen_grande']): ?>
-        <img src="<?= $e($producto['imagen_grande']) ?>" alt="<?= $e($producto['titulo']) ?>" loading="eager">
-        <?php else: ?>
+
+    <div class="product-media-row<?= !$pdfs ? ' single' : '' ?> reveal">
+      <?php if ($galeria): ?>
+      <div class="product-gallery" id="productGallery">
+        <div class="product-gallery-main" id="galleryMain">
+          <img id="galleryMainImg" src="<?= $e($galeria[0]['grande']) ?>" data-full="<?= $e($galeria[0]['grande']) ?>" alt="<?= $e($producto['titulo']) ?>" loading="eager">
+          <span class="gallery-zoom-hint" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3M11 8v6M8 11h6"/></svg>
+          </span>
+        </div>
+        <?php if (count($galeria) > 1): ?>
+        <div class="product-gallery-thumbs">
+          <?php foreach ($galeria as $i => $g): ?>
+          <button type="button" class="<?= $i === 0 ? 'active' : '' ?>" data-grande="<?= $e($g['grande']) ?>" aria-label="Ver foto <?= $i + 1 ?> de <?= count($galeria) ?>">
+            <img src="<?= $e($g['chica']) ?>" alt="" loading="lazy">
+          </button>
+          <?php endforeach; ?>
+        </div>
+        <?php endif; ?>
+      </div>
+      <?php else: ?>
+      <div class="product-gallery">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2"><rect x="4" y="7" width="16" height="12" rx="2"/><path d="M8 7V5h8v2M12 11v4M10 13h4"/></svg>
-        <?php endif; ?>
       </div>
-      <div class="product-detail-body reveal" data-delay="1">
-        <span class="resource-tag"><?= $e($producto['tipo_label']) ?></span>
-        <?php if ($producto['descripcion'] !== ''): ?>
-        <p style="color:var(--color-text-muted);margin-top:var(--space-3)"><?= $e($producto['descripcion']) ?></p>
-        <?php endif; ?>
-        <p class="price-note">Cotización a la medida de acuerdo a tus requerimientos y necesidades.</p>
-        <div class="btn-row" style="margin-top:var(--space-5)">
-          <a href="https://wa.me/526641086038?text=<?= rawurlencode('Hola, quiero cotizar: ' . $producto['titulo']) ?>" class="btn btn-action">Cotizar por WhatsApp <span class="arw">→</span></a>
-          <a href="contacto.html" class="btn btn-outline">Hablar con ventas</a>
+      <?php endif; ?>
+
+      <?php if ($pdfs): ?>
+      <div class="product-pdf-viewer">
+        <iframe src="<?= $e($pdfs[0]['url']) ?>" title="Ficha técnica — <?= $e($producto['titulo']) ?>" loading="lazy"></iframe>
+        <div class="pdf-toolbar">
+          <span>Ficha técnica (PDF)</span>
+          <span>
+            <a href="<?= $e($pdfs[0]['url']) ?>" target="_blank" rel="noopener">Ver en grande ↗</a>
+            <a href="<?= $e($pdfs[0]['url']) ?>" download>Descargar</a>
+          </span>
         </div>
-        <?php foreach ($pdfs as $pdf): ?>
-        <div style="margin-top:var(--space-4)">
-          <a href="<?= $e($pdf['url']) ?>" target="_blank" rel="noopener" class="btn btn-outline btn-sm">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" style="width:16px;height:16px;margin-right:6px;vertical-align:-3px"><path d="M12 3v12m0 0 4-4m-4 4-4-4M4 17v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-2"/></svg>
-            Ver ficha técnica (PDF)
-          </a>
-        </div>
-        <?php endforeach; ?>
-        <?php if ($descripcionLarga !== ''): ?>
-        <div style="margin-top:var(--space-6);color:var(--color-text-muted);font-size:var(--text-sm);line-height:var(--leading-relaxed)"><?= $descripcionLarga ?></div>
-        <?php endif; ?>
       </div>
+      <?php endif; ?>
+    </div>
+
+    <?php if ($galeria): ?>
+    <div class="gallery-modal" id="galleryModal">
+      <button type="button" class="gallery-modal-close" id="galleryModalClose" aria-label="Cerrar">&times;</button>
+      <?php if (count($galeria) > 1): ?>
+      <button type="button" class="gallery-modal-nav prev" id="galleryModalPrev" aria-label="Foto anterior">‹</button>
+      <button type="button" class="gallery-modal-nav next" id="galleryModalNext" aria-label="Foto siguiente">›</button>
+      <?php endif; ?>
+      <img id="galleryModalImg" src="" alt="<?= $e($producto['titulo']) ?>">
+    </div>
+    <?php endif; ?>
+
+    <div class="product-detail-body reveal" data-delay="1" style="max-width:760px;margin-top:var(--space-8)">
+      <span class="resource-tag"><?= $e($producto['tipo_label']) ?></span>
+      <?php if ($producto['descripcion'] !== ''): ?>
+      <p style="color:var(--color-text-muted);margin-top:var(--space-3)"><?= $e($producto['descripcion']) ?></p>
+      <?php endif; ?>
+      <p class="price-note">Cotización a la medida de acuerdo a tus requerimientos y necesidades.</p>
+      <div class="btn-row" style="margin-top:var(--space-5)">
+        <a href="https://wa.me/526641086038?text=<?= rawurlencode('Hola, quiero cotizar: ' . $producto['titulo']) ?>" class="btn btn-action">Cotizar por WhatsApp <span class="arw">→</span></a>
+        <a href="contacto.html" class="btn btn-outline">Hablar con ventas</a>
+      </div>
+      <?php if (count($pdfs) > 1): foreach (array_slice($pdfs, 1) as $pdf): ?>
+      <div style="margin-top:var(--space-4)">
+        <a href="<?= $e($pdf['url']) ?>" target="_blank" rel="noopener" class="btn btn-outline btn-sm">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" style="width:16px;height:16px;margin-right:6px;vertical-align:-3px"><path d="M12 3v12m0 0 4-4m-4 4-4-4M4 17v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-2"/></svg>
+          <?= $e($pdf['titulo'] ?: 'Documento adicional (PDF)') ?>
+        </a>
+      </div>
+      <?php endforeach; endif; ?>
+      <?php if ($descripcionLarga !== ''): ?>
+      <div style="margin-top:var(--space-6);color:var(--color-text-muted);font-size:var(--text-sm);line-height:var(--leading-relaxed)"><?= $descripcionLarga ?></div>
+      <?php endif; ?>
     </div>
   </div>
 </section>
@@ -221,6 +268,6 @@ $urlCanonica = 'https://sipcons.com/producto.php' . ($producto ? '?slug=' . rawu
 
 <a href="https://wa.me/526641086038" class="wa" aria-label="Escríbenos por WhatsApp"><svg viewBox="0 0 24 24"><path d="M17.5 14.4c-.3-.1-1.7-.8-2-.9-.3-.1-.5-.1-.7.1-.2.3-.7.9-.9 1.1-.2.2-.3.2-.6.1-.3-.1-1.2-.5-2.3-1.4-.9-.8-1.4-1.7-1.6-2-.2-.3 0-.5.1-.6l.4-.5c.1-.2.2-.3.3-.5.1-.2 0-.4 0-.5s-.7-1.6-.9-2.2c-.2-.6-.5-.5-.7-.5h-.6c-.2 0-.5.1-.8.4-.3.3-1 1-1 2.5s1.1 2.9 1.2 3.1c.1.2 2.1 3.2 5 4.5.7.3 1.3.5 1.7.6.7.2 1.4.2 1.9.1.6-.1 1.7-.7 1.9-1.4.2-.7.2-1.2.2-1.4-.1-.1-.3-.2-.6-.3M12 2a10 10 0 0 0-8.6 15l-1.3 4.8 4.9-1.3A10 10 0 1 0 12 2Z"/></svg></a>
 
-<script src="./assets/js/site.js?v=20260916"></script>
+<script src="./assets/js/site.js?v=20260916b"></script>
 </body>
 </html>

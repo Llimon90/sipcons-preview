@@ -151,6 +151,7 @@ function sipcons_obtener_productos(): array {
             'descripcion'   => trim(preg_replace('/\s+/', ' ', strip_tags((string)$p['post_excerpt']))),
             'imagen'        => $imagen,
             'imagen_grande' => $imagenGrande,
+            'imagen_id'     => $attId,
             'tipo_slug'   => $tipoSlug,
             'tipo_label'  => $tipoSlug ? $mapa['tipos'][$tipoSlug] : 'Otros equipos',
             'marca_slug'  => $marcaSlug,
@@ -180,6 +181,60 @@ function sipcons_obtener_productos(): array {
         'tipos'     => $chipsTipos,
         'marcas'    => $chipsMarcas,
     ];
+}
+
+/**
+ * Todas las fotos de un producto (destacada + galería de WooCommerce), para
+ * la página de detalle. Cada elemento trae 'chica' (miniatura, para el
+ * carrusel de thumbnails) y 'grande' (original, para el zoom/modal).
+ */
+function sipcons_obtener_galeria_producto(int $productId, ?int $thumbnailAttId): array {
+    $pdo = sipcons_db();
+    $postmeta = sipcons_tabla('postmeta');
+
+    $stmt = $pdo->prepare("SELECT meta_value FROM {$postmeta} WHERE post_id = :id AND meta_key = '_product_image_gallery'");
+    $stmt->execute(['id' => $productId]);
+    $galeriaRaw = (string)($stmt->fetch()['meta_value'] ?? '');
+    $galeriaIds = $galeriaRaw !== '' ? array_map('intval', explode(',', $galeriaRaw)) : [];
+
+    $attIds = [];
+    if ($thumbnailAttId) $attIds[] = $thumbnailAttId;
+    foreach ($galeriaIds as $gid) if ($gid) $attIds[] = $gid;
+    $attIds = array_values(array_unique($attIds));
+    if (!$attIds) return [];
+
+    $ph = implode(',', array_fill(0, count($attIds), '?'));
+    $stmt = $pdo->prepare("SELECT post_id, meta_value AS ruta FROM {$postmeta} WHERE meta_key = '_wp_attached_file' AND post_id IN ({$ph})");
+    $stmt->execute($attIds);
+    $rutas = [];
+    foreach ($stmt as $row) $rutas[(int)$row['post_id']] = $row['ruta'];
+
+    $stmt = $pdo->prepare("SELECT post_id, meta_value AS metadata FROM {$postmeta} WHERE meta_key = '_wp_attachment_metadata' AND post_id IN ({$ph})");
+    $stmt->execute($attIds);
+    $metas = [];
+    foreach ($stmt as $row) {
+        $datos = @unserialize($row['metadata'], ['allowed_classes' => false]);
+        if (is_array($datos)) $metas[(int)$row['post_id']] = $datos;
+    }
+
+    $galeria = [];
+    foreach ($attIds as $attId) {
+        if (!isset($rutas[$attId])) continue;
+        $rutaOriginal = $rutas[$attId];
+        $sizes = $metas[$attId]['sizes'] ?? null;
+        $chica = null;
+        foreach (['woocommerce_thumbnail', 'medium', 'shop_catalog', 'thumbnail'] as $preferida) {
+            if (isset($sizes[$preferida]['file'])) {
+                $dir = dirname($rutaOriginal);
+                $dir = $dir === '.' ? '' : $dir . '/';
+                $chica = SIPCONS_UPLOADS_BASE . $dir . $sizes[$preferida]['file'];
+                break;
+            }
+        }
+        $grande = SIPCONS_UPLOADS_BASE . $rutaOriginal;
+        $galeria[] = ['chica' => $chica ?? $grande, 'grande' => $grande];
+    }
+    return $galeria;
 }
 
 /**
