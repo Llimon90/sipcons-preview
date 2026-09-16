@@ -102,7 +102,10 @@
   const catalog = document.getElementById('catalog');
   if (catalog) {
     const products = Array.from(catalog.querySelectorAll('.product'));
-    const filterBtns = catalog.querySelectorAll('.filter-btn');
+    // Los links a marca-mettler-toledo.html / marca-zebra.html comparten la
+    // clase .filter-btn solo por estilo (se ven igual), pero navegan a otra
+    // página — no deben comportarse como botones de filtro.
+    const filterBtns = catalog.querySelectorAll('.filter-btn[data-category], .filter-btn[data-brand]');
     const search = catalog.querySelector('#catalogSearch');
     const countTag = catalog.querySelector('#catalogCount');
     const empty = catalog.querySelector('.no-results');
