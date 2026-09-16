@@ -14,6 +14,13 @@ try {
     $sipconsCatalogo = sipcons_obtener_productos();
 } catch (Throwable $e) {
     $sipconsErrorCatalogo = true;
+    // Bitácora temporal: borrar este bloque y inc/productos-debug.log en cuanto quede resuelto.
+    @file_put_contents(
+        __DIR__ . '/inc/productos-debug.log',
+        '[' . date('Y-m-d H:i:s') . '] ' . get_class($e) . ': ' . $e->getMessage()
+            . ' en ' . $e->getFile() . ':' . $e->getLine() . "\n",
+        FILE_APPEND
+    );
 }
 $sipconsProductos = $sipconsCatalogo['productos'];
 $sipconsTipos     = $sipconsCatalogo['tipos'];
