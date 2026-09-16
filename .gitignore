@@ -3,3 +3,4 @@ images/
 SKILL.md
 inc/db-config.php
 inc/mail-debug.log
+inc/productos-debug.log
