@@ -156,8 +156,24 @@ function sipcons_obtener_productos(): array {
             'tipo_label'  => $tipoSlug ? $mapa['tipos'][$tipoSlug] : 'Otros equipos',
             'marca_slug'  => $marcaSlug,
             'marca_label' => $marcaSlug ? $mapa['marcas'][$marcaSlug] : '',
+            'cats'        => $cats,
         ];
     }
+
+    // --- Orden de aparición pedido por el dueño --------------------------
+    // Regla general: Mettler-Toledo, luego Rhino, luego CAS, luego el resto.
+    // Con reglas propias para Plataformas, Puntos de venta y Consumibles
+    // (ver sipcons_subrango_producto). Agrupa por tipo y ordena dentro de
+    // cada tipo, así cada filtro del catálogo respeta el orden pedido.
+    usort($productos, static function (array $a, array $b): int {
+        $ta = $a['tipo_slug'] ?? 'zzz';
+        $tb = $b['tipo_slug'] ?? 'zzz';
+        if ($ta !== $tb) return strcmp($ta, $tb);
+        $sa = sipcons_subrango_producto($a);
+        $sb = sipcons_subrango_producto($b);
+        if ($sa !== $sb) return $sa <=> $sb;
+        return strcasecmp($a['titulo'], $b['titulo']);
+    });
 
     // --- 5) Chips de filtro (solo los que sí tienen productos) --------
     $chipsTipos = [];
@@ -181,6 +197,46 @@ function sipcons_obtener_productos(): array {
         'tipos'     => $chipsTipos,
         'marcas'    => $chipsMarcas,
     ];
+}
+
+/**
+ * Orden dentro de cada tipo de equipo, según lo pedido por el dueño:
+ * - Plataformas: primero Rhino.
+ * - Puntos de venta: primero básculas que integran POS, luego terminales
+ *   POS, luego periféricos (impresoras, scanners, cajones de dinero).
+ * - Consumibles: primero etiquetas, luego cabezas térmicas, luego teclados.
+ * - Todo lo demás: Mettler-Toledo, luego Rhino, luego CAS, luego el resto.
+ */
+function sipcons_subrango_producto(array $p): int {
+    $tipo   = $p['tipo_slug'] ?? '';
+    $marca  = $p['marca_slug'] ?? '';
+    $titulo = mb_strtoupper($p['titulo']);
+    $cats   = $p['cats'] ?? [];
+
+    if ($tipo === 'de-plataforma') {
+        return $marca === 'rhino' ? 0 : 1;
+    }
+
+    if ($tipo === 'puntos-de-venta') {
+        if (in_array('basculas', $cats, true) || in_array('comerciales', $cats, true)) return 0;
+        if (strpos($titulo, 'TERMINAL') !== false || in_array('touch', $cats, true)) return 1;
+        if (in_array('impresoras', $cats, true) || in_array('scanners', $cats, true) || in_array('cajones-de-dinero', $cats, true)) return 2;
+        return 3;
+    }
+
+    if ($tipo === 'consumibles') {
+        if (strpos($titulo, 'ETIQUETA') !== false || strpos($titulo, 'ROLLO') !== false) return 0;
+        if (strpos($titulo, 'CABEZA') !== false) return 1;
+        if (strpos($titulo, 'TECLADO') !== false) return 2;
+        return 3;
+    }
+
+    switch ($marca) {
+        case 'mettler': return 0;
+        case 'rhino':   return 1;
+        case 'cas':     return 2;
+        default:        return 3;
+    }
 }
 
 /**

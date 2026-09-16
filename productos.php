@@ -42,7 +42,7 @@ $sipconsMarcas    = $sipconsCatalogo['marcas'];
 <meta name="twitter:title" content="Catálogo de Productos · SIPCONS">
 <meta name="twitter:description" content="Catálogo de básculas, plataformas, puntos de venta y consumibles. Cotiza a la medida las mejores marcas: Mettler-Toledo, Zebra, Toshiba, CAS, A&D, Rhino y más.">
 <meta name="twitter:image" content="https://sipcons.com/assets/img/hero-slide-1.jpg">
-<link rel="stylesheet" href="./assets/css/site.css?v=20260916b">
+<link rel="stylesheet" href="./assets/css/site.css?v=20260916c">
 </head>
 <body>
 
@@ -117,6 +117,15 @@ $sipconsMarcas    = $sipconsCatalogo['marcas'];
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg>
             <input type="search" id="catalogSearch" placeholder="Buscar producto…" aria-label="Buscar producto">
           </div>
+          <label class="page-size" style="display:flex;align-items:center;gap:var(--space-2);font-size:var(--text-sm);color:var(--color-text-muted)">
+            Mostrar
+            <select id="catalogPageSize" style="border:1px solid var(--color-border);border-radius:var(--radius-md);padding:6px 10px;font:inherit;color:var(--color-text)">
+              <option value="12">12</option>
+              <option value="24" selected>24</option>
+              <option value="48">48</option>
+              <option value="all">Todos</option>
+            </select>
+          </label>
           <span class="count-tag" id="catalogCount"></span>
         </div>
 
@@ -149,6 +158,8 @@ $sipconsMarcas    = $sipconsCatalogo['marcas'];
 
           <p class="no-results">No encontramos productos con ese criterio. Prueba otra categoría o <a href="https://wa.me/526641086038" style="color:var(--color-primary);font-weight:600">escríbenos por WhatsApp</a>.</p>
         </div>
+
+        <nav class="catalog-pager" id="catalogPager" aria-label="Paginación de productos"></nav>
 
         <p style="color:var(--color-text-subtle);font-size:var(--text-sm);margin-top:var(--space-6)">Nuestra tienda en línea se implementará próximamente. Por ahora, cotiza sin compromiso por WhatsApp y un asesor te atiende al instante con una propuesta a la medida de tus requerimientos y necesidades.</p>
       </div>
@@ -213,6 +224,6 @@ $sipconsMarcas    = $sipconsCatalogo['marcas'];
 
 <a href="https://wa.me/526641086038" class="wa" aria-label="Escríbenos por WhatsApp"><svg viewBox="0 0 24 24"><path d="M17.5 14.4c-.3-.1-1.7-.8-2-.9-.3-.1-.5-.1-.7.1-.2.3-.7.9-.9 1.1-.2.2-.3.2-.6.1-.3-.1-1.2-.5-2.3-1.4-.9-.8-1.4-1.7-1.6-2-.2-.3 0-.5.1-.6l.4-.5c.1-.2.2-.3.3-.5.1-.2 0-.4 0-.5s-.7-1.6-.9-2.2c-.2-.6-.5-.5-.7-.5h-.6c-.2 0-.5.1-.8.4-.3.3-1 1-1 2.5s1.1 2.9 1.2 3.1c.1.2 2.1 3.2 5 4.5.7.3 1.3.5 1.7.6.7.2 1.4.2 1.9.1.6-.1 1.7-.7 1.9-1.4.2-.7.2-1.2.2-1.4-.1-.1-.3-.2-.6-.3M12 2a10 10 0 0 0-8.6 15l-1.3 4.8 4.9-1.3A10 10 0 1 0 12 2Z"/></svg></a>
 
-<script src="./assets/js/site.js?v=20260916b"></script>
+<script src="./assets/js/site.js?v=20260916c"></script>
 </body>
 </html>

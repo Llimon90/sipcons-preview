@@ -98,7 +98,7 @@
     }));
   });
 
-  /* ---- Catálogo: filtro por categoría + búsqueda ---- */
+  /* ---- Catálogo: filtro por categoría + búsqueda + paginación ---- */
   const catalog = document.getElementById('catalog');
   if (catalog) {
     const products = Array.from(catalog.querySelectorAll('.product'));
@@ -106,22 +106,51 @@
     const search = catalog.querySelector('#catalogSearch');
     const countTag = catalog.querySelector('#catalogCount');
     const empty = catalog.querySelector('.no-results');
+    const pageSizeSel = catalog.querySelector('#catalogPageSize');
+    const pager = catalog.querySelector('#catalogPager');
     let activeCat = 'all';
     let activeBrand = 'all';
+    let pagina = 1;
 
     const apply = () => {
       const q = (search?.value || '').trim().toLowerCase();
-      let shown = 0;
+      const visibles = [];
       products.forEach(p => {
         const matchCat = activeCat === 'all' || p.dataset.category === activeCat;
         const matchBrand = activeBrand === 'all' || p.dataset.brand === activeBrand;
         const matchText = !q || p.dataset.name.toLowerCase().includes(q);
         const ok = matchCat && matchBrand && matchText;
-        p.style.display = ok ? '' : 'none';
-        if (ok) shown++;
+        if (ok) visibles.push(p); else p.style.display = 'none';
       });
-      if (countTag) countTag.textContent = shown + (shown === 1 ? ' producto' : ' productos');
-      if (empty) empty.style.display = shown ? 'none' : 'block';
+
+      const porPagina = pageSizeSel?.value === 'all' ? visibles.length || 1 : parseInt(pageSizeSel?.value || '24', 10);
+      const totalPaginas = Math.max(1, Math.ceil(visibles.length / porPagina));
+      if (pagina > totalPaginas) pagina = totalPaginas;
+      const inicio = (pagina - 1) * porPagina;
+      const fin = inicio + porPagina;
+
+      visibles.forEach((p, i) => { p.style.display = (i >= inicio && i < fin) ? '' : 'none'; });
+
+      if (countTag) countTag.textContent = visibles.length + (visibles.length === 1 ? ' producto' : ' productos');
+      if (empty) empty.style.display = visibles.length ? 'none' : 'block';
+
+      if (pager) {
+        pager.innerHTML = '';
+        if (totalPaginas > 1) {
+          const btn = (etiqueta, destino, deshabilitado, activo) => {
+            const b = document.createElement('button');
+            b.type = 'button';
+            b.textContent = etiqueta;
+            b.className = 'pager-btn' + (activo ? ' active' : '');
+            b.disabled = !!deshabilitado;
+            b.addEventListener('click', () => { pagina = destino; apply(); catalog.scrollIntoView({ behavior: reduce ? 'auto' : 'smooth', block: 'start' }); });
+            return b;
+          };
+          pager.appendChild(btn('‹ Anterior', pagina - 1, pagina === 1, false));
+          for (let i = 1; i <= totalPaginas; i++) pager.appendChild(btn(String(i), i, false, i === pagina));
+          pager.appendChild(btn('Siguiente ›', pagina + 1, pagina === totalPaginas, false));
+        }
+      }
     };
 
     filterBtns.forEach(btn => btn.addEventListener('click', () => {
@@ -130,9 +159,11 @@
       btn.classList.add('active');
       if (btn.dataset.category !== undefined) activeCat = btn.dataset.category;
       if (btn.dataset.brand !== undefined) activeBrand = btn.dataset.brand;
+      pagina = 1;
       apply();
     }));
-    if (search) search.addEventListener('input', apply);
+    if (search) search.addEventListener('input', () => { pagina = 1; apply(); });
+    if (pageSizeSel) pageSizeSel.addEventListener('change', () => { pagina = 1; apply(); });
     apply();
   }
 

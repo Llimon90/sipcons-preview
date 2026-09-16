@@ -171,6 +171,51 @@ try {
         }
     }
 
+    echo "\n=== Productos actuales en 'De Plataforma' (para saber cuál pide quitar el dueño) ===\n";
+    $stmt = $pdo->query("
+        SELECT p.ID, p.post_title, p.post_status
+        FROM {$posts} p
+        JOIN {$termRel} tr ON tr.object_id = p.ID
+        JOIN {$termTax} tt ON tt.term_taxonomy_id = tr.term_taxonomy_id
+        JOIN {$terms} t ON t.term_id = tt.term_id
+        WHERE tt.taxonomy = 'product_cat' AND t.slug = 'de-plataforma'
+        ORDER BY p.post_title
+    ");
+    foreach ($stmt as $row) {
+        echo "  #{$row['ID']} \"{$row['post_title']}\" [{$row['post_status']}]\n";
+    }
+
+    echo "\n=== Modelos pedidos por el dueño: ¿ya existen (aunque sea publicados/no publicados o mal categorizados)? ===\n";
+    $modelosPedidos = [
+        'BAR-8', 'BAPRE-1', 'BAPRE-3', 'BAPRE-600',
+        'BAPCA-80', 'BAPCA-100', 'BAPCA-200', 'BAPCA-600', 'BAPCA-800',
+        'BP-80', 'BP-100', 'BP-200', 'BP-500',
+        'BAVET-200', 'BAPIC-100', 'BAPIC-300',
+        'PLABA-0', 'PLABA-12', 'PLABA-15', 'BAPER-12',
+        'BAPO-15', 'BACO-30', 'BcomS',
+    ];
+    foreach ($modelosPedidos as $modelo) {
+        $stmt = $pdo->prepare("
+            SELECT p.ID, p.post_title, p.post_status,
+                   GROUP_CONCAT(DISTINCT t.name ORDER BY t.name SEPARATOR ', ') AS categorias
+            FROM {$posts} p
+            LEFT JOIN {$termRel} tr ON tr.object_id = p.ID
+            LEFT JOIN {$termTax} tt ON tt.term_taxonomy_id = tr.term_taxonomy_id AND tt.taxonomy = 'product_cat'
+            LEFT JOIN {$terms} t ON t.term_id = tt.term_id
+            WHERE p.post_type = 'product' AND p.post_title LIKE :buscar
+            GROUP BY p.ID
+        ");
+        $stmt->execute(['buscar' => '%' . $modelo . '%']);
+        $encontrados = $stmt->fetchAll();
+        if (!$encontrados) {
+            echo "  {$modelo}: NO EXISTE en la base de datos\n";
+        } else {
+            foreach ($encontrados as $row) {
+                echo "  {$modelo}: existe -> #{$row['ID']} \"{$row['post_title']}\" [{$row['post_status']}] categorías: " . ($row['categorias'] ?: '(ninguna)') . "\n";
+            }
+        }
+    }
+
     echo "\nOK — copia y pega toda esta salida.\n";
 } catch (Throwable $e) {
     http_response_code(500);
