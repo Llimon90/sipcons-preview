@@ -14,13 +14,6 @@ try {
     $sipconsCatalogo = sipcons_obtener_productos();
 } catch (Throwable $e) {
     $sipconsErrorCatalogo = true;
-    // Bitácora temporal: borrar este bloque y inc/productos-debug.log en cuanto quede resuelto.
-    @file_put_contents(
-        __DIR__ . '/inc/productos-debug.log',
-        '[' . date('Y-m-d H:i:s') . '] ' . get_class($e) . ': ' . $e->getMessage()
-            . ' en ' . $e->getFile() . ':' . $e->getLine() . "\n",
-        FILE_APPEND
-    );
 }
 $sipconsProductos = $sipconsCatalogo['productos'];
 $sipconsTipos     = $sipconsCatalogo['tipos'];
@@ -51,7 +44,8 @@ $sipconsMarcas    = $sipconsCatalogo['marcas'];
 <meta name="twitter:image" content="https://sipcons.com/assets/img/hero-slide-1.jpg">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
+<link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&display=swap" onload="this.onload=null;this.rel='stylesheet'">
+<noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&display=swap"></noscript>
 <link rel="stylesheet" href="./assets/css/site.css?v=20260912c">
 </head>
 <body>
