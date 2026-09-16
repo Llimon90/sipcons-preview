@@ -105,6 +105,72 @@ try {
         echo "     " . ($row['terminos'] ?: '(sin términos)') . "\n";
     }
 
+    echo "\n=== PDFs en la biblioteca de medios (fichas técnicas / manuales) ===\n";
+    $stmt = $pdo->query("
+        SELECT COUNT(*) AS n
+        FROM {$posts}
+        WHERE post_type = 'attachment' AND post_mime_type = 'application/pdf'
+    ");
+    echo '  Total de PDFs subidos a WordPress: ' . $stmt->fetch()['n'] . "\n";
+
+    echo "\n  -- PDFs cuyo post_parent SÍ es un producto publicado (asociación directa) --\n";
+    $stmt = $pdo->query("
+        SELECT a.ID AS pdf_id, a.post_title AS pdf_titulo, a.post_parent AS producto_id, p.post_title AS producto_titulo,
+               am.meta_value AS ruta
+        FROM {$posts} a
+        JOIN {$posts} p ON p.ID = a.post_parent AND p.post_type = 'product' AND p.post_status = 'publish'
+        LEFT JOIN {$postmeta} am ON am.post_id = a.ID AND am.meta_key = '_wp_attached_file'
+        WHERE a.post_type = 'attachment' AND a.post_mime_type = 'application/pdf'
+        ORDER BY p.post_title
+        LIMIT 30
+    ");
+    $conParent = 0;
+    foreach ($stmt as $row) {
+        $conParent++;
+        echo "     producto #{$row['producto_id']} {$row['producto_titulo']}  ->  {$row['pdf_titulo']} ({$row['ruta']})\n";
+    }
+    if (!$conParent) echo "     (ninguno — los PDFs no están asociados por post_parent a un producto)\n";
+
+    echo "\n  -- Primeros 15 PDFs sin filtrar (para ver dónde viven y cómo se llaman) --\n";
+    $stmt = $pdo->query("
+        SELECT a.ID, a.post_title, a.post_parent, am.meta_value AS ruta
+        FROM {$posts} a
+        LEFT JOIN {$postmeta} am ON am.post_id = a.ID AND am.meta_key = '_wp_attached_file'
+        WHERE a.post_type = 'attachment' AND a.post_mime_type = 'application/pdf'
+        ORDER BY a.ID DESC
+        LIMIT 15
+    ");
+    foreach ($stmt as $row) {
+        echo "     #{$row['ID']} \"{$row['post_title']}\" post_parent={$row['post_parent']}  ruta: {$row['ruta']}\n";
+    }
+
+    echo "\n  -- Meta keys de productos que parecen apuntar a un archivo/manual/ficha --\n";
+    $stmt = $pdo->query("
+        SELECT DISTINCT meta_key
+        FROM {$postmeta}
+        WHERE meta_key LIKE '%pdf%' OR meta_key LIKE '%manual%' OR meta_key LIKE '%ficha%'
+           OR meta_key LIKE '%download%' OR meta_key LIKE '%adjunto%' OR meta_key LIKE '%archivo%'
+           OR meta_key LIKE '%datasheet%' OR meta_key LIKE '%catalogo%'
+        ORDER BY meta_key
+    ");
+    $metaKeys = $stmt->fetchAll(PDO::FETCH_COLUMN);
+    if (!$metaKeys) {
+        echo "     (ninguno)\n";
+    }
+    foreach ($metaKeys as $mk) {
+        $stmt2 = $pdo->prepare("SELECT COUNT(*) AS n FROM {$postmeta} WHERE meta_key = :mk AND meta_value <> ''");
+        $stmt2->execute(['mk' => $mk]);
+        $n = $stmt2->fetch()['n'];
+        echo "     {$mk}  ({$n} productos con valor)\n";
+        if ($n > 0) {
+            $stmt3 = $pdo->prepare("SELECT post_id, LEFT(meta_value,150) AS v FROM {$postmeta} WHERE meta_key = :mk AND meta_value <> '' LIMIT 2");
+            $stmt3->execute(['mk' => $mk]);
+            foreach ($stmt3 as $ej) {
+                echo "        ej. post_id={$ej['post_id']}: {$ej['v']}\n";
+            }
+        }
+    }
+
     echo "\nOK — copia y pega toda esta salida.\n";
 } catch (Throwable $e) {
     http_response_code(500);
