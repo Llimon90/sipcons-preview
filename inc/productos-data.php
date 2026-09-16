@@ -161,14 +161,22 @@ function sipcons_obtener_productos(): array {
     }
 
     // --- Orden de aparición pedido por el dueño --------------------------
-    // Regla general: Mettler-Toledo, luego Rhino, luego CAS, luego el resto.
-    // Con reglas propias para Plataformas, Puntos de venta y Consumibles
-    // (ver sipcons_subrango_producto). Agrupa por tipo y ordena dentro de
-    // cada tipo, así cada filtro del catálogo respeta el orden pedido.
-    usort($productos, static function (array $a, array $b): int {
-        $ta = $a['tipo_slug'] ?? 'zzz';
-        $tb = $b['tipo_slug'] ?? 'zzz';
-        if ($ta !== $tb) return strcmp($ta, $tb);
+    // Regla general dentro de cada tipo de equipo (filtros por categoría):
+    // Mettler-Toledo, luego Rhino, luego CAS, luego el resto — salvo Puntos
+    // de venta y Consumibles, que tienen su propia regla (ver
+    // sipcons_subrango_producto). Los tipos se agrupan en este orden para
+    // que, al filtrar por MARCA, el equipo aparezca primero y los
+    // consumibles/refacciones siempre queden al final.
+    $ordenTipos = array_flip([
+        'de-precision', 'de-plataforma', 'contadoras', 'etiquetadoras',
+        'porcionadoras', 'colgantes', 'a-prueba-de-agua', 'comerciales',
+        'puntos-de-venta', 'touch', 'impresoras', 'scanners', 'indicadores',
+        'basculas', 'consumibles',
+    ]);
+    usort($productos, static function (array $a, array $b) use ($ordenTipos): int {
+        $ta = $ordenTipos[$a['tipo_slug'] ?? ''] ?? 999;
+        $tb = $ordenTipos[$b['tipo_slug'] ?? ''] ?? 999;
+        if ($ta !== $tb) return $ta <=> $tb;
         $sa = sipcons_subrango_producto($a);
         $sb = sipcons_subrango_producto($b);
         if ($sa !== $sb) return $sa <=> $sb;
@@ -200,21 +208,18 @@ function sipcons_obtener_productos(): array {
 
 /**
  * Orden dentro de cada tipo de equipo, según lo pedido por el dueño:
- * - Plataformas: primero Rhino.
  * - Puntos de venta: primero básculas que integran POS, luego terminales
  *   POS, luego periféricos (impresoras, scanners, cajones de dinero).
  * - Consumibles: primero etiquetas, luego cabezas térmicas, luego teclados.
- * - Todo lo demás: Mettler-Toledo, luego Rhino, luego CAS, luego el resto.
+ * - Todo lo demás (incluida Plataformas): Mettler-Toledo, luego Rhino,
+ *   luego CAS, luego el resto — es el orden de marca que pide el dueño
+ *   para los filtros por característica de equipo.
  */
 function sipcons_subrango_producto(array $p): int {
     $tipo   = $p['tipo_slug'] ?? '';
     $marca  = $p['marca_slug'] ?? '';
     $titulo = mb_strtoupper($p['titulo']);
     $cats   = $p['cats'] ?? [];
-
-    if ($tipo === 'de-plataforma') {
-        return $marca === 'rhino' ? 0 : 1;
-    }
 
     if ($tipo === 'puntos-de-venta') {
         if (in_array('basculas', $cats, true) || in_array('comerciales', $cats, true)) return 0;
