@@ -68,6 +68,11 @@ ErrorDocument 404 /404.html
   <If "%{REQUEST_URI} =~ m#\.html$# || %{REQUEST_URI} == '/'">
     Header set Cache-Control "public, max-age=3600, must-revalidate"
   </If>
+  # Fotos de productos servidas desde WordPress para el catálogo: solo
+  # cabecera de caché (no toca el resto de /tienda/, que WP administra).
+  <If "%{REQUEST_URI} =~ m#^/tienda/wp-content/uploads/#">
+    Header set Cache-Control "public, max-age=2592000"
+  </If>
 </IfModule>
 
 # --- Cabeceras de seguridad para el sitio ---------------------

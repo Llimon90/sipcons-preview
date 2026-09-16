@@ -63,6 +63,7 @@ function sipcons_obtener_productos(): array {
     }
 
     $rutaPorAttachment = [];
+    $metaPorAttachment = [];
     if ($attachmentIds) {
         $attachmentIds = array_values(array_unique($attachmentIds));
         $ph2 = implode(',', array_fill(0, count($attachmentIds), '?'));
@@ -75,7 +76,40 @@ function sipcons_obtener_productos(): array {
         foreach ($stmt as $row) {
             $rutaPorAttachment[(int)$row['post_id']] = $row['ruta'];
         }
+
+        // Metadatos con los tamaños que WordPress ya generó (thumbnail, medium, etc.)
+        // para no servir siempre la foto original de varios cientos de KB.
+        $stmt = $pdo->prepare("
+            SELECT post_id, meta_value AS metadata
+            FROM {$postmeta}
+            WHERE meta_key = '_wp_attachment_metadata' AND post_id IN ({$ph2})
+        ");
+        $stmt->execute($attachmentIds);
+        foreach ($stmt as $row) {
+            $datos = @unserialize($row['metadata'], ['allowed_classes' => false]);
+            if (is_array($datos)) {
+                $metaPorAttachment[(int)$row['post_id']] = $datos;
+            }
+        }
     }
+
+    // Elige una miniatura ya generada por WordPress (mucho más liviana que el
+    // original) para el grid del catálogo; conserva el original para la
+    // página de detalle de cada producto.
+    $sipconsImagenChica = static function (?int $attId) use ($rutaPorAttachment, $metaPorAttachment): ?string {
+        if (!$attId || !isset($rutaPorAttachment[$attId])) return null;
+        $rutaOriginal = $rutaPorAttachment[$attId];
+        $meta = $metaPorAttachment[$attId] ?? null;
+        $sizes = $meta['sizes'] ?? null;
+        foreach (['woocommerce_thumbnail', 'medium', 'shop_catalog', 'thumbnail'] as $preferida) {
+            if (isset($sizes[$preferida]['file'])) {
+                $dir = dirname($rutaOriginal);
+                $dir = $dir === '.' ? '' : $dir . '/';
+                return SIPCONS_UPLOADS_BASE . $dir . $sizes[$preferida]['file'];
+            }
+        }
+        return SIPCONS_UPLOADS_BASE . $rutaOriginal; // sin tamaños generados: usar el original
+    };
 
     // --- 4) Clasificar tipo/marca y armar cada tarjeta ----------------
     $tiposSlugs  = array_keys($mapa['tipos']);
@@ -104,18 +138,19 @@ function sipcons_obtener_productos(): array {
         if ($tipoSlug !== null) $conteoTipos[$tipoSlug]++;
         if ($marcaSlug !== null) $conteoMarcas[$marcaSlug]++;
 
-        $imagen = null;
         $attId = $thumbIdPorProducto[$id] ?? null;
-        if ($attId && isset($rutaPorAttachment[$attId])) {
-            $imagen = SIPCONS_UPLOADS_BASE . $rutaPorAttachment[$attId];
-        }
+        $imagen = $sipconsImagenChica($attId);
+        $imagenGrande = ($attId && isset($rutaPorAttachment[$attId]))
+            ? SIPCONS_UPLOADS_BASE . $rutaPorAttachment[$attId]
+            : null;
 
         $productos[] = [
-            'id'          => $id,
-            'titulo'      => $p['post_title'],
-            'slug'        => $p['post_name'],
-            'descripcion' => trim(preg_replace('/\s+/', ' ', strip_tags((string)$p['post_excerpt']))),
-            'imagen'      => $imagen,
+            'id'            => $id,
+            'titulo'        => $p['post_title'],
+            'slug'          => $p['post_name'],
+            'descripcion'   => trim(preg_replace('/\s+/', ' ', strip_tags((string)$p['post_excerpt']))),
+            'imagen'        => $imagen,
+            'imagen_grande' => $imagenGrande,
             'tipo_slug'   => $tipoSlug,
             'tipo_label'  => $tipoSlug ? $mapa['tipos'][$tipoSlug] : 'Otros equipos',
             'marca_slug'  => $marcaSlug,
