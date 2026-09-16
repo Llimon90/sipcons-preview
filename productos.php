@@ -26,7 +26,7 @@ $sipconsMarcas    = $sipconsCatalogo['marcas'];
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Catálogo de Productos · SIPCONS</title>
 <meta name="description" content="Catálogo de básculas, plataformas, puntos de venta y consumibles. Cotiza a la medida las mejores marcas: Mettler-Toledo, Zebra, Toshiba, CAS, A&D, Rhino y más.">
-<link rel="canonical" href="https://sipcons.com/productos.html">
+<link rel="canonical" href="https://sipcons.com/productos.php">
 <meta name="theme-color" content="#0E1B3D">
 <link rel="icon" href="./assets/img/favicon.ico" sizes="any">
 <link rel="icon" type="image/png" href="./assets/img/favicon-32.png">
@@ -36,7 +36,7 @@ $sipconsMarcas    = $sipconsCatalogo['marcas'];
 <meta property="og:locale" content="es_MX">
 <meta property="og:title" content="Catálogo de Productos · SIPCONS">
 <meta property="og:description" content="Catálogo de básculas, plataformas, puntos de venta y consumibles. Cotiza a la medida las mejores marcas: Mettler-Toledo, Zebra, Toshiba, CAS, A&D, Rhino y más.">
-<meta property="og:url" content="https://sipcons.com/productos.html">
+<meta property="og:url" content="https://sipcons.com/productos.php">
 <meta property="og:image" content="https://sipcons.com/assets/img/hero-slide-1.jpg">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="Catálogo de Productos · SIPCONS">
@@ -63,7 +63,7 @@ $sipconsMarcas    = $sipconsCatalogo['marcas'];
       <li><a href="index.html">Inicio</a></li>
       <li><a href="quienes-somos.html">Nosotros</a></li>
       <li><a href="servicios.html">Servicios</a></li>
-      <li><a href="productos.html" class="active">Productos</a></li>
+      <li><a href="productos.php" class="active">Productos</a></li>
       <li><a href="soporte.html">Soporte</a></li>
       <li><a href="contacto.html">Contacto</a></li>
     </ul></nav>
@@ -198,8 +198,8 @@ $sipconsMarcas    = $sipconsCatalogo['marcas'];
     <div class="footer-grid">
       <div><div class="brand"><img src="./assets/img/logo-grande.png" alt="SIPCONS" class="nav-logo"></div><p class="tagline">Soluciones Integrales de Pesaje y Control. Innovación y confianza desde 1980.</p></div>
       <div><h5>Soluciones</h5><ul>
-        <li><a href="productos.html">Básculas</a></li><li><a href="productos.html">Puntos de Venta</a></li>
-        <li><a href="productos.html">Plataformas</a></li><li><a href="productos.html">Consumibles</a></li><li><a href="soporte.html">Soporte técnico</a></li>
+        <li><a href="productos.php">Básculas</a></li><li><a href="productos.php">Puntos de Venta</a></li>
+        <li><a href="productos.php">Plataformas</a></li><li><a href="productos.php">Consumibles</a></li><li><a href="soporte.html">Soporte técnico</a></li>
       </ul></div>
       <div><h5>Recursos</h5><ul>
         <li><a href="casos-de-exito.html">Casos de éxito</a></li><li><a href="recursos.html">Centro de recursos</a></li>

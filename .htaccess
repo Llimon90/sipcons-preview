@@ -12,15 +12,6 @@
 Options -Indexes
 DirectoryIndex index.html index.php
 
-# productos.html trae el catálogo en vivo desde WooCommerce (ver inc/productos-data.php)
-# y necesita ejecutarse como PHP, aunque conserva la extensión .html para no romper
-# enlaces ni el SEO existente.
-<IfModule mod_mime.c>
-  <Files "productos.html">
-    ForceType application/x-httpd-php
-  </Files>
-</IfModule>
-
 <IfModule mod_rewrite.c>
   RewriteEngine On
 
@@ -30,6 +21,10 @@ DirectoryIndex index.html index.php
 
   # No exponer el repositorio si clonas el repo con git en la raíz
   RewriteRule (^|/)\.git(/|$) - [F,L]
+
+  # productos.html pasó a ser productos.php (necesita PHP para leer WooCommerce).
+  # Redirige la URL vieja por si quedó indexada o guardada en algún enlace.
+  RewriteRule ^productos\.html$ /productos.php [L,R=301]
 
   # --- 2) Dominio canónico: HTTPS + sin www ------------------------
   RewriteCond %{HTTPS} off [OR]
