@@ -42,7 +42,7 @@ $sipconsMarcas    = $sipconsCatalogo['marcas'];
 <meta name="twitter:title" content="Catálogo de Productos · SIPCONS">
 <meta name="twitter:description" content="Catálogo de básculas, plataformas, puntos de venta y consumibles. Cotiza a la medida las mejores marcas: Mettler-Toledo, Zebra, Toshiba, CAS, A&D, Rhino y más.">
 <meta name="twitter:image" content="https://sipcons.com/assets/img/hero-slide-1.jpg">
-<link rel="stylesheet" href="./assets/css/site.css?v=20260922b">
+<link rel="stylesheet" href="./assets/css/site.css?v=20260922c">
 </head>
 <body>
 
