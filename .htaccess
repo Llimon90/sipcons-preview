@@ -10,7 +10,7 @@
 # =====================================================================
 
 Options -Indexes
-DirectoryIndex index.html index.php
+DirectoryIndex index.php index.html
 
 <IfModule mod_rewrite.c>
   RewriteEngine On
@@ -22,9 +22,11 @@ DirectoryIndex index.html index.php
   # No exponer el repositorio si clonas el repo con git en la raíz
   RewriteRule (^|/)\.git(/|$) - [F,L]
 
-  # productos.html pasó a ser productos.php (necesita PHP para leer WooCommerce).
-  # Redirige la URL vieja por si quedó indexada o guardada en algún enlace.
+  # productos.html e index.html pasaron a ser .php (necesitan PHP para leer
+  # WooCommerce). Redirige las URLs viejas por si quedaron indexadas o
+  # guardadas en algún enlace.
   RewriteRule ^productos\.html$ /productos.php [L,R=301]
+  RewriteRule ^index\.html$ /index.php [L,R=301]
 
   # --- 2) Dominio canónico: HTTPS + sin www ------------------------
   RewriteCond %{HTTPS} off [OR]
@@ -65,7 +67,7 @@ ErrorDocument 404 /404.html
   <If "%{REQUEST_URI} =~ m#^/assets/#">
     Header set Cache-Control "public, max-age=2592000"
   </If>
-  <If "%{REQUEST_URI} =~ m#\.html$# || %{REQUEST_URI} == '/'">
+  <If "%{REQUEST_URI} =~ m#\.html$# || %{REQUEST_URI} == '/' || %{REQUEST_URI} == '/index.php'">
     Header set Cache-Control "public, max-age=3600, must-revalidate"
   </If>
   # Fotos de productos servidas desde WordPress para el catálogo: solo

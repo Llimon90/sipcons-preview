@@ -85,6 +85,42 @@
     restart();
   });
 
+  /* ---- Carrusel de productos destacados (inicio) ---- */
+  const featured = document.getElementById('featuredCarousel');
+  if (featured) {
+    const viewport = featured.querySelector('[data-featured-viewport]');
+    const card = featured.querySelector('.featured-card');
+    let timer;
+
+    const step = () => {
+      if (!card) return viewport.clientWidth;
+      const gap = parseFloat(getComputedStyle(featured.querySelector('.featured-track')).gap) || 0;
+      return card.getBoundingClientRect().width + gap;
+    };
+
+    const atEnd = () => viewport.scrollLeft + viewport.clientWidth >= viewport.scrollWidth - 4;
+
+    const next = () => {
+      if (atEnd()) viewport.scrollTo({ left: 0, behavior: 'smooth' });
+      else viewport.scrollBy({ left: step(), behavior: 'smooth' });
+    };
+    const prev = () => viewport.scrollBy({ left: -step(), behavior: 'smooth' });
+
+    const restart = () => {
+      clearInterval(timer);
+      if (!reduce) timer = setInterval(next, 4000);
+    };
+
+    featured.querySelector('[data-featured-next]')?.addEventListener('click', () => { next(); restart(); });
+    featured.querySelector('[data-featured-prev]')?.addEventListener('click', () => { prev(); restart(); });
+    featured.addEventListener('mouseenter', () => clearInterval(timer));
+    featured.addEventListener('mouseleave', restart);
+    viewport.addEventListener('touchstart', () => clearInterval(timer), { passive: true });
+    viewport.addEventListener('touchend', restart, { passive: true });
+
+    restart();
+  }
+
   /* ---- Tabs (misión / visión / valores) ---- */
   document.querySelectorAll('[data-tabs]').forEach(group => {
     const btns = group.querySelectorAll('.tab-btn');

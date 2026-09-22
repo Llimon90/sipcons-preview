@@ -244,6 +244,63 @@ function sipcons_subrango_producto(array $p): int {
 }
 
 /**
+ * Selección aleatoria de productos para el carrusel "Equipo listo para
+ * trabajar desde hoy" del inicio. Mezcla marcas y tipos de equipo (Toledo,
+ * Rhino, touch, impresoras, plataformas, etc.) en vez de repetir siempre
+ * los mismos; se recalcula en cada carga de la página. Solo entran
+ * productos con foto y no se incluyen consumibles/refacciones.
+ */
+function sipcons_productos_destacados_aleatorios(array $productos, int $cantidad = 8): array {
+    $pool = array_values(array_filter($productos, static function (array $p): bool {
+        return !empty($p['imagen']) && ($p['tipo_slug'] ?? '') !== 'consumibles';
+    }));
+    if (!$pool) return [];
+
+    $porTipo = [];
+    foreach ($pool as $p) {
+        $porTipo[$p['tipo_slug'] ?? '_sin_tipo'][] = $p;
+    }
+    foreach ($porTipo as &$grupo) {
+        shuffle($grupo);
+    }
+    unset($grupo);
+
+    $tipos = array_keys($porTipo);
+    shuffle($tipos);
+
+    $seleccion = [];
+    $usados = [];
+
+    // Primera pasada: un producto de cada tipo distinto (variedad garantizada).
+    foreach ($tipos as $tipo) {
+        if (count($seleccion) >= $cantidad) break;
+        $candidato = array_shift($porTipo[$tipo]);
+        if ($candidato) {
+            $seleccion[] = $candidato;
+            $usados[$candidato['id']] = true;
+        }
+    }
+
+    // Si faltan lugares, se completa con lo que quede, sin repetir.
+    if (count($seleccion) < $cantidad) {
+        $resto = [];
+        foreach ($porTipo as $grupo) {
+            foreach ($grupo as $p) {
+                if (!isset($usados[$p['id']])) $resto[] = $p;
+            }
+        }
+        shuffle($resto);
+        foreach ($resto as $p) {
+            if (count($seleccion) >= $cantidad) break;
+            $seleccion[] = $p;
+        }
+    }
+
+    shuffle($seleccion);
+    return $seleccion;
+}
+
+/**
  * Todas las fotos de un producto (destacada + galería de WooCommerce), para
  * la página de detalle. Cada elemento trae 'chica' (miniatura, para el
  * carrusel de thumbnails) y 'grande' (original, para el zoom/modal).

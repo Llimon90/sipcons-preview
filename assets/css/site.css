@@ -345,6 +345,19 @@ body:has(#nav.scrolled) .nav-cta{position:static;transform:none;}
 .product-actions{display:flex;gap:var(--space-2);margin-top:var(--space-3);}
 .no-results{grid-column:1/-1;text-align:center;color:var(--color-text-subtle);padding:var(--space-10);}
 
+/* --- Carrusel de productos destacados (inicio) ------------------------
+   Nombres con prefijo featured- a propósito: .carousel-arrow / .carousel-track
+   ya los usa el carrusel de imágenes del hero (arriba) con otro estilo. --- */
+.featured-carousel{position:relative;padding:0 var(--space-8);}
+.featured-viewport{overflow-x:auto;overflow-y:hidden;scroll-snap-type:x mandatory;scrollbar-width:none;-ms-overflow-style:none;scroll-behavior:smooth;}
+.featured-viewport::-webkit-scrollbar{display:none;}
+.featured-track{display:flex;gap:var(--space-5);padding:2px 2px var(--space-3);}
+.featured-card{flex:0 0 260px;scroll-snap-align:start;}
+.featured-arrow{position:absolute;top:50%;transform:translateY(-50%);width:40px;height:40px;border-radius:var(--radius-full);border:1px solid var(--color-border);background:var(--color-surface);color:var(--color-text);font-size:22px;line-height:1;display:grid;place-items:center;cursor:pointer;box-shadow:var(--shadow-md);z-index:2;}
+.featured-arrow:hover{border-color:var(--color-primary);color:var(--color-primary);}
+.featured-arrow.prev{left:0;}
+.featured-arrow.next{right:0;}
+
 /* =====================================================================
    CONTACTO
    ===================================================================== */
@@ -603,6 +616,7 @@ body:has(#nav.scrolled) .nav-cta{position:static;transform:none;}
   .filters{position:static;}
   .filter-list{flex-direction:row;flex-wrap:wrap;}
   .product-grid{grid-template-columns:repeat(2,1fr);}
+  .featured-card{flex-basis:230px;}
   .footer-grid{grid-template-columns:1fr 1fr;}
   .tools-band{grid-template-columns:1fr;}
   .testimonials{grid-template-columns:1fr 1fr;}
@@ -646,6 +660,9 @@ body:has(#nav.scrolled) .nav-cta{position:static;transform:none;}
   .nav-menu-open .nav-links a.active::after{display:none;}
   .grid.cols-4,.grid.cols-3,.grid.cols-2{grid-template-columns:1fr;}
   .product-grid{grid-template-columns:1fr 1fr;}
+  .featured-carousel{padding:0 var(--space-6);}
+  .featured-card{flex-basis:200px;}
+  .featured-arrow{width:34px;height:34px;font-size:18px;}
   .field-row{grid-template-columns:1fr;}
   .cta-band{flex-direction:column;align-items:flex-start;}
   .footer-grid{grid-template-columns:1fr;gap:var(--space-6);}

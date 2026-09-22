@@ -42,12 +42,12 @@ $sipconsMarcas    = $sipconsCatalogo['marcas'];
 <meta name="twitter:title" content="Catálogo de Productos · SIPCONS">
 <meta name="twitter:description" content="Catálogo de básculas, plataformas, puntos de venta y consumibles. Cotiza a la medida las mejores marcas: Mettler-Toledo, Zebra, Toshiba, CAS, A&D, Rhino y más.">
 <meta name="twitter:image" content="https://sipcons.com/assets/img/hero-slide-1.jpg">
-<link rel="stylesheet" href="./assets/css/site.css?v=20260916c">
+<link rel="stylesheet" href="./assets/css/site.css?v=20260922a">
 </head>
 <body>
 
 <div class="home-brandbar">
-  <a href="index.html" class="home-brand" aria-label="SIPCONS — inicio">
+  <a href="index.php" class="home-brand" aria-label="SIPCONS — inicio">
     <img src="./assets/img/logo-grande.png" alt="SIPCONS · Soluciones Integrales de Pesaje y Control" width="1049" height="290">
   </a>
 </div>
@@ -55,9 +55,9 @@ $sipconsMarcas    = $sipconsCatalogo['marcas'];
 
 <header class="nav" id="nav">
   <div class="wrap nav-inner">
-    <a href="index.html" class="brand"><img src="./assets/img/logo-grande.png" alt="SIPCONS" class="nav-logo"></a>
+    <a href="index.php" class="brand"><img src="./assets/img/logo-grande.png" alt="SIPCONS" class="nav-logo"></a>
     <nav><ul class="nav-links">
-      <li><a href="index.html">Inicio</a></li>
+      <li><a href="index.php">Inicio</a></li>
       <li><a href="quienes-somos.html">Nosotros</a></li>
       <li><a href="servicios.html">Servicios</a></li>
       <li><a href="productos.php" class="active">Productos</a></li>
@@ -75,7 +75,7 @@ $sipconsMarcas    = $sipconsCatalogo['marcas'];
   <div class="hero-orb a"></div>
   <div class="hero-grid"></div>
   <div class="wrap page-hero-inner">
-    <nav class="breadcrumb"><a href="index.html">Inicio</a> / <span>Productos</span></nav>
+    <nav class="breadcrumb"><a href="index.php">Inicio</a> / <span>Productos</span></nav>
     <span class="overline" style="color:var(--sip-cyan-400)">Catálogo</span>
     <h1 class="reveal">Todo para pesar y cobrar con precisión</h1>
     <p class="sub reveal" data-delay="1">Explora nuestro catálogo de básculas, plataformas, puntos de venta y consumibles de las marcas líderes. Cotiza el equipo exacto para tu negocio.</p>
@@ -222,6 +222,6 @@ $sipconsMarcas    = $sipconsCatalogo['marcas'];
 
 <a href="https://wa.me/526641086038" class="wa" aria-label="Escríbenos por WhatsApp"><svg viewBox="0 0 24 24"><path d="M17.5 14.4c-.3-.1-1.7-.8-2-.9-.3-.1-.5-.1-.7.1-.2.3-.7.9-.9 1.1-.2.2-.3.2-.6.1-.3-.1-1.2-.5-2.3-1.4-.9-.8-1.4-1.7-1.6-2-.2-.3 0-.5.1-.6l.4-.5c.1-.2.2-.3.3-.5.1-.2 0-.4 0-.5s-.7-1.6-.9-2.2c-.2-.6-.5-.5-.7-.5h-.6c-.2 0-.5.1-.8.4-.3.3-1 1-1 2.5s1.1 2.9 1.2 3.1c.1.2 2.1 3.2 5 4.5.7.3 1.3.5 1.7.6.7.2 1.4.2 1.9.1.6-.1 1.7-.7 1.9-1.4.2-.7.2-1.2.2-1.4-.1-.1-.3-.2-.6-.3M12 2a10 10 0 0 0-8.6 15l-1.3 4.8 4.9-1.3A10 10 0 1 0 12 2Z"/></svg></a>
 
-<script src="./assets/js/site.js?v=20260916e"></script>
+<script src="./assets/js/site.js?v=20260922a"></script>
 </body>
 </html>

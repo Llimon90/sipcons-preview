@@ -1,3 +1,23 @@
+<?php
+/**
+ * Portada. El carrusel "Equipo listo para trabajar desde hoy" toma productos
+ * reales de WooCommerce (sipcons1_basedatos, solo lectura) y elige una
+ * mezcla aleatoria de marcas y tipos en cada carga. Ver
+ * inc/productos-data.php. Si la base de datos no responde, el carrusel
+ * simplemente no se muestra y el resto de la página sigue igual.
+ */
+declare(strict_types=1);
+error_reporting(0);
+
+$sipconsDestacados = [];
+try {
+    require_once __DIR__ . '/inc/productos-data.php';
+    $sipconsCatalogoInicio = sipcons_obtener_productos();
+    $sipconsDestacados = sipcons_productos_destacados_aleatorios($sipconsCatalogoInicio['productos'], 8);
+} catch (Throwable $e) {
+    $sipconsDestacados = [];
+}
+?>
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -21,7 +41,7 @@
 <meta name="twitter:title" content="SIPCONS · Básculas, Plataformas y Puntos de Venta en Baja California">
 <meta name="twitter:description" content="46 años en soluciones de pesaje y control. Venta, instalación y servicio de básculas, plataformas y puntos de venta en Tijuana, Mexicali, Ensenada y Tecate.">
 <meta name="twitter:image" content="https://sipcons.com/assets/img/hero-slide-1.jpg">
-<link rel="stylesheet" href="./assets/css/site.css?v=20260916c">
+<link rel="stylesheet" href="./assets/css/site.css?v=20260922a">
 <script type="application/ld+json">
 {
   "@context": "https://schema.org",
@@ -55,16 +75,16 @@
 <body class="home">
 
 <div class="home-brandbar">
-  <a href="index.html" class="home-brand" aria-label="SIPCONS — inicio">
+  <a href="index.php" class="home-brand" aria-label="SIPCONS — inicio">
     <img src="./assets/img/logo-grande.png" alt="SIPCONS · Soluciones Integrales de Pesaje y Control" width="1049" height="290">
   </a>
 </div>
 
 <header class="nav" id="nav">
   <div class="wrap nav-inner">
-    <a href="index.html" class="brand"><img src="./assets/img/logo-grande.png" alt="SIPCONS" class="nav-logo"></a>
+    <a href="index.php" class="brand"><img src="./assets/img/logo-grande.png" alt="SIPCONS" class="nav-logo"></a>
     <nav><ul class="nav-links">
-      <li><a href="index.html" class="active">Inicio</a></li>
+      <li><a href="index.php" class="active">Inicio</a></li>
       <li><a href="quienes-somos.html">Nosotros</a></li>
       <li><a href="servicios.html">Servicios</a></li>
       <li><a href="productos.php">Productos</a></li>
@@ -197,28 +217,31 @@
     <div class="section-head reveal">
       <span class="overline">Catálogo</span>
       <h2>Equipo listo para trabajar desde hoy</h2>
-      <p class="lead">Una muestra de lo que manejamos. Cotiza en línea o explora el catálogo completo.</p>
+      <p class="lead">Una muestra tomada directo del catálogo, distinta cada vez que entras. Cotiza en línea o explora el catálogo completo.</p>
     </div>
-    <div class="product-grid">
-      <article class="product reveal">
-        <div class="product-img"><span class="product-cat">Comercial</span><img src="./assets/img/prod-cas-comercial.png" alt="Báscula Comercial CAS PR-II" loading="lazy"></div>
-        <div class="product-body"><h3>Báscula Comercial CAS PR-II</h3><p class="desc">Pantalla dual, ideal para abarrotes y fruterías.</p>
-          <div class="product-actions"><a href="producto-bascula-cas-pr2.html" class="btn btn-outline btn-sm">Ver ficha</a></div>
+    <?php if ($sipconsDestacados): ?>
+    <div class="featured-carousel reveal" id="featuredCarousel">
+      <button type="button" class="featured-arrow prev" data-featured-prev aria-label="Anterior">‹</button>
+      <div class="featured-viewport" data-featured-viewport>
+        <div class="featured-track">
+          <?php foreach ($sipconsDestacados as $p): ?>
+          <article class="product featured-card">
+            <div class="product-img">
+              <span class="product-cat"><?= htmlspecialchars($p['marca_label'] !== '' ? $p['marca_label'] : $p['tipo_label'], ENT_QUOTES, 'UTF-8') ?></span>
+              <img src="<?= htmlspecialchars($p['imagen'], ENT_QUOTES, 'UTF-8') ?>" alt="<?= htmlspecialchars($p['titulo'], ENT_QUOTES, 'UTF-8') ?>" loading="lazy">
+            </div>
+            <div class="product-body">
+              <h3><?= htmlspecialchars($p['titulo'], ENT_QUOTES, 'UTF-8') ?></h3>
+              <p class="desc"><?= htmlspecialchars($p['descripcion'] !== '' ? $p['descripcion'] : $p['tipo_label'], ENT_QUOTES, 'UTF-8') ?></p>
+              <div class="product-actions"><a href="producto.php?slug=<?= rawurlencode($p['slug']) ?>" class="btn btn-outline btn-sm">Ver ficha</a></div>
+            </div>
+          </article>
+          <?php endforeach; ?>
         </div>
-      </article>
-      <article class="product reveal" data-delay="1">
-        <div class="product-img"><span class="product-cat">Punto de venta</span><img src="./assets/img/prod-pos-sam4s.jpg" alt="Terminal Punto de Venta SAM4S" loading="lazy"></div>
-        <div class="product-body"><h3>Terminal Punto de Venta SAM4S</h3><p class="desc">Hardware de uso rudo, listo para Mr. Tienda®.</p>
-          <div class="product-actions"><a href="productos.php" class="btn btn-outline btn-sm">Ver ficha</a></div>
-        </div>
-      </article>
-      <article class="product reveal" data-delay="2">
-        <div class="product-img"><span class="product-cat">Precisión</span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2"><rect x="4" y="7" width="16" height="12" rx="2"/><path d="M8 7V5h8v2M12 11v4M10 13h4"/></svg></div>
-        <div class="product-body"><h3>Balanza de Precisión A&amp;D</h3><p class="desc">Alta exactitud para laboratorio y control de calidad.</p>
-          <div class="product-actions"><a href="producto-balanza-precision-ad.html" class="btn btn-outline btn-sm">Ver ficha</a></div>
-        </div>
-      </article>
+      </div>
+      <button type="button" class="featured-arrow next" data-featured-next aria-label="Siguiente">›</button>
     </div>
+    <?php endif; ?>
     <div style="text-align:center;margin-top:var(--space-8)"><a href="productos.php" class="btn btn-primary">Ver catálogo completo <span class="arw">→</span></a></div>
   </div>
 </section>
@@ -402,6 +425,6 @@
 
 <a href="https://wa.me/526641086038" class="wa" aria-label="Escríbenos por WhatsApp"><svg viewBox="0 0 24 24"><path d="M17.5 14.4c-.3-.1-1.7-.8-2-.9-.3-.1-.5-.1-.7.1-.2.3-.7.9-.9 1.1-.2.2-.3.2-.6.1-.3-.1-1.2-.5-2.3-1.4-.9-.8-1.4-1.7-1.6-2-.2-.3 0-.5.1-.6l.4-.5c.1-.2.2-.3.3-.5.1-.2 0-.4 0-.5s-.7-1.6-.9-2.2c-.2-.6-.5-.5-.7-.5h-.6c-.2 0-.5.1-.8.4-.3.3-1 1-1 2.5s1.1 2.9 1.2 3.1c.1.2 2.1 3.2 5 4.5.7.3 1.3.5 1.7.6.7.2 1.4.2 1.9.1.6-.1 1.7-.7 1.9-1.4.2-.7.2-1.2.2-1.4-.1-.1-.3-.2-.6-.3M12 2a10 10 0 0 0-8.6 15l-1.3 4.8 4.9-1.3A10 10 0 1 0 12 2Z"/></svg></a>
 
-<script src="./assets/js/site.js?v=20260916e"></script>
+<script src="./assets/js/site.js?v=20260922a"></script>
 </body>
 </html>
