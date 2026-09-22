@@ -563,7 +563,7 @@ body:has(#nav.scrolled) .nav-cta{position:static;transform:none;}
 .related-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:var(--space-5);}
 
 /* ---------- GALERÍA DE PRODUCTO (zoom + modal) Y VISOR DE PDF ---------- */
-.product-media-row{display:grid;grid-template-columns:1fr 1fr;gap:var(--space-8);align-items:start;}
+.product-media-row{display:grid;grid-template-columns:1fr 1fr;gap:var(--space-8);align-items:stretch;}
 .product-media-row.single{grid-template-columns:1fr;max-width:640px;}
 
 .product-gallery-main{position:relative;aspect-ratio:1;border-radius:var(--radius-xl);background:var(--color-bg-subtle);display:grid;place-items:center;color:var(--sip-neutral-300);border:1px solid var(--color-border);overflow:hidden;cursor:zoom-in;}
@@ -576,8 +576,11 @@ body:has(#nav.scrolled) .nav-cta{position:static;transform:none;}
 .product-gallery-thumbs button.active{border-color:var(--color-primary);}
 .product-gallery-thumbs img{width:100%;height:100%;object-fit:contain;display:block;}
 
-.product-pdf-viewer{display:flex;flex-direction:column;border-radius:var(--radius-xl);border:1px solid var(--color-border);overflow:hidden;background:var(--color-bg-subtle);}
-.product-pdf-viewer iframe{width:100%;height:640px;border:0;background:#fff;flex:1;}
+/* height:100% + iframe flex:1 hace que el visor llene el mismo alto que
+   la columna de fotos (media-row usa align-items:stretch), en vez de un
+   alto fijo que quedaba chico junto a la galería. */
+.product-pdf-viewer{display:flex;flex-direction:column;height:100%;min-height:420px;border-radius:var(--radius-xl);border:1px solid var(--color-border);overflow:hidden;background:var(--color-bg-subtle);}
+.product-pdf-viewer iframe{width:100%;border:0;background:#fff;flex:1;}
 .product-pdf-viewer .pdf-toolbar{display:flex;justify-content:space-between;align-items:center;gap:var(--space-3);padding:var(--space-3) var(--space-4);border-top:1px solid var(--color-border);background:var(--color-surface);font-size:var(--text-sm);color:var(--color-text-muted);flex-wrap:wrap;}
 .product-pdf-viewer .pdf-toolbar a{color:var(--color-link);font-weight:var(--weight-medium);margin-left:var(--space-4);}
 .product-pdf-viewer .pdf-toolbar a:hover{color:var(--color-link-hover);}
@@ -592,7 +595,10 @@ body:has(#nav.scrolled) .nav-cta{position:static;transform:none;}
 
 @media (max-width:900px){
   .product-media-row{grid-template-columns:1fr;}
-  .product-pdf-viewer iframe{height:70vh;}
+  /* En una sola columna ya no hay galería junto al visor con quien igualar
+     el alto (align-items:stretch no aplica entre filas distintas), así que
+     se le da un alto propio generoso. */
+  .product-pdf-viewer{height:auto;min-height:70vh;}
 }
 
 /* =====================================================================
