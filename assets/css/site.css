@@ -197,14 +197,12 @@ body:has(#nav.scrolled) .nav-cta{position:static;transform:none;}
 .split{display:grid;grid-template-columns:1fr 1fr;gap:var(--space-10);align-items:center;}
 .split + .split{margin-top:var(--space-12);}
 .split.reverse .split-media{order:-1;}
-.split-media{aspect-ratio:4/3;border-radius:var(--radius-xl);background:var(--gradient-hero);position:relative;overflow:hidden;box-shadow:var(--shadow-xl);display:grid;place-items:center;color:#fff;}
+.split-media{aspect-ratio:4/3;border-radius:var(--radius-xl);background:#fff;position:relative;overflow:hidden;box-shadow:var(--shadow-xl);display:grid;place-items:center;color:#fff;}
 .split-media .ph{text-align:center;padding:var(--space-6);}
 .split-media .ph svg{width:64px;height:64px;color:var(--sip-cyan-400);margin-bottom:var(--space-3);}
 .split-media .ph span{color:rgba(255,255,255,.7);font-size:var(--text-sm);}
-.split-media img{width:100%;height:100%;object-fit:cover;}
-.split-media.top img{object-position:center top;}
-.split-media.contain{background:#fff;}
-.split-media.contain img{object-fit:contain;}
+/* La foto completa siempre, nunca recortada, sin importar el tamaño de pantalla. */
+.split-media img{width:100%;height:100%;object-fit:contain;padding:var(--space-4);}
 .media-band{margin:0;border-radius:var(--radius-xl);overflow:hidden;box-shadow:var(--shadow-xl);}
 .media-band img{display:block;width:100%;height:auto;}
 .media-band figcaption{background:var(--color-bg-inverse);color:rgba(255,255,255,.72);font-size:var(--text-sm);padding:var(--space-3) var(--space-5);text-align:center;}
