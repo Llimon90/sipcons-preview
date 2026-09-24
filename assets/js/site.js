@@ -121,6 +121,24 @@
     restart();
   }
 
+  /* ---- Contador de contactos: clics a WhatsApp y teléfono ---- */
+  const registrarContacto = (evento) => {
+    const datos = new FormData();
+    datos.append('evento', evento);
+    datos.append('pagina', location.pathname);
+    if (navigator.sendBeacon) navigator.sendBeacon('/inc/track.php', datos);
+    else fetch('/inc/track.php', { method: 'POST', body: datos, keepalive: true }).catch(() => {});
+  };
+  const detectarContacto = (e) => {
+    const a = e.target.closest && e.target.closest('a[href]');
+    if (!a) return;
+    const href = a.getAttribute('href') || '';
+    if (href.startsWith('https://wa.me') || href.includes('api.whatsapp.com')) registrarContacto('whatsapp');
+    else if (href.startsWith('tel:')) registrarContacto('telefono');
+  };
+  document.addEventListener('click', detectarContacto, true);
+  document.addEventListener('auxclick', detectarContacto, true);
+
   /* ---- Tabs (misión / visión / valores) ---- */
   document.querySelectorAll('[data-tabs]').forEach(group => {
     const btns = group.querySelectorAll('.tab-btn');

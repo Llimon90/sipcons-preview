@@ -76,6 +76,9 @@ if (!$enviado) {
     responder(false, 'No se pudo enviar el mensaje. Intenta de nuevo o escríbenos por WhatsApp.');
 }
 
+require_once __DIR__ . '/eventos.php';
+sipcons_registrar_evento('formulario', '/contacto.html');
+
 // --- Confirmación automática al cliente --------------------------------
 // No afecta la respuesta al navegador: el mensaje a info@ ya se envió,
 // que esta confirmación falle no debe mostrarse como error al usuario.

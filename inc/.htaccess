@@ -2,21 +2,21 @@ Options -Indexes
 
 <IfModule mod_rewrite.c>
   RewriteEngine On
-  # Solo permitir POST a send-contact.php; bloquear todo lo demás (GET directo, otros archivos).
+  # Solo permitir POST a send-contact.php y track.php; bloquear GET directo.
   RewriteCond %{REQUEST_METHOD} !POST
-  RewriteRule ^send-contact\.php$ - [F]
+  RewriteRule ^(send-contact|track)\.php$ - [F]
 </IfModule>
 
 # Archivos de uso interno: solo se deben usar por include() desde productos.php,
 # nunca visitarse directo. (db-inspect.php se protege con token dentro del propio
 # archivo y se debe borrar del servidor cuando ya no se necesite.)
 <IfModule mod_authz_core.c>
-  <FilesMatch "^(db|db-config|db-config\.example|product-cat-map|productos-data)\.php$">
+  <FilesMatch "^(db|db-config|db-config\.example|product-cat-map|productos-data|eventos)\.php$">
     Require all denied
   </FilesMatch>
 </IfModule>
 <IfModule !mod_authz_core.c>
-  <FilesMatch "^(db|db-config|db-config\.example|product-cat-map|productos-data)\.php$">
+  <FilesMatch "^(db|db-config|db-config\.example|product-cat-map|productos-data|eventos)\.php$">
     Order allow,deny
     Deny from all
   </FilesMatch>
