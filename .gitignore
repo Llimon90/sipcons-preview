@@ -4,4 +4,4 @@ SKILL.md
 inc/db-config.php
 inc/mail-debug.log
 inc/productos-debug.log
-inc/eventos.log
+inc/eventos*.log

@@ -11,12 +11,12 @@ Options -Indexes
 # nunca visitarse directo. (db-inspect.php se protege con token dentro del propio
 # archivo y se debe borrar del servidor cuando ya no se necesite.)
 <IfModule mod_authz_core.c>
-  <FilesMatch "^(db|db-config|db-config\.example|product-cat-map|productos-data|eventos)\.php$">
+  <FilesMatch "^(db|db-config|db-config\.example|product-cat-map|productos-data|eventos|analitica)\.php$">
     Require all denied
   </FilesMatch>
 </IfModule>
 <IfModule !mod_authz_core.c>
-  <FilesMatch "^(db|db-config|db-config\.example|product-cat-map|productos-data|eventos)\.php$">
+  <FilesMatch "^(db|db-config|db-config\.example|product-cat-map|productos-data|eventos|analitica)\.php$">
     Order allow,deny
     Deny from all
   </FilesMatch>

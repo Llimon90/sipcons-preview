@@ -76,8 +76,16 @@ if (!$enviado) {
     responder(false, 'No se pudo enviar el mensaje. Intenta de nuevo o escríbenos por WhatsApp.');
 }
 
-require_once __DIR__ . '/eventos.php';
-sipcons_registrar_evento('formulario', '/contacto.html');
+// Contador de envíos (anónimo): se omite si el navegador tiene «No rastrear» / ?notrack=1.
+if (empty($_POST['nt'])) {
+    require_once __DIR__ . '/eventos.php';
+    sipcons_registrar_evento('formulario', [
+        'p' => '/contacto.html',
+        's' => $_POST['sid'] ?? '',
+        'v' => $_POST['vid'] ?? '',
+        'i' => $interes,
+    ]);
+}
 
 // --- Confirmación automática al cliente --------------------------------
 // No afecta la respuesta al navegador: el mensaje a info@ ya se envió,

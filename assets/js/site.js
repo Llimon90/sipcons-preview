@@ -121,23 +121,131 @@
     restart();
   }
 
-  /* ---- Contador de contactos: clics a WhatsApp y teléfono ---- */
-  const registrarContacto = (evento) => {
-    const datos = new FormData();
-    datos.append('evento', evento);
-    datos.append('pagina', location.pathname);
-    if (navigator.sendBeacon) navigator.sendBeacon('/inc/track.php', datos);
-    else fetch('/inc/track.php', { method: 'POST', body: datos, keepalive: true }).catch(() => {});
-  };
-  const detectarContacto = (e) => {
-    const a = e.target.closest && e.target.closest('a[href]');
-    if (!a) return;
-    const href = a.getAttribute('href') || '';
-    if (href.startsWith('https://wa.me') || href.includes('api.whatsapp.com')) registrarContacto('whatsapp');
-    else if (href.startsWith('tel:')) registrarContacto('telefono');
-  };
-  document.addEventListener('click', detectarContacto, true);
-  document.addEventListener('auxclick', detectarContacto, true);
+  /* ---- Analítica anónima de comportamiento ----
+     Sin cookies ni datos personales: un id aleatorio por navegador (localStorage)
+     y otro por sesión (sessionStorage). Se apaga con «No rastrear» del navegador
+     o abriendo el sitio una vez con ?notrack=1 (?notrack=0 lo reactiva). */
+  const analitica = (() => {
+    const destino = '/inc/track.php';
+    let apagada = false;
+    try {
+      const nt = new URLSearchParams(location.search).get('notrack');
+      if (nt === '1') localStorage.setItem('sip_notrack', '1');
+      if (nt === '0') localStorage.removeItem('sip_notrack');
+      apagada = localStorage.getItem('sip_notrack') === '1' || navigator.doNotTrack === '1' || window.doNotTrack === '1';
+    } catch (_) { /* almacenamiento bloqueado */ }
+
+    const azar = () => Math.random().toString(36).slice(2, 10) + Date.now().toString(36);
+    let vid = '', sid = '', nuevo = false;
+    try {
+      vid = localStorage.getItem('sip_vid') || '';
+      if (!vid) { vid = azar(); localStorage.setItem('sip_vid', vid); sessionStorage.setItem('sip_nuevo', '1'); }
+      nuevo = sessionStorage.getItem('sip_nuevo') === '1';
+      sid = sessionStorage.getItem('sip_sid') || '';
+      if (!sid) { sid = azar(); sessionStorage.setItem('sip_sid', sid); }
+    } catch (_) { vid = vid || azar(); sid = sid || azar(); }
+
+    const params = new URLSearchParams(location.search);
+    const slug = () => params.get('slug') || '';
+    const pagina = () => (location.pathname.replace(/index\.(php|html)$/, '') || '/') + (slug() ? '?slug=' + encodeURIComponent(slug()) : '');
+
+    const enviar = (e, datos) => {
+      if (apagada) return;
+      const fd = new FormData();
+      fd.append('d', JSON.stringify(Object.assign({ e, p: pagina(), s: sid, v: vid }, datos || {})));
+      if (navigator.sendBeacon) navigator.sendBeacon(destino, fd);
+      else fetch(destino, { method: 'POST', body: fd, keepalive: true }).catch(() => {});
+    };
+
+    // --- Vista de página (origen, campaña utm, idioma, ¿visitante nuevo?) ---
+    let origen = '';
+    try {
+      if (document.referrer) {
+        const u = new URL(document.referrer);
+        if (u.hostname !== location.hostname) origen = u.hostname;
+      }
+    } catch (_) { /* referrer inválido */ }
+    if (document.title.indexOf('Página no encontrada') === 0) {
+      enviar('error404');
+    } else {
+      enviar('vista', {
+        n: nuevo ? 1 : 0, r: origen, l: navigator.language || '',
+        us: params.get('utm_source') || '', um: params.get('utm_medium') || '', uc: params.get('utm_campaign') || '',
+      });
+    }
+
+    // --- Tiempo activo y profundidad de scroll (se envía al ocultar/cerrar) ---
+    let activo = 0;
+    let desde = document.hidden ? 0 : Date.now();
+    let scrollMax = 0;
+    let salidas = 0;
+    const medirScroll = () => {
+      const el = document.documentElement;
+      const total = el.scrollHeight - el.clientHeight;
+      const pct = total > 0 ? Math.round((window.scrollY / total) * 100) : 100;
+      if (pct > scrollMax) scrollMax = Math.min(100, pct);
+    };
+    window.addEventListener('scroll', medirScroll, { passive: true });
+    medirScroll();
+    const cerrarTramo = () => {
+      if (desde) { activo += Date.now() - desde; desde = 0; }
+      if (activo < 300 && salidas > 0) return;
+      enviar('salida', { ms: activo, sc: scrollMax });
+      activo = 0;
+      salidas++;
+    };
+    document.addEventListener('visibilitychange', () => {
+      if (document.hidden) cerrarTramo();
+      else if (!desde) desde = Date.now();
+    });
+    window.addEventListener('pagehide', cerrarTramo);
+
+    // --- Clics: WhatsApp, teléfono, correo, fichas PDF, carrusel y salidas ---
+    const lugarDe = (a) => {
+      if (a.closest('a.wa')) return 'flotante';
+      if (a.closest('#featuredCarousel')) return 'carrusel portada';
+      if (a.closest('.product-detail-body')) return 'ficha de producto';
+      if (a.closest('.product')) return 'tarjeta de catálogo';
+      if (a.closest('.nav, header')) return 'menú';
+      if (a.closest('footer')) return 'pie de página';
+      if (a.closest('.hero')) return 'portada';
+      if (a.closest('.cta-band')) return 'banner';
+      return 'contenido';
+    };
+    const productoDe = (a) => {
+      const tarjeta = a.closest('.product');
+      const enlace = tarjeta && tarjeta.querySelector('a[href*="slug="]');
+      const m = /[?&]slug=([^&]+)/.exec(enlace ? enlace.getAttribute('href') : location.search);
+      return m ? decodeURIComponent(m[1]) : '';
+    };
+    const alClic = (ev) => {
+      const a = ev.target.closest && ev.target.closest('a[href]');
+      if (!a) return;
+      const href = a.getAttribute('href') || '';
+      if (/^https?:\/\/(wa\.me|api\.whatsapp\.com)/i.test(href)) enviar('whatsapp', { lg: lugarDe(a), pr: productoDe(a) });
+      else if (href.startsWith('tel:')) enviar('telefono', { lg: lugarDe(a), pr: productoDe(a) });
+      else if (href.startsWith('mailto:')) enviar('correo', { lg: lugarDe(a), pr: productoDe(a) });
+      else if (/\.pdf($|\?)/i.test(href)) enviar('pdf', { pr: productoDe(a) || slug(), lg: a.hasAttribute('download') ? 'descargar' : 'abrir' });
+      else if (a.closest('.featured-card')) enviar('destacado', { pr: productoDe(a) });
+      else if (/^https?:/i.test(href)) {
+        try {
+          const u = new URL(href, location.href);
+          if (u.hostname !== location.hostname) enviar('saliente', { lg: u.hostname });
+        } catch (_) { /* url inválida */ }
+      }
+    };
+    document.addEventListener('click', alClic, true);
+    document.addEventListener('auxclick', alClic, true);
+
+    // --- Formulario de contacto: ¿quién empieza a llenarlo? ---
+    let formIniciado = false;
+    document.addEventListener('focusin', (ev) => {
+      if (formIniciado || !ev.target.closest) return;
+      if (ev.target.closest('#contactForm')) { formIniciado = true; enviar('form_inicio'); }
+    });
+
+    return { evento: enviar, slug, ids: () => ({ sid, vid, apagada }) };
+  })();
 
   /* ---- Tabs (misión / visión / valores) ---- */
   document.querySelectorAll('[data-tabs]').forEach(group => {
@@ -167,6 +275,8 @@
     let activeCat = 'all';
     let activeBrand = 'all';
     let pagina = 1;
+    let totalVisibles = products.length;
+    let temporizadorBusqueda;
 
     const apply = () => {
       const q = (search?.value || '').trim().toLowerCase();
@@ -179,6 +289,7 @@
         if (ok) visibles.push(p); else p.style.display = 'none';
       });
 
+      totalVisibles = visibles.length;
       const porPagina = pageSizeSel?.value === 'all' ? visibles.length || 1 : parseInt(pageSizeSel?.value || '24', 10);
       const totalPaginas = Math.max(1, Math.ceil(visibles.length / porPagina));
       if (pagina > totalPaginas) pagina = totalPaginas;
@@ -217,8 +328,18 @@
       if (btn.dataset.brand !== undefined) activeBrand = btn.dataset.brand;
       pagina = 1;
       apply();
+      const valorFiltro = btn.dataset.category !== undefined ? btn.dataset.category : btn.dataset.brand;
+      if (valorFiltro !== 'all') analitica.evento('filtro', { lg: btn.dataset.category !== undefined ? 'categoría' : 'marca', q: btn.textContent.trim(), rs: totalVisibles });
     }));
-    if (search) search.addEventListener('input', () => { pagina = 1; apply(); });
+    if (search) search.addEventListener('input', () => {
+      pagina = 1;
+      apply();
+      clearTimeout(temporizadorBusqueda);
+      temporizadorBusqueda = setTimeout(() => {
+        const texto = search.value.trim();
+        if (texto.length >= 2) analitica.evento('busqueda', { q: texto.slice(0, 60), rs: totalVisibles });
+      }, 900);
+    });
     if (pageSizeSel) pageSizeSel.addEventListener('change', () => { pagina = 1; apply(); });
     apply();
   }
@@ -249,9 +370,14 @@
       if (submitBtn) submitBtn.disabled = true;
 
       try {
+        const datosForm = new FormData(form);
+        const ids = analitica.ids();
+        datosForm.append('sid', ids.sid);
+        datosForm.append('vid', ids.vid);
+        if (ids.apagada) datosForm.append('nt', '1');
         const res = await fetch('inc/send-contact.php', {
           method: 'POST',
-          body: new FormData(form),
+          body: datosForm,
           headers: { 'Accept': 'application/json' }
         });
         let data = null;
@@ -316,6 +442,7 @@
       modalImg.src = imagenes[indiceActual];
       modal.classList.add('open');
       document.body.style.overflow = 'hidden';
+      analitica.evento('galeria', { pr: analitica.slug() });
     };
     const cerrarModal = () => {
       if (!modal) return;
