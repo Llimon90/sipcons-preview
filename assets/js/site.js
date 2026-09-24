@@ -203,6 +203,7 @@
     // --- Clics: WhatsApp, teléfono, correo, fichas PDF, carrusel y salidas ---
     const lugarDe = (a) => {
       if (a.closest('a.wa')) return 'flotante';
+      if (a.closest('.home-contact')) return 'cabecera portada';
       if (a.closest('#featuredCarousel')) return 'carrusel portada';
       if (a.closest('.product-detail-body')) return 'ficha de producto';
       if (a.closest('.product')) return 'tarjeta de catálogo';
@@ -278,11 +279,23 @@
     let totalVisibles = products.length;
     let temporizadorBusqueda;
 
+    // Vistas prearmadas que enlaza la portada: ?grupo=pos | consumibles
+    const grupos = {
+      pos: { titulo: 'Puntos de venta · Mr. Tienda® y Mr. Chef®', tipos: ['puntos-de-venta', 'touch'] },
+      consumibles: { titulo: 'Consumibles y refacciones', tipos: ['consumibles'] },
+    };
+    let grupoActivo = grupos[new URLSearchParams(location.search).get('grupo')] || null;
+    let avisoGrupo = null;
+    const quitarGrupo = () => {
+      grupoActivo = null;
+      if (avisoGrupo) { avisoGrupo.remove(); avisoGrupo = null; }
+    };
+
     const apply = () => {
       const q = (search?.value || '').trim().toLowerCase();
       const visibles = [];
       products.forEach(p => {
-        const matchCat = activeCat === 'all' || p.dataset.category === activeCat;
+        const matchCat = grupoActivo ? grupoActivo.tipos.includes(p.dataset.category) : (activeCat === 'all' || p.dataset.category === activeCat);
         const matchBrand = activeBrand === 'all' || p.dataset.brand === activeBrand;
         const matchText = !q || p.dataset.name.toLowerCase().includes(q);
         const ok = matchCat && matchBrand && matchText;
@@ -324,7 +337,7 @@
       const group = btn.closest('[data-filter-group]');
       group?.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
       btn.classList.add('active');
-      if (btn.dataset.category !== undefined) activeCat = btn.dataset.category;
+      if (btn.dataset.category !== undefined) { quitarGrupo(); activeCat = btn.dataset.category; }
       if (btn.dataset.brand !== undefined) activeBrand = btn.dataset.brand;
       pagina = 1;
       apply();
@@ -341,6 +354,22 @@
       }, 900);
     });
     if (pageSizeSel) pageSizeSel.addEventListener('change', () => { pagina = 1; apply(); });
+
+    if (grupoActivo) {
+      catalog.querySelectorAll('.filter-btn[data-category]').forEach(b => b.classList.remove('active'));
+      avisoGrupo = document.createElement('div');
+      avisoGrupo.className = 'catalog-preset';
+      avisoGrupo.innerHTML = '<span>Mostrando: <b></b></span><button type="button">Ver todo el catálogo</button>';
+      avisoGrupo.querySelector('b').textContent = grupoActivo.titulo;
+      avisoGrupo.querySelector('button').addEventListener('click', () => {
+        quitarGrupo();
+        catalog.querySelector('.filter-btn[data-category="all"]')?.classList.add('active');
+        pagina = 1;
+        apply();
+      });
+      const barra = catalog.querySelector('.catalog-toolbar');
+      if (barra) barra.parentNode.insertBefore(avisoGrupo, barra);
+    }
     apply();
   }
 

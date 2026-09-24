@@ -41,7 +41,7 @@ try {
 <meta name="twitter:title" content="SIPCONS · Básculas, Plataformas y Puntos de Venta en Baja California">
 <meta name="twitter:description" content="46 años en soluciones de pesaje y control. Venta, instalación y servicio de básculas, plataformas y puntos de venta en Tijuana, Mexicali, Ensenada y Tecate.">
 <meta name="twitter:image" content="https://sipcons.com/assets/img/hero-slide-1.jpg">
-<link rel="stylesheet" href="./assets/css/site.css?v=20260922d">
+<link rel="stylesheet" href="./assets/css/site.css?v=20260924d">
 <script type="application/ld+json">
 {
   "@context": "https://schema.org",
@@ -78,6 +78,11 @@ try {
   <a href="index.php" class="home-brand" aria-label="SIPCONS — inicio">
     <img src="./assets/img/logo-grande.png" alt="SIPCONS · Soluciones Integrales de Pesaje y Control" width="1049" height="290">
   </a>
+  <div class="home-contact" aria-label="Contacto SIPCONS">
+    <a href="tel:+526646300471" class="hc-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3.1 19.5 19.5 0 0 1-6-6A19.8 19.8 0 0 1 2.1 4.2 2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7c.1 1 .4 1.9.7 2.8a2 2 0 0 1-.5 2.1L8.1 9.9a16 16 0 0 0 6 6l1.3-1.3a2 2 0 0 1 2.1-.4c.9.3 1.8.6 2.8.7a2 2 0 0 1 1.7 2Z"/></svg><span>(664) 630-0471</span></a>
+    <a href="mailto:info@sipcons.com" class="hc-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="m3 7 9 6 9-6"/></svg><span>info@sipcons.com</span></a>
+    <a href="https://wa.me/526641086038" class="hc-item hc-wa" aria-label="WhatsApp de SIPCONS"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M17.5 14.4c-.3-.1-1.7-.8-2-.9-.3-.1-.5-.1-.7.1-.2.3-.7.9-.9 1.1-.2.2-.3.2-.6.1-.3-.1-1.2-.5-2.3-1.4-.9-.8-1.4-1.7-1.6-2-.2-.3 0-.5.1-.6l.4-.5c.1-.2.2-.3.3-.5.1-.2 0-.4 0-.5s-.7-1.6-.9-2.2c-.2-.6-.5-.5-.7-.5h-.6c-.2 0-.5.1-.8.4-.3.3-1 1-1 2.5s1.1 2.9 1.2 3.1c.1.2 2.1 3.2 5 4.5.7.3 1.3.5 1.7.6.7.2 1.4.2 1.9.1.6-.1 1.7-.7 1.9-1.4.2-.7.2-1.2.2-1.4-.1-.1-.3-.2-.6-.3M12 2a10 10 0 0 0-8.6 15l-1.3 4.8 4.9-1.3A10 10 0 1 0 12 2Z"/></svg><span>WhatsApp</span></a>
+  </div>
 </div>
 
 <header class="nav" id="nav">
@@ -161,18 +166,18 @@ try {
       </div>
       <div class="card reveal" data-delay="1">
         <div class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="4" y="3" width="16" height="18" rx="2"/><path d="M8 7h8M8 11h8M8 15h4"/></svg></div>
-        <h3>Puntos de Venta</h3><p>Automatiza el cobro y gana la confianza de tus clientes con sistemas POS confiables.</p>
-        <a href="productos.php" class="more">Ver productos <span class="arw">→</span></a>
+        <h3>Puntos de Venta</h3><p>Mr. Tienda® y Mr. Chef®: pantallas touch, impresoras, gavetas, scanners y el software para automatizar tu cobro.</p>
+        <a href="productos.php?grupo=pos#catalog" class="more">Ver productos <span class="arw">→</span></a>
       </div>
       <div class="card reveal" data-delay="2">
         <div class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M21 8 12 3 3 8l9 5 9-5Z"/><path d="M3 8v8l9 5 9-5V8"/></svg></div>
-        <h3>Consumibles y Refacciones</h3><p>Etiquetas, rollos y refacciones originales para mantener tus equipos siempre operando.</p>
-        <a href="productos.php" class="more">Ver productos <span class="arw">→</span></a>
+        <h3>Consumibles y Refacciones</h3><p>Etiquetas, cabezas térmicas y teclados originales para mantener tus equipos siempre operando.</p>
+        <a href="productos.php?grupo=consumibles#catalog" class="more">Ver productos <span class="arw">→</span></a>
       </div>
       <div class="card feature reveal" data-delay="3">
         <div class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 2v4M12 18v4M2 12h4M18 12h4M5 5l3 3M16 16l3 3M19 5l-3 3M8 16l-3 3"/><circle cx="12" cy="12" r="3"/></svg></div>
-        <h3>Innovación Tecnológica</h3><p>Integramos las últimas tecnologías de pesaje y control para modernizar tu operación.</p>
-        <a href="servicios.html" class="more">Conocer más <span class="arw">→</span></a>
+        <h3>Innovación Tecnológica</h3><p>Báscula Mettler-Toledo Fresh Base Plus con inteligencia artificial: reconoce el producto y agiliza el cobro.</p>
+        <a href="producto.php?slug=mettler-toledo-fresh-base-plus-ia" class="more">Ver equipo y ficha <span class="arw">→</span></a>
       </div>
     </div>
   </div>
@@ -277,7 +282,7 @@ try {
         <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m5 13 4 4L19 7"/></svg><span>Menos filas y menos errores de cobro en hora pico.</span></li>
         <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m5 13 4 4L19 7"/></svg><span>Integración con tu punto de venta y tu catálogo.</span></li>
       </ul>
-      <div style="margin-top:var(--space-6)"><a href="https://wa.me/526641086038?text=Hola,%20quiero%20informaci%C3%B3n%20de%20b%C3%A1sculas%20con%20IA" class="btn btn-action">Quiero saber más <span class="arw">→</span></a></div>
+      <div style="margin-top:var(--space-6)"><a href="https://wa.me/526641086038?text=Hola,%20quiero%20informaci%C3%B3n%20de%20b%C3%A1sculas%20con%20IA" class="btn btn-action">Quiero saber más <span class="arw">→</span></a> <a href="producto.php?slug=mettler-toledo-fresh-base-plus-ia" class="btn btn-ghost-light">Ver ficha técnica</a></div>
     </div>
     <div class="split-media reveal" data-delay="1">
       <img src="./assets/img/bascula-ia-freshbase.jpg" alt="Báscula Mettler-Toledo FreshBase con inteligencia artificial reconociendo un producto" loading="lazy">
@@ -331,9 +336,9 @@ try {
     <p class="cap">Marcas que comercializamos</p>
     <div class="marquee"><div class="marquee-track">
       <img src="./assets/img/brand-mettler-toledo.png" alt="Mettler-Toledo" loading="lazy"><img src="./assets/img/brand-zebra.jpg" alt="Zebra" loading="lazy"><img src="./assets/img/brand-toshiba.png" alt="Toshiba" loading="lazy">
-      <img src="./assets/img/brand-and-weighing.jpg" alt="A&amp;D Weighing" loading="lazy"><img src="./assets/img/brand-cas.png" alt="CAS" loading="lazy"><img src="./assets/img/brand-rhino.png" alt="Rhino" loading="lazy"><img src="./assets/img/brand-ohaus.png" alt="Ohaus" loading="lazy"><img src="./assets/img/brand-copesa.png" alt="Copesa" loading="lazy">
+      <img src="./assets/img/brand-and-weighing.jpg" alt="A&amp;D Weighing" loading="lazy"><img src="./assets/img/brand-cas.png" alt="CAS" loading="lazy"><img src="./assets/img/brand-rhino.png" alt="Rhino" loading="lazy"><img src="./assets/img/brand-ohaus.png" alt="Ohaus" loading="lazy"><img src="./assets/img/brand-rice-lake.png" alt="Rice Lake Weighing Systems" loading="lazy">
       <img src="./assets/img/brand-mettler-toledo.png" alt="Mettler-Toledo" loading="lazy"><img src="./assets/img/brand-zebra.jpg" alt="Zebra" loading="lazy"><img src="./assets/img/brand-toshiba.png" alt="Toshiba" loading="lazy">
-      <img src="./assets/img/brand-and-weighing.jpg" alt="A&amp;D Weighing" loading="lazy"><img src="./assets/img/brand-cas.png" alt="CAS" loading="lazy"><img src="./assets/img/brand-rhino.png" alt="Rhino" loading="lazy"><img src="./assets/img/brand-ohaus.png" alt="Ohaus" loading="lazy"><img src="./assets/img/brand-copesa.png" alt="Copesa" loading="lazy">
+      <img src="./assets/img/brand-and-weighing.jpg" alt="A&amp;D Weighing" loading="lazy"><img src="./assets/img/brand-cas.png" alt="CAS" loading="lazy"><img src="./assets/img/brand-rhino.png" alt="Rhino" loading="lazy"><img src="./assets/img/brand-ohaus.png" alt="Ohaus" loading="lazy"><img src="./assets/img/brand-rice-lake.png" alt="Rice Lake Weighing Systems" loading="lazy">
     </div></div>
   </div>
 </section>
@@ -407,8 +412,8 @@ try {
     <div class="footer-grid">
       <div><div class="brand"><img src="./assets/img/logo-grande.png" alt="SIPCONS" class="nav-logo"></div><p class="tagline">Soluciones Integrales de Pesaje y Control. Innovación y confianza desde 1980.</p></div>
       <div><h5>Soluciones</h5><ul>
-        <li><a href="productos.php">Básculas</a></li><li><a href="productos.php">Puntos de Venta</a></li>
-        <li><a href="productos.php">Plataformas</a></li><li><a href="productos.php">Consumibles</a></li><li><a href="soporte.html">Soporte técnico</a></li>
+        <li><a href="productos.php">Básculas</a></li><li><a href="productos.php?grupo=pos#catalog">Puntos de Venta</a></li>
+        <li><a href="productos.php">Plataformas</a></li><li><a href="productos.php?grupo=consumibles#catalog">Consumibles</a></li><li><a href="soporte.html">Soporte técnico</a></li>
       </ul></div>
       <div><h5>Recursos</h5><ul>
         <li><a href="casos-de-exito.html">Casos de éxito</a></li><li><a href="recursos.html">Centro de recursos</a></li>
@@ -425,6 +430,6 @@ try {
 
 <a href="https://wa.me/526641086038" class="wa" aria-label="Escríbenos por WhatsApp"><svg viewBox="0 0 24 24"><path d="M17.5 14.4c-.3-.1-1.7-.8-2-.9-.3-.1-.5-.1-.7.1-.2.3-.7.9-.9 1.1-.2.2-.3.2-.6.1-.3-.1-1.2-.5-2.3-1.4-.9-.8-1.4-1.7-1.6-2-.2-.3 0-.5.1-.6l.4-.5c.1-.2.2-.3.3-.5.1-.2 0-.4 0-.5s-.7-1.6-.9-2.2c-.2-.6-.5-.5-.7-.5h-.6c-.2 0-.5.1-.8.4-.3.3-1 1-1 2.5s1.1 2.9 1.2 3.1c.1.2 2.1 3.2 5 4.5.7.3 1.3.5 1.7.6.7.2 1.4.2 1.9.1.6-.1 1.7-.7 1.9-1.4.2-.7.2-1.2.2-1.4-.1-.1-.3-.2-.6-.3M12 2a10 10 0 0 0-8.6 15l-1.3 4.8 4.9-1.3A10 10 0 1 0 12 2Z"/></svg></a>
 
-<script src="./assets/js/site.js?v=20260924c"></script>
+<script src="./assets/js/site.js?v=20260924d"></script>
 </body>
 </html>

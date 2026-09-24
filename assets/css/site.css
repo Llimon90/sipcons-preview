@@ -124,6 +124,23 @@ body .nav-cta{position:absolute;right:0;top:50%;transform:translateY(-50%);}
 body .hero{padding-top:calc(106px + 76px + var(--space-12));}
 body .page-hero{padding-top:calc(106px + 76px + var(--space-10));}
 body:has(#nav.scrolled) .home-brand{transform:translateX(calc(var(--dock-left) - 50vw)) translateY(-21px) scale(.46);}
+/* PORTADA: logo más grande (se lee «Soluciones Integrales de Pesaje y Control») con
+   teléfono, correo y WhatsApp debajo. Al hacer scroll el contacto se oculta y el
+   logo baja a la barra igual que en el resto de las páginas. */
+.home-contact{display:none;}
+body.home .home-brand{top:14px;}
+body.home .home-brand img{height:124px;}
+body.home .home-contact{position:absolute;top:146px;left:50%;transform:translateX(-50%);display:flex;gap:var(--space-3);white-space:nowrap;pointer-events:auto;transition:opacity 350ms var(--ease-out),visibility 350ms var(--ease-out);}
+.hc-item{display:inline-flex;align-items:center;gap:8px;padding:6px 14px;border-radius:var(--radius-full);border:1px solid rgba(255,255,255,.22);background:rgba(255,255,255,.08);color:#fff;font-size:var(--text-sm);font-weight:var(--weight-medium);-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px);transition:background var(--dur) var(--ease-out),border-color var(--dur) var(--ease-out);}
+.hc-item:hover{background:rgba(255,255,255,.16);border-color:rgba(255,255,255,.4);}
+.hc-item:focus-visible{outline:2px solid var(--sip-cyan-400);outline-offset:2px;}
+.hc-item svg{width:15px;height:15px;flex:none;}
+.hc-wa{background:rgba(37,211,102,.18);border-color:rgba(37,211,102,.55);}
+.hc-wa:hover{background:rgba(37,211,102,.3);border-color:#25D366;}
+body.home .nav{top:184px;}
+body.home .hero{padding-top:calc(184px + 76px + var(--space-8));}
+body.home:has(#nav.scrolled) .home-brand{transform:translateX(calc(var(--dock-left) - 50vw)) translateY(-38px) scale(.36);}
+body.home:has(#nav.scrolled) .home-contact{opacity:0;visibility:hidden;}
 body:has(#nav.scrolled) .nav{top:0;}
 body:has(#nav.scrolled) .nav-inner{justify-content:space-between;}
 body:has(#nav.scrolled) .nav .brand{display:flex;visibility:hidden;}
@@ -345,6 +362,11 @@ body:has(#nav.scrolled) .nav-cta{position:static;transform:none;}
 .product-body h3{font-size:var(--text-lg);}
 .product-body .desc{color:var(--color-text-muted);font-size:var(--text-sm);flex:1;}
 .product-actions{display:flex;gap:var(--space-2);margin-top:var(--space-3);}
+#catalog{scroll-margin-top:210px;}
+.catalog-preset{display:flex;justify-content:space-between;align-items:center;gap:var(--space-3);flex-wrap:wrap;background:var(--color-primary-soft);color:var(--color-primary);border:1px solid var(--color-border);border-radius:var(--radius-lg);padding:var(--space-3) var(--space-4);margin-bottom:var(--space-5);font-size:var(--text-sm);}
+.catalog-preset b{font-weight:var(--weight-semibold);}
+.catalog-preset button{background:var(--color-surface);color:var(--color-primary);border:1px solid var(--color-border);border-radius:var(--radius-full);padding:6px 14px;font:inherit;font-weight:var(--weight-medium);cursor:pointer;}
+.catalog-preset button:hover{border-color:var(--color-primary);}
 .no-results{grid-column:1/-1;text-align:center;color:var(--color-text-subtle);padding:var(--space-10);}
 
 /* --- Carrusel de productos destacados (inicio) ------------------------
@@ -666,6 +688,18 @@ body:has(#nav.scrolled) .nav-cta{position:static;transform:none;}
   body.nav-menu-open:has(#nav.scrolled) .nav-links{inset:76px 0 auto 0;}
   .nav-menu-open .nav-links a{color:rgba(255,255,255,.92);}
   .nav-menu-open .nav-links a.active::after{display:none;}
+  /* Portada en móvil: logo grande + fila de contacto compacta (WhatsApp solo ícono). */
+  body.home .home-brand{top:12px;}
+  body.home .home-brand img{height:min(92px,24vw);}
+  body.home .home-contact{top:110px;gap:var(--space-2);}
+  .hc-item{padding:6px 9px;font-size:12px;gap:6px;}
+  .hc-wa span{display:none;}
+  body.home .nav{top:148px;}
+  body.home .hero{padding-top:calc(148px + 76px + var(--space-6));}
+  body.home:has(#nav.scrolled) .home-brand{transform:translateX(-50%) translateY(-20px) scale(.53);}
+  body.home.nav-menu-open .nav-links{inset:224px 0 auto 0;}
+  body.home.nav-menu-open:has(#nav.scrolled) .nav-links{inset:76px 0 auto 0;}
+
   .grid.cols-4,.grid.cols-3,.grid.cols-2{grid-template-columns:1fr;}
   .product-grid{grid-template-columns:1fr 1fr;}
   .featured-carousel{padding:0 var(--space-6);}
