@@ -126,7 +126,7 @@
      y otro por sesión (sessionStorage). Se apaga con «No rastrear» del navegador
      o abriendo el sitio una vez con ?notrack=1 (?notrack=0 lo reactiva). */
   const analitica = (() => {
-    const destino = '/inc/track.php';
+    const destino = '/inc/pulso.php';
     let apagada = false;
     try {
       const nt = new URLSearchParams(location.search).get('notrack');
@@ -153,8 +153,8 @@
       if (apagada) return;
       const fd = new FormData();
       fd.append('d', JSON.stringify(Object.assign({ e, p: pagina(), s: sid, v: vid }, datos || {})));
-      if (navigator.sendBeacon) navigator.sendBeacon(destino, fd);
-      else fetch(destino, { method: 'POST', body: fd, keepalive: true }).catch(() => {});
+      const enviado = navigator.sendBeacon ? navigator.sendBeacon(destino, fd) : false;
+      if (!enviado) fetch(destino, { method: 'POST', body: fd, keepalive: true }).catch(() => {});
     };
 
     // --- Vista de página (origen, campaña utm, idioma, ¿visitante nuevo?) ---

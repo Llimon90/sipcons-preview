@@ -2,9 +2,9 @@ Options -Indexes
 
 <IfModule mod_rewrite.c>
   RewriteEngine On
-  # Solo permitir POST a send-contact.php y track.php; bloquear GET directo.
+  # Solo permitir POST a send-contact.php y pulso.php; bloquear GET directo.
   RewriteCond %{REQUEST_METHOD} !POST
-  RewriteRule ^(send-contact|track)\.php$ - [F]
+  RewriteRule ^(send-contact|pulso)\.php$ - [F]
 </IfModule>
 
 # Archivos de uso interno: solo se deben usar por include() desde productos.php,

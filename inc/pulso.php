@@ -1,6 +1,7 @@
 <?php
 /**
- * SIPCONS · recibe por POST (sendBeacon desde site.js) los eventos de
+ * SIPCONS · recibe por POST (sendBeacon desde site.js; nombre neutro a propósito,
+ * porque los bloqueadores de anuncios suelen bloquear rutas llamadas «track») los eventos de
  * comportamiento y los guarda. No responde contenido.
  * Campo "d": JSON de un evento {"e":"vista","p":"/",...} o un arreglo de ellos.
  */
@@ -9,6 +10,7 @@ declare(strict_types=1);
 error_reporting(0);
 
 function sipcons_origen_valido(): bool {
+    if (($_SERVER['HTTP_SEC_FETCH_SITE'] ?? '') === 'same-origin') return true;
     $origen = (string)($_SERVER['HTTP_ORIGIN'] ?? $_SERVER['HTTP_REFERER'] ?? '');
     if ($origen === '') return false;
     $host = strtolower((string)parse_url($origen, PHP_URL_HOST));

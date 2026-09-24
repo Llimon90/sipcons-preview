@@ -94,6 +94,24 @@ $rebotePrev = $TP['sesiones'] > 0 ? $TP['rebotes'] / $TP['sesiones'] * 100 : 0.0
 $msProm = $T['con_ms'] > 0 ? $T['ms'] / $T['con_ms'] : 0;
 $pagsPorSesion = $T['sesiones'] > 0 ? $T['vistas'] / $T['sesiones'] : 0;
 $hoyClave = date('Y-m-d');
+
+// ---------------- Estado del registro (diagnóstico) ----------------
+$logActual = __DIR__ . '/eventos-' . date('Y-m') . '.log';
+$dirEscribible = is_writable(__DIR__);
+$logExiste = is_file($logActual);
+$logTam = $logExiste ? (int)filesize($logActual) : 0;
+$ultimoEvento = null;
+if ($logExiste && $logTam > 0) {
+    $fhu = fopen($logActual, 'r');
+    fseek($fhu, max(0, $logTam - 4096));
+    $cola = trim((string)stream_get_contents($fhu));
+    fclose($fhu);
+    $ultimaLinea = substr($cola, (int)strrpos($cola, "
+"));
+    $evU = json_decode(trim($ultimaLinea), true);
+    if (is_array($evU) && isset($evU['t'])) $ultimoEvento = strtotime((string)$evU['t']) ?: null;
+}
+$eventosRango = (int)array_sum($R['por_tipo']);
 $hoyDatos = $R['por_dia'][$hoyClave] ?? [];
 $contactosHoy = 0;
 foreach (SIPCONS_CONTACTOS as $c) $contactosHoy += (int)($hoyDatos[$c] ?? 0);
@@ -407,6 +425,15 @@ function tabla_dim(array $datos, string $titulo, callable $h, callable $pct, int
   </nav>
 </header>
 
+<?php if (!$dirEscribible || $eventosRango === 0): ?>
+<div class="aviso">
+  <strong><?= !$dirEscribible ? 'El servidor no puede escribir en la carpeta inc/.' : 'No hay ningún evento registrado en este periodo.' ?></strong>
+  <?php if (!$dirEscribible): ?>En cPanel → Administrador de archivos, ponle permisos 755 (o 775) a la carpeta <code>inc</code> y recarga.
+  <?php else: ?>Revisa: (1) que hayas hecho el deploy; (2) que ese navegador no tenga «No rastrear» activado ni haya abierto el sitio con <code>?notrack=1</code> (ábrelo una vez con <code>?notrack=0</code> para reactivar); (3) que no haya un bloqueador de anuncios o modo privado estricto; (4) que la carpeta <code>inc</code> tenga permisos de escritura. Estado técnico al final de la página.
+  <?php endif; ?>
+</div>
+<?php endif; ?>
+
 <?php if ($muestraChica): ?>
 <div class="aviso"><strong>Muestra pequeña (<?= $T['sesiones'] ?> sesiones).</strong> Los porcentajes con pocas visitas cambian mucho de un día a otro: úsalos como tendencia, no como conclusión. Los datos empezaron a registrarse con esta versión, y tus propias visitas cuentan a menos que abras el sitio una vez con <code>?notrack=1</code> en ese navegador.</div>
 <?php endif; ?>
@@ -583,6 +610,13 @@ function tabla_dim(array $datos, string $titulo, callable $h, callable $pct, int
     </tbody></table></div></div>
 </div>
 
+<p class="pie" style="margin-top:28px">
+  <strong>Estado del registro.</strong>
+  Escritura en <code>inc/</code>: <?= $dirEscribible ? 'sí' : '<b>NO</b>' ?> ·
+  Archivo del mes: <?= $logExiste ? 'existe (' . number_format($logTam / 1024, 1) . ' KB)' : '<b>aún no existe</b>' ?> ·
+  Último evento: <?= $ultimoEvento ? $h(date('j', $ultimoEvento) . ' ' . $meses[(int)date('n', $ultimoEvento) - 1] . ' ' . date('H:i', $ultimoEvento)) . ' (hace ' . max(0, (int)round((time() - $ultimoEvento) / 60)) . ' min)' : 'ninguno' ?> ·
+  Eventos en el periodo: <?= $nf($eventosRango) ?>
+</p>
 <p class="pie">
   <strong>Cómo se mide.</strong> Analítica propia y anónima: no se guarda IP, nombre, correo ni teléfono; solo un identificador aleatorio por navegador y por sesión, la familia de dispositivo/navegador y lo que se hace en el sitio. Se excluyen bots conocidos y a quien tenga activado «No rastrear». Una <em>sesión</em> es una visita continua de un navegador; un <em>contacto</em> es un envío del formulario o un clic en WhatsApp, teléfono o correo. Los clics indican intención, no garantizan que la persona haya escrito o llamado. Para no contar tus propias visitas, abre el sitio una vez con <code>?notrack=1</code> en cada navegador que uses (con <code>?notrack=0</code> se reactiva). Recuerda mantener actualizado el aviso de privacidad del sitio.
   Datos: <code>inc/eventos-AAAA-MM.log</code> (un archivo por mes) · <a href="?token=<?= $h(rawurlencode($token)) ?>&amp;dias=<?= $dias ?>&amp;export=csv">descargar eventos crudos (CSV)</a>.
