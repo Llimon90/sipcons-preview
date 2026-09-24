@@ -141,6 +141,17 @@ body.home .nav{top:184px;}
 body.home .hero{padding-top:calc(184px + 76px + var(--space-8));}
 body.home:has(#nav.scrolled) .home-brand{transform:translateX(calc(var(--dock-left) - 50vw)) translateY(-38px) scale(.36);}
 body.home:has(#nav.scrolled) .home-contact{opacity:0;visibility:hidden;}
+/* «Contáctanos» está oculto al inicio (el contacto ya se ve bajo el logo) y al hacer scroll
+   llega de forma equivalente al logo, pero hacia la derecha. */
+body.home .nav{--dock-left:max(var(--gutter), calc((100vw - var(--container)) / 2 + var(--gutter)));}
+body.home .nav-cta .btn{opacity:0;visibility:hidden;transform:translateX(calc(var(--dock-left) - 50vw));
+  transition:transform 650ms cubic-bezier(.45,.05,.2,1),opacity 450ms var(--ease-out),visibility 0s linear 650ms,
+    background var(--dur) var(--ease-out),border-color var(--dur) var(--ease-out);}
+/* Al aparecer, el botón viaja desde el centro pero solo se hace visible al llegar cerca
+   de su lugar (así no se encima con los enlaces del menú durante el trayecto). */
+body.home:has(#nav.scrolled) .nav-cta .btn{opacity:1;visibility:visible;transform:none;
+  transition:transform 650ms cubic-bezier(.45,.05,.2,1),opacity 350ms var(--ease-out) 320ms,visibility 0s,
+    background var(--dur) var(--ease-out),border-color var(--dur) var(--ease-out);}
 body:has(#nav.scrolled) .nav{top:0;}
 body:has(#nav.scrolled) .nav-inner{justify-content:space-between;}
 body:has(#nav.scrolled) .nav .brand{display:flex;visibility:hidden;}
@@ -666,17 +677,20 @@ body:has(#nav.scrolled) .nav-cta{position:static;transform:none;}
 @media (max-width:720px){
   .nav-links,.nav-cta .btn{display:none;}
   .nav-toggle{display:flex;}
-  /* En móvil el logo permanece centrado arriba y del MISMO tamaño siempre
-     (no se contrae al hacer scroll); el nav queda fijo debajo. */
+  /* En móvil el logo (fijo, centrado y del MISMO tamaño siempre) y el botón de menú
+     comparten una barra fija: el ícono queda alineado con el logo desde el arranque y
+     no se mueve al hacer scroll (solo aparece el fondo de cristal). */
   .home-brandbar{display:block;}
-  .home-brand{top:16px;transform-origin:center center;transform:translateX(-50%);}
+  .home-brand{top:0;height:74px;display:flex;align-items:center;transform-origin:center center;transform:translateX(-50%);}
   .home-brand img{height:42px;}
-  body .nav{top:66px;}
-  body .nav-inner{justify-content:center;}
+  body .nav{top:0;}
+  body .nav-inner{justify-content:center;height:74px;}
   body .nav .brand{display:none;}
   body .nav-cta{position:absolute;right:0;top:50%;transform:translateY(-50%);}
-  body .hero{padding-top:calc(66px + 76px + var(--space-8));}
-  body .page-hero{padding-top:calc(66px + 76px + var(--space-6));}
+  .nav-toggle{padding:12px;margin-right:-12px;gap:6px;}
+  .nav-toggle span{width:30px;height:3px;}
+  body .hero{padding-top:calc(74px + var(--space-8));}
+  body .page-hero{padding-top:calc(74px + var(--space-6));}
   /* Al hacer scroll el logo NO cambia de tamaño ni de sitio: la barra de
      vidrio sube por debajo y lo envuelve. */
   body:has(#nav.scrolled) .home-brand{transform:translateX(-50%);}
@@ -684,21 +698,24 @@ body:has(#nav.scrolled) .nav-cta{position:static;transform:none;}
   body:has(#nav.scrolled) .nav-inner{justify-content:center;}
   body:has(#nav.scrolled) .nav .brand{display:none;}
   body:has(#nav.scrolled) .nav-cta{position:absolute;right:0;top:50%;transform:translateY(-50%);}
-  .nav-menu-open .nav-links{display:flex;position:fixed;inset:142px 0 auto 0;flex-direction:column;background:rgba(12,23,54,.92);-webkit-backdrop-filter:blur(18px) saturate(180%);backdrop-filter:blur(18px) saturate(180%);padding:var(--space-6) var(--gutter);gap:var(--space-5);box-shadow:0 20px 40px rgba(0,0,0,.35);border-bottom:1px solid rgba(255,255,255,.12);}
-  body.nav-menu-open:has(#nav.scrolled) .nav-links{inset:76px 0 auto 0;}
+  .nav-menu-open .nav-links{display:flex;position:fixed;inset:74px 0 auto 0;flex-direction:column;background:rgba(12,23,54,.92);-webkit-backdrop-filter:blur(18px) saturate(180%);backdrop-filter:blur(18px) saturate(180%);padding:var(--space-6) var(--gutter);gap:var(--space-5);box-shadow:0 20px 40px rgba(0,0,0,.35);border-bottom:1px solid rgba(255,255,255,.12);}
+  body.nav-menu-open:has(#nav.scrolled) .nav-links{inset:74px 0 auto 0;}
   .nav-menu-open .nav-links a{color:rgba(255,255,255,.92);}
   .nav-menu-open .nav-links a.active::after{display:none;}
-  /* Portada en móvil: logo grande + fila de contacto compacta (WhatsApp solo ícono). */
-  body.home .home-brand{top:12px;}
+  /* Portada en móvil: barra de 116px con logo grande (mismo tamaño siempre) y el menú
+     alineado a él; debajo, la fila de contacto que se oculta al hacer scroll. */
+  body.home .home-brand{height:116px;}
   body.home .home-brand img{height:min(92px,24vw);}
-  body.home .home-contact{top:110px;gap:var(--space-2);}
+  body.home .nav{top:0;}
+  body.home .nav-inner{height:116px;}
+  body.home .home-contact{top:112px;gap:var(--space-2);}
   .hc-item{padding:6px 9px;font-size:12px;gap:6px;}
   .hc-wa span{display:none;}
-  body.home .nav{top:148px;}
-  body.home .hero{padding-top:calc(148px + 76px + var(--space-6));}
-  body.home:has(#nav.scrolled) .home-brand{transform:translateX(-50%) translateY(-20px) scale(.53);}
-  body.home.nav-menu-open .nav-links{inset:224px 0 auto 0;}
-  body.home.nav-menu-open:has(#nav.scrolled) .nav-links{inset:76px 0 auto 0;}
+  body.home .hero{padding-top:calc(150px + var(--space-6));}
+  body.home:has(#nav.scrolled) .home-brand{transform:translateX(-50%);}
+  body.home.nav-menu-open .nav-links{inset:116px 0 auto 0;}
+  body.home.nav-menu-open .home-contact{opacity:0;visibility:hidden;}
+  body.home.nav-menu-open:has(#nav.scrolled) .nav-links{inset:116px 0 auto 0;}
 
   .grid.cols-4,.grid.cols-3,.grid.cols-2{grid-template-columns:1fr;}
   .product-grid{grid-template-columns:1fr 1fr;}

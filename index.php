@@ -41,7 +41,7 @@ try {
 <meta name="twitter:title" content="SIPCONS · Básculas, Plataformas y Puntos de Venta en Baja California">
 <meta name="twitter:description" content="46 años en soluciones de pesaje y control. Venta, instalación y servicio de básculas, plataformas y puntos de venta en Tijuana, Mexicali, Ensenada y Tecate.">
 <meta name="twitter:image" content="https://sipcons.com/assets/img/hero-slide-1.jpg">
-<link rel="stylesheet" href="./assets/css/site.css?v=20260924d">
+<link rel="stylesheet" href="./assets/css/site.css?v=20260924e">
 <script type="application/ld+json">
 {
   "@context": "https://schema.org",

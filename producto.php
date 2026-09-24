@@ -80,7 +80,7 @@ $urlCanonica = 'https://sipcons.com/producto.php' . ($producto ? '?slug=' . rawu
 <meta name="twitter:title" content="<?= $e($tituloPagina) ?>">
 <meta name="twitter:description" content="<?= $e($descMeta) ?>">
 <meta name="twitter:image" content="<?= $e($ogImagen) ?>">
-<link rel="stylesheet" href="./assets/css/site.css?v=20260924d">
+<link rel="stylesheet" href="./assets/css/site.css?v=20260924e">
 </head>
 <body>
 
