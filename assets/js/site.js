@@ -203,7 +203,7 @@
     // --- Clics: WhatsApp, teléfono, correo, fichas PDF, carrusel y salidas ---
     const lugarDe = (a) => {
       if (a.closest('a.wa')) return 'flotante';
-      if (a.closest('.home-contact')) return 'cabecera portada';
+      if (a.closest('.home-contact')) return 'cabecera';
       if (a.closest('#featuredCarousel')) return 'carrusel portada';
       if (a.closest('.product-detail-body')) return 'ficha de producto';
       if (a.closest('.product')) return 'tarjeta de catálogo';

@@ -109,47 +109,43 @@ ul{margin:0;}
   border-bottom-color:rgba(255,255,255,.14);
 }
 
-/* Logo grande y centrado sobre el nav en TODAS las páginas; al hacer scroll baja
-   suavemente a la barra (una sola animación de transform). */
+/* CABECERA DE TODAS LAS PÁGINAS: logo grande (se lee «Soluciones Integrales de Pesaje y
+   Control») con una cápsula de contacto (teléfono, correo, WhatsApp) debajo y el menú.
+   Al hacer scroll la cápsula se oculta, el logo baja a la barra por la izquierda y
+   «Contáctanos» llega desde el centro por la derecha (una sola animación de transform). */
 .home-brandbar{position:fixed;top:0;left:0;right:0;height:0;z-index:calc(var(--z-header) + 2);pointer-events:none;
   --dock-left:max(var(--gutter), calc((100vw - var(--container)) / 2 + var(--gutter)));}
-.home-brand{position:absolute;top:22px;left:50%;transform-origin:left center;transform:translateX(-50%);
+.home-brand{position:absolute;top:14px;left:50%;transform-origin:left center;transform:translateX(-50%);
   display:block;pointer-events:auto;will-change:transform;
   transition:transform 650ms cubic-bezier(.45,.05,.2,1);}
-.home-brand img{height:74px;width:auto;display:block;filter:drop-shadow(0 3px 16px rgba(0,0,0,.36));}
-body .nav{top:106px;}
+.home-brand img{height:124px;width:auto;display:block;filter:drop-shadow(0 3px 16px rgba(0,0,0,.36));}
+.home-contact{position:absolute;top:146px;left:50%;transform:translateX(-50%);display:flex;align-items:stretch;
+  white-space:nowrap;pointer-events:auto;overflow:hidden;border-radius:var(--radius-full);
+  border:1px solid rgba(255,255,255,.2);background:rgba(255,255,255,.08);
+  -webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px);
+  transition:opacity 350ms var(--ease-out),visibility 350ms var(--ease-out);}
+.hc-item{display:inline-flex;align-items:center;gap:8px;padding:7px 16px;color:#fff;font-size:var(--text-sm);
+  font-weight:var(--weight-medium);transition:background var(--dur) var(--ease-out);}
+.hc-item + .hc-item{border-left:1px solid rgba(255,255,255,.16);}
+.hc-item:hover{background:rgba(255,255,255,.14);}
+.hc-item:focus-visible{outline:2px solid var(--sip-cyan-400);outline-offset:-2px;}
+.hc-item svg{width:15px;height:15px;flex:none;}
+.hc-wa svg{color:#25D366;}
+body .nav{top:184px;--dock-left:max(var(--gutter), calc((100vw - var(--container)) / 2 + var(--gutter)));}
 body .nav-inner{position:relative;justify-content:center;}
 body .nav .brand{display:none;}
 body .nav-cta{position:absolute;right:0;top:50%;transform:translateY(-50%);}
-body .hero{padding-top:calc(106px + 76px + var(--space-12));}
-body .page-hero{padding-top:calc(106px + 76px + var(--space-10));}
-body:has(#nav.scrolled) .home-brand{transform:translateX(calc(var(--dock-left) - 50vw)) translateY(-21px) scale(.46);}
-/* PORTADA: logo más grande (se lee «Soluciones Integrales de Pesaje y Control») con
-   teléfono, correo y WhatsApp debajo. Al hacer scroll el contacto se oculta y el
-   logo baja a la barra igual que en el resto de las páginas. */
-.home-contact{display:none;}
-body.home .home-brand{top:14px;}
-body.home .home-brand img{height:124px;}
-body.home .home-contact{position:absolute;top:146px;left:50%;transform:translateX(-50%);display:flex;gap:var(--space-3);white-space:nowrap;pointer-events:auto;transition:opacity 350ms var(--ease-out),visibility 350ms var(--ease-out);}
-.hc-item{display:inline-flex;align-items:center;gap:8px;padding:6px 14px;border-radius:var(--radius-full);border:1px solid rgba(255,255,255,.22);background:rgba(255,255,255,.08);color:#fff;font-size:var(--text-sm);font-weight:var(--weight-medium);-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px);transition:background var(--dur) var(--ease-out),border-color var(--dur) var(--ease-out);}
-.hc-item:hover{background:rgba(255,255,255,.16);border-color:rgba(255,255,255,.4);}
-.hc-item:focus-visible{outline:2px solid var(--sip-cyan-400);outline-offset:2px;}
-.hc-item svg{width:15px;height:15px;flex:none;}
-.hc-wa{background:rgba(37,211,102,.18);border-color:rgba(37,211,102,.55);}
-.hc-wa:hover{background:rgba(37,211,102,.3);border-color:#25D366;}
-body.home .nav{top:184px;}
-body.home .hero{padding-top:calc(184px + 76px + var(--space-8));}
-body.home:has(#nav.scrolled) .home-brand{transform:translateX(calc(var(--dock-left) - 50vw)) translateY(-38px) scale(.36);}
-body.home:has(#nav.scrolled) .home-contact{opacity:0;visibility:hidden;}
-/* «Contáctanos» está oculto al inicio (el contacto ya se ve bajo el logo) y al hacer scroll
-   llega de forma equivalente al logo, pero hacia la derecha. */
-body.home .nav{--dock-left:max(var(--gutter), calc((100vw - var(--container)) / 2 + var(--gutter)));}
-body.home .nav-cta .btn{opacity:0;visibility:hidden;transform:translateX(calc(var(--dock-left) - 50vw));
+body .hero{padding-top:calc(184px + 76px + var(--space-8));}
+body .page-hero{padding-top:calc(184px + 76px + var(--space-6));}
+body:has(#nav.scrolled) .home-brand{transform:translateX(calc(var(--dock-left) - 50vw)) translateY(-38px) scale(.36);}
+body:has(#nav.scrolled) .home-contact{opacity:0;visibility:hidden;}
+/* «Contáctanos»: oculto al inicio (el contacto ya se ve bajo el logo); al hacer scroll viaja
+   desde el centro hacia la derecha y se hace visible solo al llegar cerca de su lugar, para
+   no encimarse con los enlaces del menú durante el trayecto. */
+body .nav-cta .btn{opacity:0;visibility:hidden;transform:translateX(calc(var(--dock-left) - 50vw));
   transition:transform 650ms cubic-bezier(.45,.05,.2,1),opacity 450ms var(--ease-out),visibility 0s linear 650ms,
     background var(--dur) var(--ease-out),border-color var(--dur) var(--ease-out);}
-/* Al aparecer, el botón viaja desde el centro pero solo se hace visible al llegar cerca
-   de su lugar (así no se encima con los enlaces del menú durante el trayecto). */
-body.home:has(#nav.scrolled) .nav-cta .btn{opacity:1;visibility:visible;transform:none;
+body:has(#nav.scrolled) .nav-cta .btn{opacity:1;visibility:visible;transform:none;
   transition:transform 650ms cubic-bezier(.45,.05,.2,1),opacity 350ms var(--ease-out) 320ms,visibility 0s,
     background var(--dur) var(--ease-out),border-color var(--dur) var(--ease-out);}
 body:has(#nav.scrolled) .nav{top:0;}
@@ -678,44 +674,39 @@ body:has(#nav.scrolled) .nav-cta{position:static;transform:none;}
   .nav-links,.nav-cta .btn{display:none;}
   .nav-toggle{display:flex;}
   /* En móvil el logo (fijo, centrado y del MISMO tamaño siempre) y el botón de menú
-     comparten una barra fija: el ícono queda alineado con el logo desde el arranque y
-     no se mueve al hacer scroll (solo aparece el fondo de cristal). */
+     comparten una barra fija de 96px: el ícono queda alineado con el logo desde el
+     arranque y no se mueve al hacer scroll (solo aparece el fondo de cristal). Debajo va
+     la cápsula de contacto, que se oculta al hacer scroll. */
   .home-brandbar{display:block;}
-  .home-brand{top:0;height:74px;display:flex;align-items:center;transform-origin:center center;transform:translateX(-50%);}
-  .home-brand img{height:42px;}
+  .home-brand{top:0;height:96px;display:flex;align-items:center;transform-origin:center center;transform:translateX(-50%);}
+  .home-brand img{height:min(80px,22vw);}
   body .nav{top:0;}
-  body .nav-inner{justify-content:center;height:74px;}
+  body .nav-inner{justify-content:center;height:96px;}
   body .nav .brand{display:none;}
-  body .nav-cta{position:absolute;right:0;top:50%;transform:translateY(-50%);}
-  .nav-toggle{padding:12px;margin-right:-12px;gap:6px;}
+  body .nav-cta{position:absolute;right:calc(var(--gutter) - 12px);top:50%;transform:translateY(-50%);}
+  .nav-toggle{padding:12px;gap:6px;}
   .nav-toggle span{width:30px;height:3px;}
-  body .hero{padding-top:calc(74px + var(--space-8));}
-  body .page-hero{padding-top:calc(74px + var(--space-6));}
+  .home-contact{top:100px;max-width:calc(100vw - 2 * var(--gutter));}
+  .hc-item{padding:7px 10px;font-size:11.5px;gap:5px;}
+  .hc-item svg{width:13px;height:13px;}
+  .hc-wa span{display:none;}
+  .hc-wa svg{width:17px;height:17px;}
+  body .hero{padding-top:calc(132px + var(--space-6));}
+  body .page-hero{padding-top:calc(132px + var(--space-5));}
   /* Al hacer scroll el logo NO cambia de tamaño ni de sitio: la barra de
      vidrio sube por debajo y lo envuelve. */
   body:has(#nav.scrolled) .home-brand{transform:translateX(-50%);}
   body:has(#nav.scrolled) .nav{top:0;}
   body:has(#nav.scrolled) .nav-inner{justify-content:center;}
   body:has(#nav.scrolled) .nav .brand{display:none;}
-  body:has(#nav.scrolled) .nav-cta{position:absolute;right:0;top:50%;transform:translateY(-50%);}
-  .nav-menu-open .nav-links{display:flex;position:fixed;inset:74px 0 auto 0;flex-direction:column;background:rgba(12,23,54,.92);-webkit-backdrop-filter:blur(18px) saturate(180%);backdrop-filter:blur(18px) saturate(180%);padding:var(--space-6) var(--gutter);gap:var(--space-5);box-shadow:0 20px 40px rgba(0,0,0,.35);border-bottom:1px solid rgba(255,255,255,.12);}
-  body.nav-menu-open:has(#nav.scrolled) .nav-links{inset:74px 0 auto 0;}
+  body:has(#nav.scrolled) .nav-cta{position:absolute;right:calc(var(--gutter) - 12px);top:50%;transform:translateY(-50%);}
+  .nav-menu-open .nav-links{display:flex;position:fixed;inset:96px 0 auto 0;flex-direction:column;background:rgba(12,23,54,.92);-webkit-backdrop-filter:blur(18px) saturate(180%);backdrop-filter:blur(18px) saturate(180%);padding:var(--space-6) var(--gutter);gap:var(--space-5);box-shadow:0 20px 40px rgba(0,0,0,.35);border-bottom:1px solid rgba(255,255,255,.12);}
+  body.nav-menu-open:has(#nav.scrolled) .nav-links{inset:96px 0 auto 0;}
+  body.nav-menu-open .home-contact{opacity:0;visibility:hidden;}
   .nav-menu-open .nav-links a{color:rgba(255,255,255,.92);}
   .nav-menu-open .nav-links a.active::after{display:none;}
-  /* Portada en móvil: barra de 116px con logo grande (mismo tamaño siempre) y el menú
-     alineado a él; debajo, la fila de contacto que se oculta al hacer scroll. */
-  body.home .home-brand{height:116px;}
-  body.home .home-brand img{height:min(92px,24vw);}
-  body.home .nav{top:0;}
-  body.home .nav-inner{height:116px;}
-  body.home .home-contact{top:112px;gap:var(--space-2);}
-  .hc-item{padding:6px 9px;font-size:12px;gap:6px;}
-  .hc-wa span{display:none;}
-  body.home .hero{padding-top:calc(150px + var(--space-6));}
-  body.home:has(#nav.scrolled) .home-brand{transform:translateX(-50%);}
-  body.home.nav-menu-open .nav-links{inset:116px 0 auto 0;}
-  body.home.nav-menu-open .home-contact{opacity:0;visibility:hidden;}
-  body.home.nav-menu-open:has(#nav.scrolled) .nav-links{inset:116px 0 auto 0;}
+  /* Pantallas muy angostas: sin íconos en teléfono y correo para que la cápsula no se salga. */
+  @media (max-width:350px){.hc-item:not(.hc-wa) svg{display:none;}}
 
   .grid.cols-4,.grid.cols-3,.grid.cols-2{grid-template-columns:1fr;}
   .product-grid{grid-template-columns:1fr 1fr;}
