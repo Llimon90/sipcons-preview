@@ -81,6 +81,23 @@ $urlCanonica = 'https://sipcons.com/producto.php' . ($producto ? '?slug=' . rawu
 <meta name="twitter:description" content="<?= $e($descMeta) ?>">
 <meta name="twitter:image" content="<?= $e($ogImagen) ?>">
 <link rel="stylesheet" href="./assets/css/site.css?v=20260929c">
+<?php if ($producto): ?>
+<script type="application/ld+json">
+<?= json_encode([
+    '@context' => 'https://schema.org',
+    '@type' => 'Product',
+    'name' => $producto['titulo'],
+    'image' => array_column($galeria, 'grande') ?: [$ogImagen],
+    'description' => $descMeta,
+    'brand' => $producto['marca_label'] !== '' ? ['@type' => 'Brand', 'name' => $producto['marca_label']] : 'SIPCONS',
+    'category' => $producto['tipo_label'],
+    'url' => $urlCanonica,
+    // Sin "offers": la cotización es a la medida, no hay precio fijo que
+    // publicar. Un Offer sin price sale como advertencia en Search Console;
+    // mejor un Product completo y válido que uno con una advertencia.
+], JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES) ?>
+</script>
+<?php endif; ?>
 </head>
 <body>
 

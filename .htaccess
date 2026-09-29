@@ -22,6 +22,11 @@ DirectoryIndex index.php index.html
   # No exponer el repositorio si clonas el repo con git en la raíz
   RewriteRule (^|/)\.git(/|$) - [F,L]
 
+  # sitemap.xml ahora se genera en vivo (incluye cada ficha de producto).
+  # Reescritura interna, no redirección: la URL sigue siendo /sitemap.xml,
+  # sin necesidad de tocar nada en Search Console.
+  RewriteRule ^sitemap\.xml$ /sitemap.php [L]
+
   # productos.html e index.html pasaron a ser .php (necesitan PHP para leer
   # WooCommerce). Redirige las URLs viejas por si quedaron indexadas o
   # guardadas en algún enlace.
@@ -34,20 +39,24 @@ DirectoryIndex index.php index.html
   RewriteRule ^ https://sipcons.com%{REQUEST_URI} [L,R=301]
 
   # --- 3) Redirecciones 301 de URLs viejas de WordPress -----------
-  #     Descomenta / ajusta según lo que tengas indexado en Google.
-  #     (Ver Search Console -> Páginas, o el sitemap anterior de WP.)
-  # RewriteRule ^nosotros/?$              /quienes-somos.html            [L,R=301]
-  # RewriteRule ^quienes-somos/?$         /quienes-somos.html            [L,R=301]
-  # RewriteRule ^servicios/?$             /servicios.html               [L,R=301]
-  # RewriteRule ^soporte/?$               /soporte.html                 [L,R=301]
-  # RewriteRule ^contacto/?$              /contacto.html                [L,R=301]
-  # RewriteRule ^productos/?$             /productos.html               [L,R=301]
-  # RewriteRule ^calibracion/?$           /calibracion.html             [L,R=301]
-  # RewriteRule ^casos-de-exito/?$        /casos-de-exito.html          [L,R=301]
-  #     Fichas de producto y blog que ahora viven en WordPress:
-  # RewriteRule ^producto/(.*)$           /tienda/producto/$1           [L,R=301]
-  # RewriteRule ^tienda-online/(.*)$      /tienda/$1                    [L,R=301]
-  # RewriteRule ^blog/(.*)$              /tienda/blog/$1                [L,R=301]
+  #     Google todavía tiene indexadas estas URLs de antes de la migración
+  #     (sitecons.com/servicios/, /product/cas-cl-5200/, etc.) y sin estas
+  #     reglas cada una regresaba 404 — el sitio se veía "roto" para Google
+  #     justo en las páginas que ya traían posicionamiento.
+  RewriteRule ^nosotros/?$              /quienes-somos.html            [L,R=301]
+  RewriteRule ^quienes-somos/?$         /quienes-somos.html            [L,R=301]
+  RewriteRule ^servicios/?$             /servicios.html                [L,R=301]
+  RewriteRule ^soporte/?$               /soporte.html                  [L,R=301]
+  RewriteRule ^contacto/?$              /contacto.html                 [L,R=301]
+  RewriteRule ^productos/?$             /productos.php                 [L,R=301]
+  RewriteRule ^calibracion/?$           /calibracion.html              [L,R=301]
+  RewriteRule ^casos-de-exito/?$        /casos-de-exito.html           [L,R=301]
+  #     Fichas de producto de WooCommerce: mismo slug en el catálogo nuevo.
+  #     Si el producto ya no existe, producto.php manda solo a productos.php.
+  RewriteRule ^produc(?:t|to)/([^/]+)/?$   /producto.php?slug=$1       [L,R=301]
+  RewriteRule ^product-category/.*$        /productos.php              [L,R=301]
+  RewriteRule ^tienda-online/?(.*)$        /tienda/$1                  [L,R=301]
+  RewriteRule ^blog/?(.*)$                 /tienda/blog/$1             [L,R=301]
 </IfModule>
 
 # --- Página de error 404 del sitio estático ----------------------
