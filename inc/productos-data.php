@@ -376,27 +376,56 @@ function sipcons_obtener_descripcion_larga(int $productId): string {
 }
 
 /**
- * Busca el "código de modelo" de un producto a partir de su título: el último
- * token que trae un dígito (ej. "RHINO BAPRE-2600" -> "BAPRE2600"). Se usa
- * solo como pista para emparejar PDFs sueltos; null si no hay nada así.
+ * Candidatos de "código de modelo" de un producto a partir de su título, de
+ * más a menos específico (ej. "METTLER TOLEDO BPLUS H2" -> ["BPLUSH2", "BPLUS"]).
+ * Se usan solo como pista para emparejar PDFs sueltos.
+ *
+ * Antes solo se probaba el último token del título si traía un dígito y medía
+ * 3+ caracteres — por eso modelos como "BPLUS H2"/"T2"/"U2" (sufijo de 2
+ * caracteres) o sin dígito como "BCOMS" nunca encontraban su ficha. Ahora se
+ * quitan la marca y las palabras genéricas del título, y se arman candidatos
+ * desde el más específico (todos los tokens que quedan) hasta el nombre de la
+ * línea del equipo sola (ej. "BPLUS", "FRESHBASE") — así una ficha técnica
+ * subida una sola vez para toda la línea también se muestra en sus variantes,
+ * cabezas térmicas y teclados.
  */
-function sipcons_extraer_codigo_modelo(string $titulo): ?string {
-    $tokens = preg_split('/\s+/', trim($titulo));
-    for ($i = count($tokens) - 1; $i >= 0; $i--) {
-        $t = $tokens[$i];
-        if (preg_match('/\d/', $t) && strlen($t) >= 3) {
-            return strtoupper((string)preg_replace('/[^A-Z0-9]/i', '', $t));
-        }
+function sipcons_candidatos_modelo(string $titulo): array {
+    static $marcasYGenericos = [
+        // Marcas (no identifican un modelo por sí solas)
+        'METTLER', 'TOLEDO', 'RHINO', 'CAS', 'SAM4S', 'BIXOLON', 'HONEYWELL', 'NCR',
+        'COPESA', 'EPELSA', 'MAGELLAN', 'MEGELLAN', 'YOUJIE', 'INOVACION', 'INNOVACION',
+        'REDSIS', 'ZEBRA', 'TOSHIBA', 'OHAUS', 'DATALOGIC', 'AD',
+        // Palabras genéricas del catálogo (se repiten en muchos productos distintos)
+        'BASCULA', 'BALANZA', 'ELECTRONICA', 'ELECTRONICO', 'DE', 'LA', 'EL', 'Y', 'CON', 'PARA',
+        'TERMINAL', 'IMPRESORA', 'SCANNER', 'INDICADOR', 'PESO', 'PUNTO', 'VENTA', 'SOFTWARE',
+        'TOUCH', 'VERIFICADOR', 'PRECIOS', 'PRECISION', 'PLATAFORMA', 'COLGANTE', 'COLGANTES',
+        'ROLLO', 'ETIQUETA', 'ETIQUETAS', 'TERMAL', 'CABEZA', 'TECLADO',
+        'CONSUMIBLE', 'CONSUMIBLES', 'REFACCION', 'REFACCIONES', 'PAPEL', 'PANTALLA',
+    ];
+
+    $tokens = preg_split('/\s+/', trim($titulo)) ?: [];
+    $limpios = [];
+    foreach ($tokens as $t) {
+        $norm = strtoupper((string)preg_replace('/[^A-Za-z0-9]/', '', $t));
+        if ($norm === '' || in_array($norm, $marcasYGenericos, true)) continue;
+        $limpios[] = $norm;
     }
-    return null;
+
+    $candidatos = [];
+    for ($n = count($limpios); $n >= 1; $n--) {
+        $c = implode('', array_slice($limpios, 0, $n));
+        if (strlen($c) >= 3) $candidatos[] = $c;
+    }
+    return array_values(array_unique($candidatos));
 }
 
 /**
  * Fichas técnicas / manuales (PDF) de un producto.
  * 1) PDFs adjuntos directamente en WordPress (post_parent = producto): siempre confiables.
- * 2) Si no hay ninguno, busca entre los PDFs sueltos (post_parent = 0) por el
- *    código de modelo del producto — solo se usa si hay UNA sola coincidencia,
- *    para no arriesgarse a mostrar la ficha de otro equipo.
+ * 2) Si no hay ninguno, busca entre los PDFs sueltos (post_parent = 0) probando
+ *    los candidatos de código de modelo del más al menos específico — se
+ *    queda con el primero que tenga UNA sola coincidencia, para no
+ *    arriesgarse a mostrar la ficha de otro equipo.
  */
 function sipcons_obtener_pdfs_producto(int $productId, string $titulo): array {
     $pdo = sipcons_db();
@@ -417,8 +446,8 @@ function sipcons_obtener_pdfs_producto(int $productId, string $titulo): array {
     }
     if ($pdfs) return $pdfs;
 
-    $codigo = sipcons_extraer_codigo_modelo($titulo);
-    if (!$codigo) return [];
+    $candidatos = sipcons_candidatos_modelo($titulo);
+    if (!$candidatos) return [];
 
     $stmt = $pdo->query("
         SELECT a.post_title AS titulo, am.meta_value AS ruta
@@ -426,13 +455,24 @@ function sipcons_obtener_pdfs_producto(int $productId, string $titulo): array {
         LEFT JOIN {$postmeta} am ON am.post_id = a.ID AND am.meta_key = '_wp_attached_file'
         WHERE a.post_type = 'attachment' AND a.post_mime_type = 'application/pdf' AND a.post_parent = 0
     ");
-    $candidatos = [];
+    $sueltos = [];
     foreach ($stmt as $row) {
         if (!$row['ruta']) continue;
-        $normalizada = strtoupper((string)preg_replace('/[^A-Z0-9]/i', '', $row['ruta']));
-        if (strpos($normalizada, $codigo) !== false) {
-            $candidatos[] = ['titulo' => $row['titulo'], 'url' => SIPCONS_UPLOADS_BASE . $row['ruta']];
+        $sueltos[] = [
+            'titulo' => $row['titulo'],
+            'url'    => SIPCONS_UPLOADS_BASE . $row['ruta'],
+            'norm'   => strtoupper((string)preg_replace('/[^A-Z0-9]/i', '', $row['ruta'])),
+        ];
+    }
+
+    foreach ($candidatos as $codigo) {
+        $coincidencias = array_values(array_filter(
+            $sueltos,
+            static fn(array $p): bool => strpos($p['norm'], $codigo) !== false
+        ));
+        if (count($coincidencias) === 1) {
+            return [['titulo' => $coincidencias[0]['titulo'], 'url' => $coincidencias[0]['url']]];
         }
     }
-    return count($candidatos) === 1 ? $candidatos : [];
+    return [];
 }
