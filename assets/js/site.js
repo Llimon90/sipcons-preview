@@ -265,6 +265,21 @@
   const catalog = document.getElementById('catalog');
   if (catalog) {
     const products = Array.from(catalog.querySelectorAll('.product'));
+
+    // Orden aleatorio de "Todos los productos": uno por visita (no se vuelve a
+    // barajar cada vez que se quita un filtro), y solo aplica ahí — en cuanto
+    // se filtra por marca o categoría se respeta el orden ya definido
+    // (Mettler-Toledo > Rhino > CAS, equipo antes que consumibles, etc.).
+    const posicionAleatoria = new Map();
+    {
+      const indices = products.map((_, i) => i);
+      for (let i = indices.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [indices[i], indices[j]] = [indices[j], indices[i]];
+      }
+      indices.forEach((origIdx, pos) => posicionAleatoria.set(products[origIdx], pos));
+    }
+
     // Solo botones con data-category o data-brand cuentan como filtro (por si
     // algún día se agrega un link con la misma clase .filter-btn por estilo).
     const filterBtns = catalog.querySelectorAll('.filter-btn[data-category], .filter-btn[data-brand]');
@@ -302,6 +317,13 @@
         if (ok) visibles.push(p); else p.style.display = 'none';
       });
 
+      // Vista general (sin filtro, sin búsqueda, sin grupo prearmado): orden
+      // aleatorio de esta visita. Con cualquier filtro activo, se deja el
+      // orden fijo del catálogo (visibles ya viene en ese orden).
+      if (activeCat === 'all' && activeBrand === 'all' && !grupoActivo && !q) {
+        visibles.sort((a, b) => posicionAleatoria.get(a) - posicionAleatoria.get(b));
+      }
+
       totalVisibles = visibles.length;
       const porPagina = pageSizeSel?.value === 'all' ? visibles.length || 1 : parseInt(pageSizeSel?.value || '24', 10);
       const totalPaginas = Math.max(1, Math.ceil(visibles.length / porPagina));
@@ -309,7 +331,10 @@
       const inicio = (pagina - 1) * porPagina;
       const fin = inicio + porPagina;
 
-      visibles.forEach((p, i) => { p.style.display = (i >= inicio && i < fin) ? '' : 'none'; });
+      visibles.forEach((p, i) => {
+        p.style.display = (i >= inicio && i < fin) ? '' : 'none';
+        p.style.order = String(i); // refleja el orden de "visibles" (barajado o fijo) en el grid
+      });
 
       if (countTag) countTag.textContent = visibles.length + (visibles.length === 1 ? ' producto' : ' productos');
       if (empty) empty.style.display = visibles.length ? 'none' : 'block';
