@@ -42,7 +42,7 @@ $sipconsMarcas    = $sipconsCatalogo['marcas'];
 <meta name="twitter:title" content="Catálogo de Productos · SIPCONS">
 <meta name="twitter:description" content="Catálogo de básculas, plataformas, puntos de venta y consumibles. Cotiza a la medida las mejores marcas: Mettler-Toledo, Zebra, Toshiba, CAS, A&D, Rhino y más.">
 <meta name="twitter:image" content="https://sipcons.com/assets/img/hero-slide-1.jpg">
-<link rel="stylesheet" href="./assets/css/site.css?v=20260924g">
+<link rel="stylesheet" href="./assets/css/site.css?v=20260929c">
 </head>
 <body>
 
@@ -96,18 +96,18 @@ $sipconsMarcas    = $sipconsCatalogo['marcas'];
         <div data-filter-group>
           <h4>Categorías</h4>
           <ul class="filter-list">
-            <li><button class="filter-btn active" data-category="all">Todos los productos</button></li>
+            <li><button class="filter-btn active" data-category="all"><span class="filter-label">Todos los productos</span> <span class="filter-count"></span></button></li>
             <?php foreach ($sipconsTipos as $tipo): ?>
-            <li><button class="filter-btn" data-category="<?= htmlspecialchars($tipo['slug'], ENT_QUOTES, 'UTF-8') ?>"><?= htmlspecialchars($tipo['label'], ENT_QUOTES, 'UTF-8') ?></button></li>
+            <li><button class="filter-btn" data-category="<?= htmlspecialchars($tipo['slug'], ENT_QUOTES, 'UTF-8') ?>"><span class="filter-label"><?= htmlspecialchars($tipo['label'], ENT_QUOTES, 'UTF-8') ?></span> <span class="filter-count"></span></button></li>
             <?php endforeach; ?>
           </ul>
         </div>
         <div data-filter-group style="margin-top:var(--space-6)">
           <h4>Marca</h4>
           <ul class="filter-list">
-            <li><button class="filter-btn active" data-brand="all">Todas las marcas</button></li>
+            <li><button class="filter-btn active" data-brand="all"><span class="filter-label">Todas las marcas</span> <span class="filter-count"></span></button></li>
             <?php foreach ($sipconsMarcas as $marca): ?>
-            <li><button class="filter-btn" data-brand="<?= htmlspecialchars($marca['slug'], ENT_QUOTES, 'UTF-8') ?>"><?= htmlspecialchars($marca['label'], ENT_QUOTES, 'UTF-8') ?></button></li>
+            <li><button class="filter-btn" data-brand="<?= htmlspecialchars($marca['slug'], ENT_QUOTES, 'UTF-8') ?>"><span class="filter-label"><?= htmlspecialchars($marca['label'], ENT_QUOTES, 'UTF-8') ?></span> <span class="filter-count"></span></button></li>
             <?php endforeach; ?>
           </ul>
         </div>
@@ -159,7 +159,11 @@ $sipconsMarcas    = $sipconsCatalogo['marcas'];
           </article>
           <?php endforeach; ?>
 
-          <p class="no-results">No encontramos productos con ese criterio. Prueba otra categoría o <a href="https://wa.me/526641086038" style="color:var(--color-primary);font-weight:600">escríbenos por WhatsApp</a>.</p>
+          <p class="no-results" id="catalogNoResults">
+            <span id="catalogNoResultsTexto">No encontramos productos con ese criterio.</span>
+            <span id="catalogNoResultsAcciones"></span>
+            <a href="https://wa.me/526641086038" style="color:var(--color-primary);font-weight:600">Escríbenos por WhatsApp</a>.
+          </p>
         </div>
 
         <nav class="catalog-pager" id="catalogPager" aria-label="Paginación de productos"></nav>
@@ -227,6 +231,6 @@ $sipconsMarcas    = $sipconsCatalogo['marcas'];
 
 <a href="https://wa.me/526641086038" class="wa" aria-label="Escríbenos por WhatsApp"><svg viewBox="0 0 24 24"><path d="M17.5 14.4c-.3-.1-1.7-.8-2-.9-.3-.1-.5-.1-.7.1-.2.3-.7.9-.9 1.1-.2.2-.3.2-.6.1-.3-.1-1.2-.5-2.3-1.4-.9-.8-1.4-1.7-1.6-2-.2-.3 0-.5.1-.6l.4-.5c.1-.2.2-.3.3-.5.1-.2 0-.4 0-.5s-.7-1.6-.9-2.2c-.2-.6-.5-.5-.7-.5h-.6c-.2 0-.5.1-.8.4-.3.3-1 1-1 2.5s1.1 2.9 1.2 3.1c.1.2 2.1 3.2 5 4.5.7.3 1.3.5 1.7.6.7.2 1.4.2 1.9.1.6-.1 1.7-.7 1.9-1.4.2-.7.2-1.2.2-1.4-.1-.1-.3-.2-.6-.3M12 2a10 10 0 0 0-8.6 15l-1.3 4.8 4.9-1.3A10 10 0 1 0 12 2Z"/></svg></a>
 
-<script src="./assets/js/site.js?v=20260929b"></script>
+<script src="./assets/js/site.js?v=20260929c"></script>
 </body>
 </html>

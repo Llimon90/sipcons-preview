@@ -285,11 +285,17 @@
     const filterBtns = catalog.querySelectorAll('.filter-btn[data-category], .filter-btn[data-brand]');
     const search = catalog.querySelector('#catalogSearch');
     const countTag = catalog.querySelector('#catalogCount');
-    const empty = catalog.querySelector('.no-results');
+    const empty = catalog.querySelector('#catalogNoResults');
+    const emptyTexto = catalog.querySelector('#catalogNoResultsTexto');
+    const emptyAcciones = catalog.querySelector('#catalogNoResultsAcciones');
     const pageSizeSel = catalog.querySelector('#catalogPageSize');
     const pager = catalog.querySelector('#catalogPager');
+    const catBtns = Array.from(catalog.querySelectorAll('.filter-btn[data-category]'));
+    const brandBtns = Array.from(catalog.querySelectorAll('.filter-btn[data-brand]'));
     let activeCat = 'all';
     let activeBrand = 'all';
+    let activeCatLabel = '';
+    let activeBrandLabel = '';
     let pagina = 1;
     let totalVisibles = products.length;
     let temporizadorBusqueda;
@@ -305,6 +311,56 @@
       grupoActivo = null;
       if (avisoGrupo) { avisoGrupo.remove(); avisoGrupo = null; }
     };
+
+    // Coincidencia de un producto contra una combinación hipotética de
+    // categoría/marca — se reutiliza para contar cuántos resultados tendría
+    // cada chip del panel de filtros, antes de hacer clic en él.
+    const coincideConCombinacion = (p, cat, brand, q) => {
+      const matchCat = grupoActivo ? grupoActivo.tipos.includes(p.dataset.category) : (cat === 'all' || p.dataset.category === cat);
+      const matchBrand = brand === 'all' || p.dataset.brand === brand;
+      const matchText = !q || p.dataset.name.toLowerCase().includes(q);
+      return matchCat && matchBrand && matchText;
+    };
+
+    // Conteos en vivo por chip + atenuar combinaciones sin resultados: así se
+    // ve venir un cruce de filtros vacío (ej. Colgantes + Mettler-Toledo)
+    // antes de llegar a él, en vez de solo toparse con "0 resultados".
+    const actualizarConteos = () => {
+      const q = (search?.value || '').trim().toLowerCase();
+      if (grupoActivo) {
+        // Vista prearmada de la portada: el panel de categorías no aplica
+        // igual (el grupo ya fija su propio conjunto de tipos), así que no
+        // se muestran conteos de categoría para no dar un número engañoso.
+        catBtns.forEach(btn => { btn.querySelector('.filter-count').textContent = ''; btn.classList.remove('sin-resultados'); });
+      } else {
+        catBtns.forEach(btn => {
+          const n = products.reduce((t, p) => t + (coincideConCombinacion(p, btn.dataset.category, activeBrand, q) ? 1 : 0), 0);
+          btn.querySelector('.filter-count').textContent = `(${n})`;
+          btn.classList.toggle('sin-resultados', n === 0);
+        });
+      }
+      brandBtns.forEach(btn => {
+        const n = products.reduce((t, p) => t + (coincideConCombinacion(p, activeCat, btn.dataset.brand, q) ? 1 : 0), 0);
+        btn.querySelector('.filter-count').textContent = `(${n})`;
+        btn.classList.toggle('sin-resultados', n === 0);
+      });
+    };
+
+    // Cuando el cruce de dos filtros da 0 resultados, en vez de solo decir
+    // "no encontramos nada" se explica cuáles son y se ofrece quitar
+    // cualquiera de los dos con un clic, para no quedarse atorado.
+    const quitarFiltro = (tipo) => {
+      if (tipo === 'cat') { activeCat = 'all'; activeCatLabel = ''; catBtns.forEach(b => b.classList.toggle('active', b.dataset.category === 'all')); }
+      if (tipo === 'brand') { activeBrand = 'all'; activeBrandLabel = ''; brandBtns.forEach(b => b.classList.toggle('active', b.dataset.brand === 'all')); }
+      pagina = 1;
+      apply();
+    };
+    if (emptyAcciones) {
+      emptyAcciones.addEventListener('click', (ev) => {
+        const btn = ev.target.closest('[data-quitar]');
+        if (btn) quitarFiltro(btn.dataset.quitar);
+      });
+    }
 
     const apply = () => {
       const q = (search?.value || '').trim().toLowerCase();
@@ -323,6 +379,7 @@
         const ok = matchCat && matchBrand && matchText && !esConsumibleEnVistaGeneral;
         if (ok) visibles.push(p); else p.style.display = 'none';
       });
+      actualizarConteos();
 
       // Vista general: orden aleatorio de esta visita. Con cualquier filtro
       // activo, se deja el orden fijo del catálogo (visibles ya viene en ese
@@ -344,7 +401,22 @@
       });
 
       if (countTag) countTag.textContent = visibles.length + (visibles.length === 1 ? ' producto' : ' productos');
-      if (empty) empty.style.display = visibles.length ? 'none' : 'block';
+      if (empty) {
+        empty.style.display = visibles.length ? 'none' : 'block';
+        if (!visibles.length && emptyTexto && emptyAcciones) {
+          if (activeCat !== 'all' && activeBrand !== 'all' && !grupoActivo) {
+            emptyTexto.textContent = `No hay productos de ${activeBrandLabel} en ${activeCatLabel}.`;
+            emptyAcciones.innerHTML =
+              `<span class="no-results-acciones">` +
+              `<button type="button" data-quitar="brand">Quitar «${activeBrandLabel}»</button>` +
+              `<button type="button" data-quitar="cat">Quitar «${activeCatLabel}»</button>` +
+              `</span>`;
+          } else {
+            emptyTexto.textContent = 'No encontramos productos con ese criterio.';
+            emptyAcciones.innerHTML = '';
+          }
+        }
+      }
 
       if (pager) {
         pager.innerHTML = '';
@@ -369,12 +441,13 @@
       const group = btn.closest('[data-filter-group]');
       group?.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
       btn.classList.add('active');
-      if (btn.dataset.category !== undefined) { quitarGrupo(); activeCat = btn.dataset.category; }
-      if (btn.dataset.brand !== undefined) activeBrand = btn.dataset.brand;
+      const etiqueta = (btn.querySelector('.filter-label')?.textContent || btn.textContent).trim();
+      if (btn.dataset.category !== undefined) { quitarGrupo(); activeCat = btn.dataset.category; activeCatLabel = etiqueta; }
+      if (btn.dataset.brand !== undefined) { activeBrand = btn.dataset.brand; activeBrandLabel = etiqueta; }
       pagina = 1;
       apply();
       const valorFiltro = btn.dataset.category !== undefined ? btn.dataset.category : btn.dataset.brand;
-      if (valorFiltro !== 'all') analitica.evento('filtro', { lg: btn.dataset.category !== undefined ? 'categoría' : 'marca', q: btn.textContent.trim(), rs: totalVisibles });
+      if (valorFiltro !== 'all') analitica.evento('filtro', { lg: btn.dataset.category !== undefined ? 'categoría' : 'marca', q: etiqueta, rs: totalVisibles });
     }));
     if (search) search.addEventListener('input', () => {
       pagina = 1;

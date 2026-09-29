@@ -337,12 +337,22 @@ body:has(#nav.scrolled) .nav-cta{position:static;transform:none;}
    PRODUCTOS — catálogo tipo e-commerce
    ===================================================================== */
 .catalog{display:grid;grid-template-columns:240px 1fr;gap:var(--space-8);align-items:start;}
-.filters{position:sticky;top:96px;background:var(--color-surface);border:1px solid var(--color-border);border-radius:var(--radius-lg);padding:var(--space-5);box-shadow:var(--shadow-sm);}
+/* max-height + scroll propio: en categorías con muchas marcas, el panel
+   completo podía quedar más alto que la pantalla y, al estar fijo (sticky),
+   la parte de abajo no se alcanzaba a ver hasta llegar al final del
+   catálogo. Ahora el panel scrollea por su cuenta sin perder su lugar. */
+.filters{position:sticky;top:96px;max-height:calc(100vh - 116px);overflow-y:auto;background:var(--color-surface);border:1px solid var(--color-border);border-radius:var(--radius-lg);padding:var(--space-5);box-shadow:var(--shadow-sm);}
 .filters h4{font-size:var(--text-base);margin-bottom:var(--space-3);}
 .filter-list{list-style:none;padding:0;display:flex;flex-direction:column;gap:2px;}
-.filter-btn{width:100%;text-align:left;background:none;border:0;padding:var(--space-2) var(--space-3);border-radius:var(--radius-sm);color:var(--color-text-muted);font-family:var(--font-body);font-size:var(--text-sm);cursor:pointer;transition:all var(--dur-fast) var(--ease-out);}
+.filter-btn{width:100%;display:flex;align-items:baseline;justify-content:space-between;gap:var(--space-2);text-align:left;background:none;border:0;padding:var(--space-2) var(--space-3);border-radius:var(--radius-sm);color:var(--color-text-muted);font-family:var(--font-body);font-size:var(--text-sm);cursor:pointer;transition:all var(--dur-fast) var(--ease-out);}
 .filter-btn:hover{background:var(--color-bg-subtle);color:var(--color-text);}
 .filter-btn.active{background:var(--color-primary-soft);color:var(--color-primary);font-weight:var(--weight-semibold);}
+.filter-count{color:var(--color-text-subtle);font-size:var(--text-xs);flex:none;}
+.filter-btn.active .filter-count{color:var(--color-primary);}
+/* Combinación sin resultados (ej. una marca + una categoría que no se cruzan):
+   se atenúa en vez de ocultarse, para que se entienda por qué no hay nada,
+   sin impedir que se pueda quitar el otro filtro después. */
+.filter-btn.sin-resultados:not(.active){opacity:.42;}
 .catalog-toolbar{display:flex;justify-content:space-between;align-items:center;gap:var(--space-4);margin-bottom:var(--space-5);flex-wrap:wrap;}
 .search{position:relative;flex:1;min-width:220px;max-width:360px;}
 .search input{width:100%;padding:var(--space-3) var(--space-3) var(--space-3) var(--space-7);border:1px solid var(--color-border-strong);border-radius:var(--radius-full);font-family:var(--font-body);font-size:var(--text-base);background:var(--color-surface);}
@@ -375,6 +385,9 @@ body:has(#nav.scrolled) .nav-cta{position:static;transform:none;}
 .catalog-preset button{background:var(--color-surface);color:var(--color-primary);border:1px solid var(--color-border);border-radius:var(--radius-full);padding:6px 14px;font:inherit;font-weight:var(--weight-medium);cursor:pointer;}
 .catalog-preset button:hover{border-color:var(--color-primary);}
 .no-results{grid-column:1/-1;text-align:center;color:var(--color-text-subtle);padding:var(--space-10);}
+.no-results-acciones{display:inline-flex;gap:var(--space-2);flex-wrap:wrap;justify-content:center;margin:var(--space-3) 0;}
+.no-results-acciones button{background:var(--color-surface);color:var(--color-primary);border:1px solid var(--color-border);border-radius:var(--radius-full);padding:6px 14px;font:inherit;font-size:var(--text-sm);font-weight:var(--weight-medium);cursor:pointer;}
+.no-results-acciones button:hover{border-color:var(--color-primary);}
 
 /* --- Carrusel de productos destacados (inicio) ------------------------
    Nombres con prefijo featured- a propósito: .carousel-arrow / .carousel-track
@@ -650,7 +663,7 @@ body:has(#nav.scrolled) .nav-cta{position:static;transform:none;}
   .split.reverse .split-media{order:0;}
   .contact-grid{grid-template-columns:1fr;}
   .catalog{grid-template-columns:1fr;}
-  .filters{position:static;}
+  .filters{position:static;max-height:none;overflow-y:visible;}
   .filter-list{flex-direction:row;flex-wrap:wrap;}
   .product-grid{grid-template-columns:repeat(2,1fr);}
   .featured-card{flex-basis:230px;}
