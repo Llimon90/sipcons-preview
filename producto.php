@@ -149,7 +149,7 @@ $urlCanonica = 'https://sipcons.com/producto.php' . ($producto ? '?slug=' . rawu
 
     <div class="product-media-row<?= !$pdfs ? ' single' : '' ?> reveal">
       <?php if ($galeria): ?>
-      <div class="product-gallery" id="productGallery">
+      <div class="product-gallery-wrap" id="productGallery">
         <div class="product-gallery-main" id="galleryMain">
           <img id="galleryMainImg" src="<?= $e($galeria[0]['grande']) ?>" data-full="<?= $e($galeria[0]['grande']) ?>" alt="<?= $e($producto['titulo']) ?>" loading="eager">
           <span class="gallery-zoom-hint" aria-hidden="true">
