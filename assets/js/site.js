@@ -308,19 +308,26 @@
 
     const apply = () => {
       const q = (search?.value || '').trim().toLowerCase();
+      // Vista general: sin filtro de categoría ni marca, sin búsqueda y sin
+      // grupo prearmado (?grupo=... de la portada) — es la que se ve "al
+      // inicio", antes de elegir nada.
+      const esVistaGeneral = activeCat === 'all' && activeBrand === 'all' && !grupoActivo && !q;
       const visibles = [];
       products.forEach(p => {
         const matchCat = grupoActivo ? grupoActivo.tipos.includes(p.dataset.category) : (activeCat === 'all' || p.dataset.category === activeCat);
         const matchBrand = activeBrand === 'all' || p.dataset.brand === activeBrand;
         const matchText = !q || p.dataset.name.toLowerCase().includes(q);
-        const ok = matchCat && matchBrand && matchText;
+        // Consumibles y refacciones no aparecen en la vista general: solo se
+        // muestran si se elige a propósito el filtro de Consumibles.
+        const esConsumibleEnVistaGeneral = esVistaGeneral && p.dataset.category === 'consumibles';
+        const ok = matchCat && matchBrand && matchText && !esConsumibleEnVistaGeneral;
         if (ok) visibles.push(p); else p.style.display = 'none';
       });
 
-      // Vista general (sin filtro, sin búsqueda, sin grupo prearmado): orden
-      // aleatorio de esta visita. Con cualquier filtro activo, se deja el
-      // orden fijo del catálogo (visibles ya viene en ese orden).
-      if (activeCat === 'all' && activeBrand === 'all' && !grupoActivo && !q) {
+      // Vista general: orden aleatorio de esta visita. Con cualquier filtro
+      // activo, se deja el orden fijo del catálogo (visibles ya viene en ese
+      // orden).
+      if (esVistaGeneral) {
         visibles.sort((a, b) => posicionAleatoria.get(a) - posicionAleatoria.get(b));
       }
 
