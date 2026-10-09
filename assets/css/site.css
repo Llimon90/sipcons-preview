@@ -365,6 +365,7 @@ body:has(#nav.scrolled) .nav-cta{position:static;transform:none;}
 .pager-btn.active{background:var(--color-primary);border-color:var(--color-primary);color:#fff;font-weight:var(--weight-medium);}
 .pager-btn:disabled{opacity:.4;cursor:default;}
 .product-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:var(--space-5);}
+.product-grid.cols-4{grid-template-columns:repeat(4,1fr);}
 .product{background:var(--color-surface);border:1px solid var(--color-border);border-radius:var(--radius-lg);overflow:hidden;transition:transform var(--dur) var(--ease-out),box-shadow var(--dur) var(--ease-out);display:flex;flex-direction:column;}
 .product:hover{transform:translateY(-4px);box-shadow:var(--shadow-lg);}
 /* Cuadrado y con aire generoso, igual que el visor de la ficha de producto:
@@ -665,7 +666,7 @@ body:has(#nav.scrolled) .nav-cta{position:static;transform:none;}
   .catalog{grid-template-columns:1fr;}
   .filters{position:static;max-height:none;overflow-y:visible;}
   .filter-list{flex-direction:row;flex-wrap:wrap;}
-  .product-grid{grid-template-columns:repeat(2,1fr);}
+  .product-grid,.product-grid.cols-4{grid-template-columns:repeat(2,1fr);}
   .featured-card{flex-basis:230px;}
   .footer-grid{grid-template-columns:1fr 1fr;}
   .tools-band{grid-template-columns:1fr;}
@@ -722,7 +723,7 @@ body:has(#nav.scrolled) .nav-cta{position:static;transform:none;}
   @media (max-width:350px){.hc-item:not(.hc-wa) svg{display:none;}}
 
   .grid.cols-4,.grid.cols-3,.grid.cols-2{grid-template-columns:1fr;}
-  .product-grid{grid-template-columns:1fr 1fr;}
+  .product-grid,.product-grid.cols-4{grid-template-columns:1fr 1fr;}
   .featured-carousel{padding:0 var(--space-6);}
   .featured-card{flex-basis:200px;}
   .featured-arrow{width:34px;height:34px;font-size:18px;}
