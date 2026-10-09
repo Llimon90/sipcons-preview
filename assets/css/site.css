@@ -226,7 +226,8 @@ body:has(#nav.scrolled) .nav-cta{position:static;transform:none;}
 .split-media .ph svg{width:64px;height:64px;color:var(--sip-cyan-400);margin-bottom:var(--space-3);}
 .split-media .ph span{color:rgba(255,255,255,.7);font-size:var(--text-sm);}
 /* La foto completa siempre, nunca recortada, sin importar el tamaño de pantalla. */
-.split-media img{width:100%;height:100%;object-fit:contain;padding:var(--space-4);}
+/* Absoluta: dentro del grid la imagen tomaba su altura natural y overflow:hidden la recortaba. */
+.split-media img{position:absolute;inset:0;width:100%;height:100%;object-fit:contain;padding:var(--space-4);}
 .media-band{margin:0;border-radius:var(--radius-xl);overflow:hidden;box-shadow:var(--shadow-xl);}
 .media-band img{display:block;width:100%;height:auto;}
 .media-band figcaption{background:var(--color-bg-inverse);color:rgba(255,255,255,.72);font-size:var(--text-sm);padding:var(--space-3) var(--space-5);text-align:center;}
