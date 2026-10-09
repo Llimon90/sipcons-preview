@@ -42,7 +42,7 @@ $sipconsMarcas    = $sipconsCatalogo['marcas'];
 <meta name="twitter:title" content="Catálogo de Productos · SIPCONS">
 <meta name="twitter:description" content="Catálogo de básculas, plataformas, puntos de venta y consumibles. Cotiza a la medida las mejores marcas: Mettler-Toledo, Zebra, Toshiba, CAS, A&D, Rhino y más.">
 <meta name="twitter:image" content="https://sipcons.com/assets/img/hero-slide-1.jpg">
-<link rel="stylesheet" href="./assets/css/site.css?v=20261009b">
+<link rel="stylesheet" href="./assets/css/site.css?v=20261009c">
 </head>
 <body>
 
@@ -84,6 +84,56 @@ $sipconsMarcas    = $sipconsCatalogo['marcas'];
     <span class="overline" style="color:var(--sip-cyan-400)">Catálogo</span>
     <h1 class="reveal">Todo para pesar y cobrar con precisión</h1>
     <p class="sub reveal" data-delay="1">Explora nuestro catálogo de básculas, plataformas, puntos de venta y consumibles de las marcas líderes. Cotiza el equipo exacto para tu negocio.</p>
+  </div>
+</section>
+
+<!-- MR. TIENDA® — se muestra al entrar a Puntos de venta (?grupo=pos o filtro de categoría) -->
+<section class="mt-promo" id="mrtienda"<?= ($_GET['grupo'] ?? '') === 'pos' ? '' : ' hidden' ?>>
+  <div class="wrap">
+    <div class="mt-promo-card">
+      <div class="mt-promo-head">
+        <span class="mt-logo"><img src="./assets/img/logo-mrtienda.png" alt="Mr. Tienda® · El primer punto de venta inteligente" width="363" height="89"></span>
+        <div>
+          <span class="overline" style="color:var(--sip-cyan-400)">Software punto de venta</span>
+          <h2>Mr. Tienda®: vende más rápido y controla todo tu negocio</h2>
+          <p>Desde una tienda pequeña hasta cadenas con muchas sucursales: abarrotes, minisúper, farmacias, carnicerías, ropa, vinaterías y más. Lo instalamos, lo integramos con tu báscula y te damos soporte.</p>
+        </div>
+        <div class="btn-row">
+          <a href="producto-mr-tienda.html" class="btn btn-action">Ver ficha técnica <span class="arw">→</span></a>
+          <a href="https://wa.me/526641086038?text=Hola,%20quiero%20informaci%C3%B3n%20del%20punto%20de%20venta%20Mr.%20Tienda" class="btn btn-ghost-light">Cotizar por WhatsApp</a>
+        </div>
+      </div>
+      <div class="carousel" id="mtCarousel">
+        <div class="carousel-frame">
+          <div class="carousel-slide is-active"><img src="./assets/img/mrtienda-slide-1.jpg" alt="Mr. Tienda®, el punto de venta que hace crecer tu negocio: más rápido que una registradora, para abarrotes, minisúper, farmacias, carnicerías y más" width="1900" height="800" loading="eager"></div>
+          <div class="carousel-slide"><img src="./assets/img/mrtienda-slide-2.jpg" alt="Pesa y cobra en un solo paso: lectura automática de básculas, etiquetas de carnicería por código de barras, cajón e impresora" width="1900" height="800" loading="lazy"></div>
+          <div class="carousel-slide"><img src="./assets/img/mrtienda-slide-3.jpg" alt="Precios y ofertas a tu medida: hasta 1,400 escalas de precios, ofertas calendarizadas y ticket que resalta el ahorro del cliente" width="1900" height="800" loading="lazy"></div>
+          <div class="carousel-slide"><img src="./assets/img/mrtienda-slide-4.jpg" alt="Clientes, crédito y facturación desde la caja: límite de crédito visible, apartados, cotizaciones y abonos" width="1900" height="800" loading="lazy"></div>
+          <div class="carousel-slide"><img src="./assets/img/mrtienda-slide-5.jpg" alt="Reportes que te dicen dónde está la utilidad: ventas por hora, mejores vendedores, cortes X y Z" width="1900" height="800" loading="lazy"></div>
+          <div class="carousel-slide"><img src="./assets/img/mrtienda-slide-6.jpg" alt="Modo protegido: la caja sigue vendiendo aunque se caiga la red y se recupera tras un corte de luz" width="1900" height="800" loading="lazy"></div>
+          <div class="carousel-slide"><img src="./assets/img/mrtienda-slide-7.jpg" alt="Supervisa tus cajas en vivo desde tu oficina, traspasos entre sucursales e inventario centralizado" width="1900" height="800" loading="lazy"></div>
+          <div class="carousel-slide"><img src="./assets/img/mrtienda-slide-8.jpg" alt="Módulo restaurante: mesas, meseros, comandas a cocina y bar, recetas y explosión de insumos" width="1900" height="800" loading="lazy"></div>
+          <button class="carousel-arrow prev" aria-label="Diapositiva anterior">‹</button>
+          <button class="carousel-arrow next" aria-label="Siguiente diapositiva">›</button>
+        </div>
+        <div class="carousel-dots">
+          <button class="carousel-dot is-active" data-slide="0" aria-label="Ir a la diapositiva 1"></button>
+          <button class="carousel-dot" data-slide="1" aria-label="Ir a la diapositiva 2"></button>
+          <button class="carousel-dot" data-slide="2" aria-label="Ir a la diapositiva 3"></button>
+          <button class="carousel-dot" data-slide="3" aria-label="Ir a la diapositiva 4"></button>
+          <button class="carousel-dot" data-slide="4" aria-label="Ir a la diapositiva 5"></button>
+          <button class="carousel-dot" data-slide="5" aria-label="Ir a la diapositiva 6"></button>
+          <button class="carousel-dot" data-slide="6" aria-label="Ir a la diapositiva 7"></button>
+          <button class="carousel-dot" data-slide="7" aria-label="Ir a la diapositiva 8"></button>
+        </div>
+      </div>
+      <ul class="mt-highlights">
+        <li><b>1,400</b>escalas de precios, ofertas y descuentos</li>
+        <li><b>Báscula</b>lectura automática del peso al cobrar</li>
+        <li><b>Modo protegido</b>sigue vendiendo aunque se caiga la red</li>
+        <li><b>En vivo</b>monitorea tus cajas desde tu oficina</li>
+      </ul>
+    </div>
   </div>
 </section>
 
@@ -213,7 +263,7 @@ $sipconsMarcas    = $sipconsCatalogo['marcas'];
     <div class="footer-grid">
       <div><div class="brand"><img src="./assets/img/logo-grande.png" alt="SIPCONS" class="nav-logo"></div><p class="tagline">Soluciones Integrales de Pesaje y Control. Innovación y confianza desde 1980.</p></div>
       <div><h5>Soluciones</h5><ul>
-        <li><a href="productos.php">Básculas</a></li><li><a href="productos.php?grupo=pos#catalog">Puntos de Venta</a></li>
+        <li><a href="productos.php">Básculas</a></li><li><a href="productos.php?grupo=pos#mrtienda">Puntos de Venta</a></li>
         <li><a href="productos.php">Plataformas</a></li><li><a href="productos.php?grupo=consumibles#catalog">Consumibles</a></li><li><a href="soporte.html">Soporte técnico</a></li>
       </ul></div>
       <div><h5>Recursos</h5><ul>
@@ -231,6 +281,6 @@ $sipconsMarcas    = $sipconsCatalogo['marcas'];
 
 <a href="https://wa.me/526641086038" class="wa" aria-label="Escríbenos por WhatsApp"><svg viewBox="0 0 24 24"><path d="M17.5 14.4c-.3-.1-1.7-.8-2-.9-.3-.1-.5-.1-.7.1-.2.3-.7.9-.9 1.1-.2.2-.3.2-.6.1-.3-.1-1.2-.5-2.3-1.4-.9-.8-1.4-1.7-1.6-2-.2-.3 0-.5.1-.6l.4-.5c.1-.2.2-.3.3-.5.1-.2 0-.4 0-.5s-.7-1.6-.9-2.2c-.2-.6-.5-.5-.7-.5h-.6c-.2 0-.5.1-.8.4-.3.3-1 1-1 2.5s1.1 2.9 1.2 3.1c.1.2 2.1 3.2 5 4.5.7.3 1.3.5 1.7.6.7.2 1.4.2 1.9.1.6-.1 1.7-.7 1.9-1.4.2-.7.2-1.2.2-1.4-.1-.1-.3-.2-.6-.3M12 2a10 10 0 0 0-8.6 15l-1.3 4.8 4.9-1.3A10 10 0 1 0 12 2Z"/></svg></a>
 
-<script src="./assets/js/site.js?v=20261009b"></script>
+<script src="./assets/js/site.js?v=20261009c"></script>
 </body>
 </html>

@@ -735,3 +735,39 @@ body:has(#nav.scrolled) .nav-cta{position:static;transform:none;}
   .logo-wall{grid-template-columns:repeat(2,1fr);}
   .article-body blockquote{font-size:var(--text-lg);}
 }
+
+/* =========================================================
+   MR. TIENDA® — bloque promocional (catálogo › Puntos de venta)
+   y ficha técnica (producto-mr-tienda.html)
+   ========================================================= */
+.mt-promo{padding-block:var(--space-10) 0;scroll-margin-top:90px;}
+.mt-promo[hidden]{display:none;}
+.mt-promo-card{background:var(--gradient-hero);border-radius:var(--radius-2xl);padding:var(--space-8);box-shadow:var(--shadow-xl);color:#fff;overflow:hidden;}
+.mt-promo-head{display:grid;grid-template-columns:auto 1fr auto;gap:var(--space-6);align-items:center;margin-bottom:var(--space-6);}
+.mt-logo{justify-self:start;align-self:center;background:#fff;border-radius:var(--radius-lg);padding:10px 14px;box-shadow:var(--shadow-lg);display:inline-block;}
+.mt-logo img{display:block;height:64px;width:auto;}
+.mt-promo-head h2{color:#fff;font-size:var(--text-3xl);margin-top:var(--space-1);}
+.mt-promo-head p{color:rgba(255,255,255,.8);margin-top:var(--space-2);max-width:62ch;}
+.mt-promo-head .btn-row{display:flex;flex-direction:column;gap:var(--space-3);}
+.mt-promo .carousel{padding-inline:0;}
+.mt-promo .carousel-dot{background:rgba(255,255,255,.3);}
+.mt-promo .carousel-dot.is-active{background:var(--sip-cyan-400);}
+.mt-highlights{list-style:none;padding:0;margin:var(--space-6) 0 0;display:grid;grid-template-columns:repeat(4,1fr);gap:var(--space-4);}
+.mt-highlights li{background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.12);border-radius:var(--radius-lg);padding:var(--space-4);font-size:var(--text-sm);color:rgba(255,255,255,.8);}
+.mt-highlights b{display:block;font-family:var(--font-display);font-size:var(--text-xl);color:var(--sip-cyan-400);margin-bottom:2px;}
+.check-cols{list-style:none;padding:0;margin:0;columns:2;column-gap:var(--space-8);}
+.check-cols li{break-inside:avoid;display:flex;gap:var(--space-3);padding:6px 0;color:var(--color-text-muted);font-size:var(--text-sm);}
+.check-cols li::before{content:"";flex:none;width:18px;height:18px;margin-top:2px;border-radius:50%;background:var(--color-accent-soft) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%230891B2' stroke-width='3.4' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 12 4 4 8-8'/%3E%3C/svg%3E") center/12px no-repeat;}
+.tab-panel h4{font-size:var(--text-lg);margin:var(--space-6) 0 var(--space-3);}
+.tab-panel h4:first-child{margin-top:0;}
+@media (max-width:960px){
+  .mt-promo-head{grid-template-columns:1fr;}
+  .mt-promo-head .btn-row{flex-direction:row;flex-wrap:wrap;}
+  .mt-highlights{grid-template-columns:repeat(2,1fr);}
+}
+@media (max-width:720px){
+  .mt-promo-card{padding:var(--space-5);border-radius:var(--radius-xl);}
+  .mt-logo img{height:48px;}
+  .mt-promo .carousel-arrow{display:none;}
+  .check-cols{columns:1;}
+}

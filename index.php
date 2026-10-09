@@ -41,7 +41,7 @@ try {
 <meta name="twitter:title" content="SIPCONS · Básculas, Plataformas y Puntos de Venta en Baja California">
 <meta name="twitter:description" content="46 años en soluciones de pesaje y control. Venta, instalación y servicio de básculas, plataformas y puntos de venta en Tijuana, Mexicali, Ensenada y Tecate.">
 <meta name="twitter:image" content="https://sipcons.com/assets/img/hero-slide-1.jpg">
-<link rel="stylesheet" href="./assets/css/site.css?v=20261009b">
+<link rel="stylesheet" href="./assets/css/site.css?v=20261009c">
 <script type="application/ld+json">
 {
   "@context": "https://schema.org",
@@ -167,7 +167,7 @@ try {
       <div class="card reveal" data-delay="1">
         <div class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="4" y="3" width="16" height="18" rx="2"/><path d="M8 7h8M8 11h8M8 15h4"/></svg></div>
         <h3>Puntos de Venta</h3><p>Mr. Tienda® y Mr. Chef®: pantallas touch, impresoras, gavetas, scanners y el software para automatizar tu cobro.</p>
-        <a href="productos.php?grupo=pos#catalog" class="more">Ver productos <span class="arw">→</span></a>
+        <a href="productos.php?grupo=pos#mrtienda" class="more">Ver productos <span class="arw">→</span></a>
       </div>
       <div class="card reveal" data-delay="2">
         <div class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M21 8 12 3 3 8l9 5 9-5Z"/><path d="M3 8v8l9 5 9-5V8"/></svg></div>
@@ -412,7 +412,7 @@ try {
     <div class="footer-grid">
       <div><div class="brand"><img src="./assets/img/logo-grande.png" alt="SIPCONS" class="nav-logo"></div><p class="tagline">Soluciones Integrales de Pesaje y Control. Innovación y confianza desde 1980.</p></div>
       <div><h5>Soluciones</h5><ul>
-        <li><a href="productos.php">Básculas</a></li><li><a href="productos.php?grupo=pos#catalog">Puntos de Venta</a></li>
+        <li><a href="productos.php">Básculas</a></li><li><a href="productos.php?grupo=pos#mrtienda">Puntos de Venta</a></li>
         <li><a href="productos.php">Plataformas</a></li><li><a href="productos.php?grupo=consumibles#catalog">Consumibles</a></li><li><a href="soporte.html">Soporte técnico</a></li>
       </ul></div>
       <div><h5>Recursos</h5><ul>
@@ -430,6 +430,6 @@ try {
 
 <a href="https://wa.me/526641086038" class="wa" aria-label="Escríbenos por WhatsApp"><svg viewBox="0 0 24 24"><path d="M17.5 14.4c-.3-.1-1.7-.8-2-.9-.3-.1-.5-.1-.7.1-.2.3-.7.9-.9 1.1-.2.2-.3.2-.6.1-.3-.1-1.2-.5-2.3-1.4-.9-.8-1.4-1.7-1.6-2-.2-.3 0-.5.1-.6l.4-.5c.1-.2.2-.3.3-.5.1-.2 0-.4 0-.5s-.7-1.6-.9-2.2c-.2-.6-.5-.5-.7-.5h-.6c-.2 0-.5.1-.8.4-.3.3-1 1-1 2.5s1.1 2.9 1.2 3.1c.1.2 2.1 3.2 5 4.5.7.3 1.3.5 1.7.6.7.2 1.4.2 1.9.1.6-.1 1.7-.7 1.9-1.4.2-.7.2-1.2.2-1.4-.1-.1-.3-.2-.6-.3M12 2a10 10 0 0 0-8.6 15l-1.3 4.8 4.9-1.3A10 10 0 1 0 12 2Z"/></svg></a>
 
-<script src="./assets/js/site.js?v=20261009b"></script>
+<script src="./assets/js/site.js?v=20261009c"></script>
 </body>
 </html>

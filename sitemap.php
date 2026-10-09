@@ -31,6 +31,7 @@ $paginasFijas = [
     ['/recursos.html', '2026-09-08'],
     ['/recurso-calibracion-nom.html', '2026-09-08'],
     ['/recurso-como-elegir-bascula.html', '2026-09-08'],
+    ['/producto-mr-tienda.html', '2026-10-09'],
     ['/industrias-abarrotes.html', '2026-09-08'],
     ['/industrias-ferreterias.html', '2026-09-08'],
     ['/industrias-industria.html', '2026-09-08'],

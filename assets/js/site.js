@@ -362,8 +362,14 @@
       });
     }
 
+    // Bloque de Mr. Tienda® (arriba del catálogo): visible solo mientras se
+    // ven puntos de venta, ya sea por ?grupo=pos o por el filtro de categoría.
+    const promoMrTienda = document.getElementById('mrtienda');
+    const tiposPos = grupos.pos.tipos.concat('punto-de-venta');
+
     const apply = () => {
       const q = (search?.value || '').trim().toLowerCase();
+      if (promoMrTienda) promoMrTienda.hidden = !(grupoActivo === grupos.pos || tiposPos.includes(activeCat));
       // Vista general: sin filtro de categoría ni marca, sin búsqueda y sin
       // grupo prearmado (?grupo=... de la portada) — es la que se ve "al
       // inicio", antes de elegir nada.
