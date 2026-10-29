@@ -19,6 +19,8 @@ const SIPCONS_EVENTOS = [
     'filtro', 'busqueda', 'pdf', 'galeria', 'saliente', 'destacado', 'error404',
 ];
 
+const SIPCONS_EVENTOS_MAX_BYTES = 40 * 1024 * 1024;
+
 function sipcons_es_bot(string $ua): bool {
     return $ua === '' || (bool)preg_match(
         '/bot|crawl|spider|slurp|curl|wget|python|java\/|httpclient|headless|lighthouse|pingdom|monitor|preview|facebookexternalhit|scanner/i',
@@ -105,5 +107,8 @@ function sipcons_registrar_evento(string $evento, array $d = []): void {
     }
 
     $archivo = __DIR__ . '/eventos-' . date('Y-m') . '.log';
+    // Tope por mes: si alguien manda eventos en masa, deja de escribir en vez de
+    // llenar el disco del hosting (un mes normal del sitio pesa unos pocos MB).
+    if (@filesize($archivo) > SIPCONS_EVENTOS_MAX_BYTES) return;
     @file_put_contents($archivo, json_encode($linea, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE) . "\n", FILE_APPEND | LOCK_EX);
 }

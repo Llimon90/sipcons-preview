@@ -22,6 +22,14 @@ DirectoryIndex index.php index.html
   # No exponer el repositorio si clonas el repo con git en la raíz
   RewriteRule (^|/)\.git(/|$) - [F,L]
 
+  # Las páginas PHP públicas solo se consultan (GET/HEAD): no reciben formularios
+  # ni archivos. Rechazar cualquier otro método antes de llegar a PHP evita que
+  # PHP procese cuerpos POST (multipart/archivos) que nadie debería mandar aquí,
+  # el vector de fallas como CVE-2026-109618 / 109619 («php2shell»). El único
+  # endpoint con POST es inc/send-contact.php (y pulso.php), limitado en inc/.htaccess.
+  RewriteCond %{REQUEST_METHOD} !^(GET|HEAD)$
+  RewriteRule ^(index|productos|producto|sitemap)\.php$|^$ - [F,L]
+
   # sitemap.xml ahora se genera en vivo (incluye cada ficha de producto).
   # Reescritura interna, no redirección: la URL sigue siendo /sitemap.xml,
   # sin necesidad de tocar nada en Search Console.
@@ -91,7 +99,16 @@ ErrorDocument 404 /404.html
   Header always set X-Content-Type-Options "nosniff"
   Header always set Referrer-Policy "strict-origin-when-cross-origin"
   Header always set X-Frame-Options "SAMEORIGIN"
+  # Solo HTTPS durante un año (sin includeSubDomains: no obliga a /app/ ni a
+  # otros subdominios que quizá aún no tengan certificado).
+  Header always set Strict-Transport-Security "max-age=31536000" "expr=%{HTTPS} == 'on'"
+  # El sitio no usa cámara, micrófono, ubicación ni pagos.
+  Header always set Permissions-Policy "camera=(), microphone=(), geolocation=(), payment=(), usb=()"
+  # No anunciar la versión de PHP del servidor.
+  Header always unset X-Powered-By
+  Header unset X-Powered-By
 </IfModule>
+ServerSignature Off
 
 # --- Tipos MIME (por si el server no los trae) ---------------
 <IfModule mod_mime.c>

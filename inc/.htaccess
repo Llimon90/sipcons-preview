@@ -1,35 +1,45 @@
 Options -Indexes
 
+# Ningún endpoint de esta carpeta recibe archivos ni textos largos: el formulario
+# de contacto pesa unos pocos KB. Apache corta antes de que PHP lea el cuerpo,
+# lo que también reduce la exposición a fallas de PHP al procesar POST grandes
+# o con archivos (p. ej. CVE-2026-109618, «php2shell»).
+LimitRequestBody 65536
+
 <IfModule mod_rewrite.c>
   RewriteEngine On
   # Solo permitir POST a send-contact.php y pulso.php; bloquear GET directo.
   RewriteCond %{REQUEST_METHOD} !POST
   RewriteRule ^(send-contact|pulso)\.php$ - [F]
+  # El reporte solo se consulta (GET); cualquier otro método se rechaza.
+  RewriteCond %{REQUEST_METHOD} !^(GET|HEAD)$
+  RewriteRule ^stats\.php$ - [F]
 </IfModule>
 
-# Archivos de uso interno: solo se deben usar por include() desde productos.php,
-# nunca visitarse directo. (db-inspect.php se protege con token dentro del propio
-# archivo y se debe borrar del servidor cuando ya no se necesite.)
+# Archivos de uso interno: solo se deben usar por include() desde los .php del
+# sitio, nunca visitarse directo. db-inspect.php ya no existe en el código; si
+# quedó una copia en el servidor, esta regla la bloquea (bórrala de todos modos).
 <IfModule mod_authz_core.c>
-  <FilesMatch "^(db|db-config|db-config\.example|product-cat-map|productos-data|eventos|analitica)\.php$">
+  <FilesMatch "^(db|db-config|db-config\.example|db-inspect|product-cat-map|productos-data|eventos|analitica)\.php$">
     Require all denied
   </FilesMatch>
 </IfModule>
 <IfModule !mod_authz_core.c>
-  <FilesMatch "^(db|db-config|db-config\.example|product-cat-map|productos-data|eventos|analitica)\.php$">
+  <FilesMatch "^(db|db-config|db-config\.example|db-inspect|product-cat-map|productos-data|eventos|analitica)\.php$">
     Order allow,deny
     Deny from all
   </FilesMatch>
 </IfModule>
 
-# Bloquear acceso público a bitácoras de depuración temporales (*.log)
+# Bitácoras (*.log), contador de envíos del formulario (*.dat) y respaldos que
+# deja un editor (*.bak, *~, *.old, *.swp): nunca públicos.
 <IfModule mod_authz_core.c>
-  <FilesMatch "\.log$">
+  <FilesMatch "(\.(log|dat|bak|old|orig|swp)|~)$">
     Require all denied
   </FilesMatch>
 </IfModule>
 <IfModule !mod_authz_core.c>
-  <FilesMatch "\.log$">
+  <FilesMatch "(\.(log|dat|bak|old|orig|swp)|~)$">
     Order allow,deny
     Deny from all
   </FilesMatch>

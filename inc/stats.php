@@ -38,12 +38,16 @@ if (($_GET['export'] ?? '') === 'csv') {
     $out = fopen('php://output', 'w');
     fwrite($out, "\xEF\xBB\xBF");
     fputcsv($out, ['fecha', 'evento', 'pagina', 'sesion', 'visitante', 'dispositivo', 'navegador', 'sistema', 'origen', 'utm_source', 'utm_medium', 'utm_campaign', 'lugar', 'producto', 'texto', 'resultados', 'interes', 'ms_activos', 'scroll_pct']);
+    // Textos que escribe el visitante (búsquedas, origen, etc.) pueden empezar con
+    // = + - @ y Excel los ejecutaría como fórmula al abrir el CSV; se neutralizan
+    // anteponiendo un apóstrofo.
+    $celda = static fn($v): string => preg_match('/^[=+\-@\t\r]/', (string)$v) ? "'" . $v : (string)$v;
     foreach (sipcons_leer_eventos($desde, $ahora) as $ev) {
-        fputcsv($out, [
+        fputcsv($out, array_map($celda, [
             $ev['t'], $ev['e'], $ev['p'] ?? '', $ev['s'] ?? '', $ev['v'] ?? '', $ev['d'] ?? '', $ev['b'] ?? '', $ev['o'] ?? '',
             $ev['r'] ?? '', $ev['us'] ?? '', $ev['um'] ?? '', $ev['uc'] ?? '', $ev['lg'] ?? '', $ev['pr'] ?? '', $ev['q'] ?? '',
             $ev['rs'] ?? '', $ev['i'] ?? '', $ev['ms'] ?? '', $ev['sc'] ?? '',
-        ]);
+        ]));
     }
     fclose($out);
     exit;
@@ -52,6 +56,7 @@ if (($_GET['export'] ?? '') === 'csv') {
 header('Content-Type: text/html; charset=UTF-8');
 header('Cache-Control: no-store');
 header('X-Robots-Tag: noindex, nofollow');
+header('Referrer-Policy: no-referrer'); // el token va en la URL: que no salga en el Referer
 
 $R = sipcons_analizar($desde, $ahora);
 $P = sipcons_analizar($desdePrev, $hastaPrev);

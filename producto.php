@@ -95,7 +95,7 @@ $urlCanonica = 'https://sipcons.com/producto.php' . ($producto ? '?slug=' . rawu
     // Sin "offers": la cotización es a la medida, no hay precio fijo que
     // publicar. Un Offer sin price sale como advertencia en Search Console;
     // mejor un Product completo y válido que uno con una advertencia.
-], JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES) ?>
+], JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_HEX_TAG) ?>
 </script>
 <?php endif; ?>
 </head>

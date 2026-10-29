@@ -18,11 +18,6 @@ return [
     'password' => 'XXXXXXXXXXXX',     // la contraseña de ese usuario
     'prefix'   => 'wpwa_',            // prefijo de tablas de WordPress en esta instalación
 
-    // Token temporal para poder abrir inc/db-inspect.php desde el navegador.
-    // Invéntate algo largo y random. Borra inc/db-inspect.php del servidor
-    // en cuanto termines de usarlo.
-    'inspect_token' => 'CAMBIA-ESTO-POR-ALGO-LARGO-Y-UNICO',
-
     // Contraseña para ver el reporte de contactos (inc/stats.php?token=...):
     // envíos del formulario y clics a WhatsApp/teléfono. Larga y única.
     'stats_token' => 'CAMBIA-ESTO-POR-OTRO-TOKEN-LARGO-Y-UNICO',

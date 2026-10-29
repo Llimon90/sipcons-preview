@@ -1,7 +1,7 @@
 <?php
 /**
  * SIPCONS · conexión de solo lectura a la base de datos de WordPress/WooCommerce.
- * Usada por productos.php y por el diagnóstico inc/db-inspect.php.
+ * Usada por productos.php, producto.php, index.php y sitemap.php.
  */
 
 declare(strict_types=1);
