@@ -8,6 +8,8 @@ declare(strict_types=1);
 
 const SIPCONS_CONTACTOS = ['whatsapp', 'telefono', 'correo', 'formulario'];
 const SIPCONS_INTERACCIONES = ['filtro', 'busqueda', 'pdf', 'galeria', 'destacado', 'form_inicio'];
+const SIPCONS_MAX_RECIENTES = 60;   // contactos recientes que se guardan para la bitácora
+const SIPCONS_VENTANA_VIVO = 1800;  // segundos que cuentan como «ahora mismo»
 
 /** Lee (en streaming) los eventos entre dos timestamps, de los archivos mensuales. */
 function sipcons_leer_eventos(int $desde, int $hasta): Generator {
@@ -53,16 +55,23 @@ function sipcons_clasificar_fuente(string $ref, string $us, string $um): string 
     return 'Referido: ' . $h;
 }
 
+/** Agrupa una fuente detallada en su canal («Búsqueda: Google» -> «Búsqueda»). */
+function sipcons_canal_de_fuente(string $fuente): string {
+    $p = strpos($fuente, ':');
+    return $p === false ? $fuente : substr($fuente, 0, $p);
+}
+
 function sipcons_slug_de_pagina(string $p): string {
     if (strpos($p, '/producto.php') !== 0) return '';
     return preg_match('/[?&]slug=([^&]+)/', $p, $m) ? rawurldecode($m[1]) : '';
 }
 
 /** @param array<string,array<string,int>> $tabla */
-function sipcons_sumar_sesion(array &$tabla, string $k, bool $convierte, bool $rebote): void {
+function sipcons_sumar_sesion(array &$tabla, string $k, bool $convierte, bool $rebote, int $contactos = 0): void {
     $tabla[$k]['ses'] = ($tabla[$k]['ses'] ?? 0) + 1;
     if ($convierte) $tabla[$k]['conv'] = ($tabla[$k]['conv'] ?? 0) + 1;
     if ($rebote) $tabla[$k]['reb'] = ($tabla[$k]['reb'] ?? 0) + 1;
+    if ($contactos > 0) $tabla[$k]['cont'] = ($tabla[$k]['cont'] ?? 0) + $contactos;
 }
 
 /** @param array<string,int> $a */
@@ -72,11 +81,13 @@ function sipcons_inc(array &$a, string $k, int $n = 1): void {
 
 /**
  * Agrega todos los eventos del rango. Devuelve KPIs, series, rankings y tablas.
+ * @param bool $conPruebas false = descarta los envíos marcados como prueba interna (x=1).
  * @return array<string,mixed>
  */
-function sipcons_analizar(int $desde, int $hasta): array {
+function sipcons_analizar(int $desde, int $hasta, bool $conPruebas = true): array {
     $porTipo = [];
     $porDia = [];
+    $porHora = [];
     $heatVistas = array_fill(1, 7, array_fill(0, 24, 0));
     $heatContactos = array_fill(1, 7, array_fill(0, 24, 0));
     $sesiones = [];
@@ -90,33 +101,69 @@ function sipcons_analizar(int $desde, int $hasta): array {
     $e404 = [];
     $salientes = [];
     $destacados = [];
+    $erroresForm = [];
+    $recientes = [];
+    $ultimosEventos = [];
+    $ultimoPorTipo = [];
+    $pruebas = 0;
     $sinSesion = array_fill_keys(SIPCONS_CONTACTOS, 0);
+    $limiteVivo = $hasta - SIPCONS_VENTANA_VIVO;
 
     foreach (sipcons_leer_eventos($desde, $hasta) as $ev) {
         $e = (string)$ev['e'];
         $ts = (int)$ev['ts'];
         $p = (string)($ev['p'] ?? '');
         $s = (string)($ev['s'] ?? '');
+        $esPrueba = !empty($ev['x']);
+        if ($esPrueba) {
+            $pruebas++;
+            if (!$conPruebas) continue;
+        }
         $dia = date('Y-m-d', $ts);
+        $hora = date('Y-m-d H', $ts);
         $esContacto = in_array($e, SIPCONS_CONTACTOS, true);
 
         sipcons_inc($porTipo, $e);
+        $ultimoPorTipo[$e] = $ts;
+
+        if ($e !== 'salida') {
+            $ultimosEventos[] = ['ts' => $ts, 'e' => $e, 'p' => $p, 'lg' => (string)($ev['lg'] ?? ''), 'pr' => (string)($ev['pr'] ?? ''),
+                                 'q' => (string)($ev['q'] ?? ''), 'd' => (string)($ev['d'] ?? ''), 'x' => $esPrueba];
+            if (count($ultimosEventos) > 25) array_shift($ultimosEventos);
+        }
 
         if ($e === 'vista') {
             $porDia[$dia]['vistas'] = ($porDia[$dia]['vistas'] ?? 0) + 1;
+            $porHora[$hora]['vistas'] = ($porHora[$hora]['vistas'] ?? 0) + 1;
             $heatVistas[(int)date('N', $ts)][(int)date('G', $ts)]++;
+        }
+        if ($e === 'form_error') {
+            sipcons_inc($erroresForm, (string)($ev['lg'] ?? '') !== '' ? (string)$ev['lg'] : 'sin motivo');
         }
         if ($esContacto) {
             $porDia[$dia][$e] = ($porDia[$dia][$e] ?? 0) + 1;
+            $porHora[$hora][$e] = ($porHora[$hora][$e] ?? 0) + 1;
             $heatContactos[(int)date('N', $ts)][(int)date('G', $ts)]++;
             $lg = (string)($ev['lg'] ?? '');
             $lugarClave = $lg !== '' ? $lg : ($e === 'formulario' ? 'formulario' : 'sin dato');
             $lugares[$e][$lugarClave] = ($lugares[$e][$lugarClave] ?? 0) + 1;
             if ($p !== '') $paginas[$p]['contactos'] = ($paginas[$p]['contactos'] ?? 0) + 1;
             $pr = (string)($ev['pr'] ?? '');
+            if ($pr === '') $pr = sipcons_slug_de_pagina($p);
             if ($pr !== '') $productos[$pr]['cotizar'] = ($productos[$pr]['cotizar'] ?? 0) + 1;
             if ($e === 'formulario' && !empty($ev['i'])) sipcons_inc($intereses, (string)$ev['i']);
             if ($s === '') $sinSesion[$e]++;
+
+            // Bitácora: el contacto con lo que se sabía de la sesión hasta ese momento.
+            $ctx = $s !== '' && isset($sesiones[$s]) ? $sesiones[$s] : null;
+            $recientes[] = [
+                'ts' => $ts, 'e' => $e, 'p' => $p, 'pr' => $pr, 'lg' => $lg, 'i' => (string)($ev['i'] ?? ''), 'x' => $esPrueba,
+                'd' => (string)($ev['d'] ?? ($ctx['d'] ?? '')),
+                'fuente' => $ctx['fuente'] ?? null, 'landing' => $ctx['landing'] ?? null,
+                'vistas' => $ctx['vistas'] ?? 0, 'seg' => $ctx ? max(0, $ts - $ctx['ini']) : null,
+                'nuevo' => $ctx['nuevo'] ?? null,
+            ];
+            if (count($recientes) > SIPCONS_MAX_RECIENTES) array_shift($recientes);
         }
 
         switch ($e) {
@@ -151,13 +198,14 @@ function sipcons_analizar(int $desde, int $hasta): array {
 
         if (!isset($sesiones[$s])) {
             $sesiones[$s] = [
-                'v' => (string)($ev['v'] ?? '') ?: $s, 'vistas' => 0, 'ms' => 0,
+                'v' => (string)($ev['v'] ?? '') ?: $s, 'vistas' => 0, 'ms' => 0, 'ini' => $ts, 'fin' => $ts,
                 'd' => (string)($ev['d'] ?? 'Escritorio'), 'b' => (string)($ev['b'] ?? 'Otro'), 'o' => (string)($ev['o'] ?? 'Otro'),
                 'fuente' => null, 'landing' => null, 'nuevo' => false, 'contactos' => 0,
                 'productos' => false, 'interacciones' => 0, 'ultima' => '',
             ];
         }
         $ses =& $sesiones[$s];
+        $ses['fin'] = $ts;
 
         if ($e === 'vista') {
             $ses['vistas']++;
@@ -196,14 +244,18 @@ function sipcons_analizar(int $desde, int $hasta): array {
     $visitantes = [];
     $nuevosV = [];
     $fuentes = [];
+    $canales = [];
+    $tipoVisitante = [];
     $dispositivos = [];
     $navegadores = [];
     $sistemas = [];
     $landings = [];
     $salidasPorPagina = [];
     $embudo = ['sesiones' => 0, 'productos' => 0, 'interaccion' => 0, 'contacto' => 0];
+    $enVivo = [];
+    $paginasPorSesion = [];
 
-    foreach ($sesiones as $ses) {
+    foreach ($sesiones as $sid => $ses) {
         $t['sesiones']++;
         $t['vistas'] += $ses['vistas'];
         $visitantes[$ses['v']] = true;
@@ -214,18 +266,29 @@ function sipcons_analizar(int $desde, int $hasta): array {
         if ($ses['nuevo']) { $t['nuevos']++; $nuevosV[$ses['v']] = true; }
         if ($ses['ms'] > 0) { $t['ms'] += $ses['ms']; $t['con_ms']++; }
 
-        sipcons_sumar_sesion($fuentes, $ses['fuente'] ?? 'Directo', $convierte, $rebote);
-        sipcons_sumar_sesion($dispositivos, $ses['d'], $convierte, $rebote);
-        sipcons_sumar_sesion($navegadores, $ses['b'], $convierte, $rebote);
-        sipcons_sumar_sesion($sistemas, $ses['o'], $convierte, $rebote);
-        sipcons_sumar_sesion($landings, $ses['landing'] ?? '(sin datos)', $convierte, $rebote);
+        $fuente = $ses['fuente'] ?? 'Directo';
+        sipcons_sumar_sesion($fuentes, $fuente, $convierte, $rebote, $ses['contactos']);
+        sipcons_sumar_sesion($canales, sipcons_canal_de_fuente($fuente), $convierte, $rebote, $ses['contactos']);
+        sipcons_sumar_sesion($tipoVisitante, $ses['nuevo'] ? 'Primera visita' : 'Ya había venido', $convierte, $rebote, $ses['contactos']);
+        sipcons_sumar_sesion($dispositivos, $ses['d'], $convierte, $rebote, $ses['contactos']);
+        sipcons_sumar_sesion($navegadores, $ses['b'], $convierte, $rebote, $ses['contactos']);
+        sipcons_sumar_sesion($sistemas, $ses['o'], $convierte, $rebote, $ses['contactos']);
+        sipcons_sumar_sesion($landings, $ses['landing'] ?? '(sin datos)', $convierte, $rebote, $ses['contactos']);
         if ($ses['ultima'] !== '') sipcons_inc($salidasPorPagina, $ses['ultima']);
+        $prof = $ses['vistas'] >= 5 ? '5 o más' : (string)max(1, $ses['vistas']);
+        sipcons_sumar_sesion($paginasPorSesion, $prof, $convierte, $rebote, $ses['contactos']);
 
         $embudo['sesiones']++;
         if ($ses['productos']) $embudo['productos']++;
         if ($ses['interacciones'] > 0 || $convierte) $embudo['interaccion']++;
         if ($convierte) $embudo['contacto']++;
+
+        if ($ses['fin'] >= $limiteVivo) {
+            $enVivo[] = ['fin' => $ses['fin'], 'ultima' => $ses['ultima'], 'd' => $ses['d'], 'fuente' => $fuente,
+                         'vistas' => $ses['vistas'], 'contactos' => $ses['contactos'], 'ini' => $ses['ini']];
+        }
     }
+    usort($enVivo, static fn($a, $b) => $b['fin'] <=> $a['fin']);
 
     // --- Métricas por página (por visita = sesión × página) ---------------
     foreach ($visitas as $vis) {
@@ -243,38 +306,51 @@ function sipcons_analizar(int $desde, int $hasta): array {
     uasort($productos, static fn($a, $b) => (($b['vistas'] ?? 0) + ($b['cotizar'] ?? 0) * 5) <=> (($a['vistas'] ?? 0) + ($a['cotizar'] ?? 0) * 5));
     $porSesiones = static fn($a, $b) => $b['ses'] <=> $a['ses'];
     uasort($fuentes, $porSesiones);
+    uasort($canales, $porSesiones);
     uasort($dispositivos, $porSesiones);
     uasort($navegadores, $porSesiones);
     uasort($sistemas, $porSesiones);
     uasort($landings, $porSesiones);
+    ksort($paginasPorSesion);
     arsort($filtros);
     arsort($e404);
     arsort($salientes);
     arsort($destacados);
     arsort($intereses);
+    arsort($erroresForm);
     uasort($busquedas, static fn($a, $b) => $b['n'] <=> $a['n']);
 
     return [
-        'totales'       => $t + ['visitantes' => count($visitantes), 'visitantes_nuevos' => count($nuevosV)],
-        'por_tipo'      => $porTipo,
-        'por_dia'       => $porDia,
-        'heat_vistas'   => $heatVistas,
+        'totales'        => $t + ['visitantes' => count($visitantes), 'visitantes_nuevos' => count($nuevosV)],
+        'por_tipo'       => $porTipo,
+        'por_dia'        => $porDia,
+        'por_hora'       => $porHora,
+        'heat_vistas'    => $heatVistas,
         'heat_contactos' => $heatContactos,
-        'fuentes'       => $fuentes,
-        'dispositivos'  => $dispositivos,
-        'navegadores'   => $navegadores,
-        'sistemas'      => $sistemas,
-        'landings'      => $landings,
-        'embudo'        => $embudo,
-        'paginas'       => $paginas,
-        'productos'     => $productos,
-        'lugares'       => $lugares,
-        'filtros'       => $filtros,
-        'busquedas'     => $busquedas,
-        'intereses'     => $intereses,
-        'e404'          => $e404,
-        'salientes'     => $salientes,
-        'destacados'    => $destacados,
-        'sin_sesion'    => $sinSesion,
+        'fuentes'        => $fuentes,
+        'canales'        => $canales,
+        'tipo_visitante' => $tipoVisitante,
+        'profundidad'    => $paginasPorSesion,
+        'dispositivos'   => $dispositivos,
+        'navegadores'    => $navegadores,
+        'sistemas'       => $sistemas,
+        'landings'       => $landings,
+        'embudo'         => $embudo,
+        'paginas'        => $paginas,
+        'productos'      => $productos,
+        'lugares'        => $lugares,
+        'filtros'        => $filtros,
+        'busquedas'      => $busquedas,
+        'intereses'      => $intereses,
+        'e404'           => $e404,
+        'salientes'      => $salientes,
+        'destacados'     => $destacados,
+        'sin_sesion'     => $sinSesion,
+        'errores_form'   => $erroresForm,
+        'recientes'      => array_reverse($recientes),
+        'ultimos_eventos' => array_reverse($ultimosEventos),
+        'ultimo_por_tipo' => $ultimoPorTipo,
+        'en_vivo'        => $enVivo,
+        'pruebas'        => $pruebas,
     ];
 }

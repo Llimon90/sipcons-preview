@@ -9,6 +9,7 @@ error_reporting(0); // no exponer warnings/paths del servidor al cliente
 
 header('Content-Type: application/json; charset=UTF-8');
 header('Cache-Control: no-store');
+date_default_timezone_set('America/Tijuana');
 
 const DEST_EMAIL   = 'info@sipcons.com';
 const FROM_EMAIL   = 'noreply@sipcons.com'; // buzón dedicado en cPanel para no saturar info@ con rebotes
@@ -34,6 +35,25 @@ function responder(bool $ok, string $error = ''): void {
     exit;
 }
 
+/**
+ * Deja constancia del resultado en la analítica (inc/stats.php). Se registra
+ * SIEMPRE, aunque el navegador tenga «No rastrear» o ?notrack=1: un contacto no
+ * es rastreo y es el dato que más importa. Las pruebas del dueño (?notrack=1)
+ * quedan marcadas con x=1 para poder separarlas en el panel.
+ * $motivo vacío = envío correcto ('formulario'); con motivo = 'form_error'.
+ */
+function registrar_resultado(string $motivo = '', string $interes = ''): void {
+    require_once __DIR__ . '/eventos.php';
+    sipcons_registrar_evento($motivo === '' ? 'formulario' : 'form_error', [
+        'p'  => '/contacto.html',
+        's'  => $_POST['sid'] ?? '',
+        'v'  => $_POST['vid'] ?? '',
+        'i'  => $interes,
+        'lg' => $motivo,
+        'x'  => !empty($_POST['nt']) ? 1 : 0,
+    ], true);
+}
+
 if (($_SERVER['REQUEST_METHOD'] ?? '') !== 'POST') {
     http_response_code(405);
     responder(false, 'Método no permitido.');
@@ -56,6 +76,7 @@ function origen_valido(): bool {
     return $host === 'sipcons.com' || $host === 'www.sipcons.com';
 }
 if (!origen_valido()) {
+    registrar_resultado('otro sitio');
     http_response_code(403);
     responder(false, 'Solicitud no permitida.');
 }
@@ -63,6 +84,7 @@ if (!origen_valido()) {
 // --- Honeypot: campo oculto que un humano nunca llena -----------------
 // Si viene lleno, es un bot: respondemos "éxito" sin enviar nada.
 if (!empty($_POST['website'] ?? '')) {
+    registrar_resultado('bot (honeypot)');
     responder(true);
 }
 
@@ -108,19 +130,23 @@ $mensaje  = trim((string)($_POST['mensaje'] ?? ''));
 $mensaje  = mb_substr($mensaje, 0, MAX_LEN_LARGO);
 
 if ($nombre === '' || $telefono === '' || $email === '' || $mensaje === '') {
+    registrar_resultado('faltan campos', $interes);
     responder(false, 'Faltan campos obligatorios.');
 }
 
 if (strlen($email) > 120 || !filter_var($email, FILTER_VALIDATE_EMAIL)) {
+    registrar_resultado('correo inválido', $interes);
     responder(false, 'El correo electrónico no es válido.');
 }
 
 $digitos = (string)preg_replace('/\D+/', '', $telefono);
 if (!preg_match('/^[0-9+()\-.\s]{7,25}$/', $telefono) || strlen($digitos) < 7 || strlen($digitos) > 15) {
+    registrar_resultado('teléfono inválido', $interes);
     responder(false, 'El teléfono no es válido.');
 }
 
 if (!dentro_del_limite()) {
+    registrar_resultado('límite por hora', $interes);
     http_response_code(429);
     responder(false, 'Recibimos varios mensajes seguidos. Intenta más tarde o escríbenos por WhatsApp.');
 }
@@ -145,19 +171,11 @@ $headers[] = 'Content-Type: text/plain; charset=UTF-8';
 $enviado = mail(DEST_EMAIL, $asunto, $cuerpo, implode("\r\n", $headers), '-f' . FROM_EMAIL);
 
 if (!$enviado) {
+    registrar_resultado('falló el envío del correo', $interes);
     responder(false, 'No se pudo enviar el mensaje. Intenta de nuevo o escríbenos por WhatsApp.');
 }
 
-// Contador de envíos (anónimo): se omite si el navegador tiene «No rastrear» / ?notrack=1.
-if (empty($_POST['nt'])) {
-    require_once __DIR__ . '/eventos.php';
-    sipcons_registrar_evento('formulario', [
-        'p' => '/contacto.html',
-        's' => $_POST['sid'] ?? '',
-        'v' => $_POST['vid'] ?? '',
-        'i' => $interes,
-    ]);
-}
+registrar_resultado('', $interes);
 
 // --- Confirmación automática al cliente --------------------------------
 // No afecta la respuesta al navegador: el mensaje a info@ ya se envió,

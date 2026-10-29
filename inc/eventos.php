@@ -17,6 +17,7 @@ declare(strict_types=1);
 const SIPCONS_EVENTOS = [
     'vista', 'salida', 'whatsapp', 'telefono', 'correo', 'formulario', 'form_inicio',
     'filtro', 'busqueda', 'pdf', 'galeria', 'saliente', 'destacado', 'error404',
+    'form_error', // envío del formulario que no llegó a info@ (lg = motivo)
 ];
 
 const SIPCONS_EVENTOS_MAX_BYTES = 40 * 1024 * 1024;
@@ -72,13 +73,16 @@ function sipcons_limpiar_id($valor): string {
  *   p página · s sesión · v visitante · n visitante nuevo (0/1) · r sitio de origen
  *   us/um/uc utm source/medium/campaign · l idioma · ms tiempo activo (ms)
  *   sc scroll máx. (%) · lg lugar/etiqueta · pr producto · q texto (búsqueda/valor)
- *   rs resultados · i interés (formulario)
+ *   rs resultados · i interés (formulario) · x 1 = prueba interna (navegador con ?notrack=1)
+ * @param bool $servidor true cuando lo registra el propio servidor tras procesar
+ *   el formulario: ahí ya no se descarta por «parecer bot» (el envío pasó todas
+ *   las validaciones y el correo ya salió), para no perder contactos reales.
  */
-function sipcons_registrar_evento(string $evento, array $d = []): void {
+function sipcons_registrar_evento(string $evento, array $d = [], bool $servidor = false): void {
     if (!in_array($evento, SIPCONS_EVENTOS, true)) return;
 
     $ua = (string)($_SERVER['HTTP_USER_AGENT'] ?? '');
-    if (sipcons_es_bot($ua)) return;
+    if (!$servidor && sipcons_es_bot($ua)) return;
 
     date_default_timezone_set('America/Tijuana');
     $perfil = sipcons_perfil_ua($ua);
@@ -94,6 +98,7 @@ function sipcons_registrar_evento(string $evento, array $d = []): void {
         'd' => $perfil['d'], 'b' => $perfil['b'], 'o' => $perfil['o'],
     ];
     if (!empty($d['n']))  $linea['n']  = 1;
+    if (!empty($d['x']))  $linea['x']  = 1;
     if (!empty($d['r']))  $linea['r']  = strtolower(sipcons_limpiar_texto($d['r'], 80));
     foreach (['us', 'um', 'uc'] as $k) {
         if (!empty($d[$k])) $linea[$k] = strtolower(sipcons_limpiar_texto($d[$k], 60));
